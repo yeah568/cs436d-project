@@ -5,7 +5,7 @@
 class Turtle;
 class Fish;
 
-class Salmon : public Renderable
+class Player : public Renderable
 {
 public:
 	// Creates all the associated render resources and default transform

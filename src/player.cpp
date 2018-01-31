@@ -1,5 +1,5 @@
 // Header
-#include "salmon.hpp"
+#include "player.hpp"
 
 // internal
 #include "turtle.hpp"
@@ -11,7 +11,7 @@
 #include <string>
 #include <algorithm>
 
-bool Salmon::init()
+bool Player::init()
 {
 	std::vector<Vertex> vertices;
 	std::vector<uint16_t> indices;
@@ -86,7 +86,7 @@ bool Salmon::init()
 }
 
 // Releases all graphics resources
-void Salmon::destroy()
+void Player::destroy()
 {
 	glDeleteBuffers(1, &mesh.vbo);
 	glDeleteBuffers(1, &mesh.ibo);
@@ -98,7 +98,7 @@ void Salmon::destroy()
 }
 
 // Called on each frame by World::update()
-void Salmon::update(float ms)
+void Player::update(float ms)
 {
 	const float SALMON_SPEED = 200.f;
 	float step = SALMON_SPEED * (ms / 1000);
@@ -128,7 +128,7 @@ void Salmon::update(float ms)
 		m_light_up_countdown_ms -= ms;
 }
 
-void Salmon::draw(const mat3& projection)
+void Player::draw(const mat3& projection)
 {
 	transform_begin();
 
@@ -196,7 +196,7 @@ void Salmon::draw(const mat3& projection)
 }
 
 // Simple bounding box collision check, 
-bool Salmon::collides_with(const Turtle& turtle)
+bool Player::collides_with(const Turtle& turtle)
 {
 	float dx = m_position.x - turtle.get_position().x;
 	float dy = m_position.y - turtle.get_position().y;
@@ -210,7 +210,7 @@ bool Salmon::collides_with(const Turtle& turtle)
 	return false;
 }
 
-bool Salmon::collides_with(const Fish& fish)
+bool Player::collides_with(const Fish& fish)
 {
 	float dx = m_position.x - fish.get_position().x;
 	float dy = m_position.y - fish.get_position().y;
@@ -224,34 +224,34 @@ bool Salmon::collides_with(const Fish& fish)
 	return false;
 }
 
-vec2 Salmon::get_position()const
+vec2 Player::get_position()const
 {
 	return m_position;
 }
 
-void Salmon::move(vec2 off)
+void Player::move(vec2 off)
 {
 	m_position.x += off.x; m_position.y += off.y;
 }
 
-void Salmon::set_rotation(float radians)
+void Player::set_rotation(float radians)
 {
 	m_rotation = radians;
 }
 
-bool Salmon::is_alive()const
+bool Player::is_alive()const
 {
 	return m_is_alive;
 }
 
 // Called when the salmon collides with a turtle
-void Salmon::kill()
+void Player::kill()
 {
 	m_is_alive = false;
 }
 
 // Called when the salmon collides with a fish
-void Salmon::light_up()
+void Player::light_up()
 {
 	m_light_up_countdown_ms = 1500.f;
 }

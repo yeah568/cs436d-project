@@ -2,7 +2,7 @@
 
 // internal
 #include "common.hpp"
-#include "salmon.hpp"
+#include "player.hpp"
 #include "turtle.hpp"
 #include "fish.hpp"
 
@@ -56,7 +56,7 @@ private:
 	unsigned int m_points;
 
 	// Game entities
-	Salmon m_salmon;
+	Player m_salmon;
 	std::vector<Turtle> m_turtles;
 	std::vector<Fish> m_fish;
 
