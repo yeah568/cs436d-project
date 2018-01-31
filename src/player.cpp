@@ -81,6 +81,7 @@ bool Player::init()
 	m_position = { 50.f, 100.f };
 	m_rotation = 0.f;
 	m_light_up_countdown_ms = -1.f;
+	m_movement_dir = { 0.f, 0.f };
 
 	return true;
 }
@@ -107,15 +108,14 @@ void Player::update(float ms)
 		// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		// UPDATE SALMON POSITION HERE BASED ON KEY PRESSED (World::on_key())
 		// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		m_movement.x = m_right - m_left;
-		m_movement.y = m_down - m_up;
-		printf("Before %d \n" , m_movement.x);
-		if (m_movement.x != 0 && m_movement.y != 0) {
-			m_movement = normalize(m_movement);
+		printf("Before %d \n" , m_movement_dir.x);
+		vec2 normalized_movement = m_movement_dir;
+		if (m_movement_dir.x != 0 && m_movement_dir.y != 0) {
+			normalized_movement = normalize(normalized_movement);
 		}
-		printf("After %d \n",m_movement.x);
-		m_position.x += 2*m_movement.x;
-		m_position.y += 2*m_movement.y;
+		
+		printf("After %d \n", normalized_movement.x);
+		move({ normalized_movement.x * 10, normalized_movement.y * 10 });
 	}
 	else
 	{
@@ -254,4 +254,13 @@ void Player::kill()
 void Player::light_up()
 {
 	m_light_up_countdown_ms = 1500.f;
+}
+
+void Player::set_movement_dir(vec2 dir) {
+	m_movement_dir = dir;
+}
+
+void Player::add_movement_dir(vec2 dir) {
+	m_movement_dir.x += dir.x;
+	m_movement_dir.y += dir.y;
 }

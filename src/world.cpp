@@ -341,34 +341,42 @@ void World::on_key(GLFWwindow*, int key, int, int action, int mod)
 		Fish& new_fish = m_fish.back();
 		new_fish.set_position({ salmon_pos.x, salmon_pos.y+ 200});
 	}
-	if (action == GLFW_PRESS && key == GLFW_KEY_LEFT) {
-		m_salmon.m_left = true;
-	}
-	if (action == GLFW_PRESS && key == GLFW_KEY_RIGHT) {
-		m_salmon.m_right = true;
+
+	if (action == GLFW_PRESS) {
+		switch (key) {
+		case GLFW_KEY_RIGHT: 
+			m_salmon.add_movement_dir({ 1.f, 0.f });
+			break;
+		case GLFW_KEY_LEFT: 
+			m_salmon.add_movement_dir({ -1.f, 0.f });
+			break;
+		case GLFW_KEY_UP:    
+			m_salmon.add_movement_dir({ 0.f, -1.f });
+			break;
+		case GLFW_KEY_DOWN:  
+			m_salmon.add_movement_dir({ 0.f, 1.f });
+			break;
+		}
 	}
 
-	if (action == GLFW_PRESS && key == GLFW_KEY_UP) {
-		m_salmon.m_up = true;
+	if (action == GLFW_RELEASE) {
+		switch (key) {
+		case GLFW_KEY_RIGHT:
+			m_salmon.add_movement_dir({ -1.f, 0.f });
+			break;
+		case GLFW_KEY_LEFT:
+			m_salmon.add_movement_dir({ 1.f, 0.f });
+			break;
+		case GLFW_KEY_UP:
+			m_salmon.add_movement_dir({ 0.f, 1.f });
+			break;
+		case GLFW_KEY_DOWN:
+			m_salmon.add_movement_dir({ 0.f, -1.f });
+			break;
+		}
 	}
 
-	if (action == GLFW_PRESS && key == GLFW_KEY_DOWN) {
-		m_salmon.m_down = true;
-	}
 
-	if (action == GLFW_RELEASE && key == GLFW_KEY_LEFT) {
-		m_salmon.m_left = false;
-	}
-	if (action == GLFW_RELEASE && key == GLFW_KEY_RIGHT) {
-		m_salmon.m_right = false;
-	}
-
-	if (action == GLFW_RELEASE && key == GLFW_KEY_UP) {
-		m_salmon.m_up = false;
-	}
-	if (action == GLFW_RELEASE && key == GLFW_KEY_DOWN) {
-		m_salmon.m_down = false;
-	}
 	// Resetting game
 	if (action == GLFW_RELEASE && key == GLFW_KEY_R)
 	{

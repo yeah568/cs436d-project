@@ -40,13 +40,12 @@ public:
 	// Kills the salmon, changing its alive state and triggering on death events
 	void kill();
 
-	// Called when the salmon collides with a fish, starts lighting up the salmon
+	// Callesd when the salmon collides with a fish, starts lighting up the salmon
 	void light_up();
-	bool m_up;
-	bool m_down;
-	bool m_left;
-	bool m_right;
-	vec2 m_movement;
+
+	void set_movement_dir(vec2 dir);
+
+	void add_movement_dir(vec2 dir);
 
 private:
 	float m_light_up_countdown_ms; // Used to keep track for how long the salmon should be lit up
@@ -55,4 +54,5 @@ private:
 	vec2 m_scale; // 1.f in each dimension. 1.f is as big as the associated texture
 	float m_rotation; // in radians
 	size_t m_num_indices; // passed to glDrawElements
+	vec2 m_movement_dir;
 };
