@@ -42,6 +42,11 @@ public:
 
 	// Called when the salmon collides with a fish, starts lighting up the salmon
 	void light_up();
+	bool m_up;
+	bool m_down;
+	bool m_left;
+	bool m_right;
+	vec2 m_movement;
 
 private:
 	float m_light_up_countdown_ms; // Used to keep track for how long the salmon should be lit up

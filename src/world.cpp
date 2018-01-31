@@ -1,5 +1,6 @@
 // Header
 #include "world.hpp"
+#include "common.hpp"
 
 // stlib
 #include <string.h>
@@ -204,6 +205,7 @@ bool World::update(float elapsed_ms)
 	}
 
 	// Spawning new turtles
+	/*
 	m_next_turtle_spawn -= elapsed_ms * m_current_speed;
 	if (m_turtles.size() <= MAX_TURTLES && m_next_turtle_spawn < 0.f)
 	{
@@ -218,8 +220,10 @@ bool World::update(float elapsed_ms)
 		// Next spawn
 		m_next_turtle_spawn = (TURTLE_DELAY_MS / 2) + m_dist(m_rng) * (TURTLE_DELAY_MS/2);
 	}
+	*/
 
 	// Spawning new fish
+	/*
 	m_next_fish_spawn -= elapsed_ms * m_current_speed;
 	if (m_fish.size() <= MAX_FISH && m_next_fish_spawn < 0.f)
 	{
@@ -231,7 +235,7 @@ bool World::update(float elapsed_ms)
 
 		m_next_fish_spawn = (FISH_DELAY_MS / 2) + m_dist(m_rng) * (FISH_DELAY_MS / 2);
 	}
-
+	*/
 	return true;
 }
 
@@ -273,12 +277,15 @@ void World::draw()
 	mat3 projection_2D{ { sx, 0.f, 0.f },{ 0.f, sy, 0.f },{ tx, ty, 1.f } };
 
 	// Drawing entities
+	/*
 	for (auto& turtle : m_turtles)
 		turtle.draw(projection_2D);
+	*/
 	for (auto& fish : m_fish)
 		fish.draw(projection_2D);
+	
 	m_salmon.draw(projection_2D);
-
+	
 	// Presenting
 	glfwSwapBuffers(m_window);
 }
@@ -323,7 +330,45 @@ void World::on_key(GLFWwindow*, int key, int, int action, int mod)
 	// key is of 'type' GLFW_KEY_
 	// action can be GLFW_PRESS GLFW_RELEASE GLFW_REPEAT
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	int w, h;
+	glfwGetFramebufferSize(m_window, &w, &h);
+	vec2 screen = { (float)w, (float)h };
+	
 
+	if (action == GLFW_PRESS && key == GLFW_KEY_SPACE) {
+		vec2 salmon_pos = m_salmon.get_position();
+		spawn_fish();
+		Fish& new_fish = m_fish.back();
+		new_fish.set_position({ salmon_pos.x, salmon_pos.y+ 200});
+	}
+	if (action == GLFW_PRESS && key == GLFW_KEY_LEFT) {
+		m_salmon.m_left = true;
+	}
+	if (action == GLFW_PRESS && key == GLFW_KEY_RIGHT) {
+		m_salmon.m_right = true;
+	}
+
+	if (action == GLFW_PRESS && key == GLFW_KEY_UP) {
+		m_salmon.m_up = true;
+	}
+
+	if (action == GLFW_PRESS && key == GLFW_KEY_DOWN) {
+		m_salmon.m_down = true;
+	}
+
+	if (action == GLFW_RELEASE && key == GLFW_KEY_LEFT) {
+		m_salmon.m_left = false;
+	}
+	if (action == GLFW_RELEASE && key == GLFW_KEY_RIGHT) {
+		m_salmon.m_right = false;
+	}
+
+	if (action == GLFW_RELEASE && key == GLFW_KEY_UP) {
+		m_salmon.m_up = false;
+	}
+	if (action == GLFW_RELEASE && key == GLFW_KEY_DOWN) {
+		m_salmon.m_down = false;
+	}
 	// Resetting game
 	if (action == GLFW_RELEASE && key == GLFW_KEY_R)
 	{

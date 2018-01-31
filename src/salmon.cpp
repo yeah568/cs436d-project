@@ -4,6 +4,7 @@
 // internal
 #include "turtle.hpp"
 #include "fish.hpp"
+#include "common.hpp"
 
 // stlib
 #include <vector>
@@ -16,7 +17,7 @@ bool Salmon::init()
 	std::vector<uint16_t> indices;
 
 	// Reads the salmon mesh from a file, which contains a list of vertices and indices
-	FILE* mesh_file = fopen(mesh_path("salmon.mesh"), "r");
+	FILE* mesh_file = fopen(mesh_path("character.mesh"), "r");
 	if (mesh_file == nullptr)
 		return false;
 
@@ -106,9 +107,15 @@ void Salmon::update(float ms)
 		// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		// UPDATE SALMON POSITION HERE BASED ON KEY PRESSED (World::on_key())
 		// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-
-		
+		m_movement.x = m_right - m_left;
+		m_movement.y = m_down - m_up;
+		printf("Before %d \n" , m_movement.x);
+		if (m_movement.x != 0 && m_movement.y != 0) {
+			m_movement = normalize(m_movement);
+		}
+		printf("After %d \n",m_movement.x);
+		m_position.x += 2*m_movement.x;
+		m_position.y += 2*m_movement.y;
 	}
 	else
 	{
@@ -136,7 +143,7 @@ void Salmon::draw(const mat3& projection)
 
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	// REMOVE THE FOLLOWING LINES BEFORE ADDING ANY TRANSFORMATION CODE
-	transform_translate({ 100.f, 100.f });
+	transform_translate({ m_position.x, m_position.y });
 	transform_scale(m_scale);
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
