@@ -1,0 +1,8 @@
+//
+// Created by Sarah Jade on 2/1/18.
+//
+
+#ifndef CS436D_PROJECT_SOUND_PLAYER_H
+#define CS436D_PROJECT_SOUND_PLAYER_H
+
+#endif //CS436D_PROJECT_SOUND_PLAYER_H

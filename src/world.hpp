@@ -5,6 +5,7 @@
 #include "player.hpp"
 #include "turtle.hpp"
 #include "fish.hpp"
+#include "sounds_player.h"
 
 // stlib
 #include <vector>
@@ -63,10 +64,8 @@ private:
 	float m_current_speed;
 	float m_next_turtle_spawn;
 	float m_next_fish_spawn;
-	
-	Mix_Music* m_background_music;
-	Mix_Chunk* m_salmon_dead_sound;
-	Mix_Chunk* m_salmon_eat_sound;
+
+    Sounds_Player sounds_player;
 
 	// C++ rng
 	std::default_random_engine m_rng;
