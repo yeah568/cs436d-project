@@ -109,6 +109,8 @@ bool World::init(vec2 screen)
 
 	m_current_speed = 1.f;
 
+	m_background.init();
+
 	return m_salmon.init();
 }
 
@@ -275,6 +277,10 @@ void World::draw()
 	float tx = -(right + left) / (right - left);
 	float ty = -(top + bottom) / (top - bottom);
 	mat3 projection_2D{ { sx, 0.f, 0.f },{ 0.f, sy, 0.f },{ tx, ty, 1.f } };
+
+	m_background.set_position({ (float)w / 2, (float)h / 2 });
+
+	m_background.draw(projection_2D);
 
 	// Drawing entities
 	/*
