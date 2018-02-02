@@ -1,5 +1,7 @@
 language: cpp
 
+before_install: sudo apt install mesa-common-dev
+
 script: make && make test
 
 os:
