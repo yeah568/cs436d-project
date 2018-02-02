@@ -6,7 +6,7 @@ ifeq ($(OS), Darwin)
 else ifeq ($(OS), Linux)
     CXXFLAGS = -Iext/gl3w -Iext/glfw/include -Iext/sdl/include -Iext/stb_image -std=c++11 -Wall -pedantic -DENABLE_SOUND
     # LIB = -lglfw -lGL -lm -lXrandr -lXi -lX11 -lXxf86vm -lpthread -ldl -lSDL -lSDL_mixer -lSDLmain
-    LIB = -Lext/glfw/lib -lglfw -lGL -lm -lXrandr -lXi -lX11 -lXxf86vm -lpthread -ldl -Lext/sdl/lib -lSDL -lSDL_mixer -lSDLmain
+    LIB = -lglfw -lGL -lm -lXrandr -lXi -lX11 -lXxf86vm -lpthread -ldl -Lext/sdl/lib -lSDL -lSDL_mixer -lSDLmain
 else
     $(error Your OS $(OS) is not supported.) 
     exit 1
