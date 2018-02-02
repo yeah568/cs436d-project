@@ -129,8 +129,11 @@ void World::destroy()
 		turtle.destroy();
 	for (auto& fish : m_fish)
 		fish.destroy();
+	for (auto& bullet : m_bullets)
+		bullet.destroy();
 	m_turtles.clear();
 	m_fish.clear();
+	m_bullets.clear();
 	glfwDestroyWindow(m_window);
 }
 
@@ -175,6 +178,8 @@ bool World::update(float elapsed_ms)
 		turtle.update(elapsed_ms * m_current_speed);
 	for (auto& fish : m_fish)
 		fish.update(elapsed_ms * m_current_speed);
+	for (auto& bullet : m_bullets)
+		bullet.update(elapsed_ms * m_current_speed);
 
 	// Removing out of screen turtles
 	auto turtle_it = m_turtles.begin();
@@ -203,6 +208,8 @@ bool World::update(float elapsed_ms)
 
 		++fish_it;
 	}
+
+	// TODO: remove out of screen bullets
 
 	// Spawning new turtles
 	/*
@@ -283,6 +290,8 @@ void World::draw()
 	*/
 	for (auto& fish : m_fish)
 		fish.draw(projection_2D);
+	for (auto& bullet : m_bullets)
+		bullet.draw(projection_2D);
 	
 	m_salmon.draw(projection_2D);
 	
@@ -322,6 +331,18 @@ bool World::spawn_fish()
 	return false;
 }
 
+bool World::spawn_bullet(float angle, vec2 position)
+{
+	Bullet bullet;
+	if (bullet.init(angle, position))
+	{
+		m_bullets.emplace_back(bullet);
+		return true;
+	}
+	fprintf(stderr, "Failed to spawn bullet");
+	return false;
+}
+
 // On key callback
 void World::on_key(GLFWwindow*, int key, int, int action, int mod)
 {
@@ -336,10 +357,9 @@ void World::on_key(GLFWwindow*, int key, int, int action, int mod)
 	
 
 	if (action == GLFW_PRESS && key == GLFW_KEY_SPACE) {
+		float player_angle = m_salmon.get_rotation();
 		vec2 salmon_pos = m_salmon.get_position();
-		spawn_fish();
-		Fish& new_fish = m_fish.back();
-		new_fish.set_position({ salmon_pos.x, salmon_pos.y+ 200});
+		spawn_bullet(player_angle, salmon_pos);
 	}
 
 	if (action == GLFW_PRESS) {
