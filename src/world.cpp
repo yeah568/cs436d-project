@@ -345,15 +345,19 @@ void World::on_key(GLFWwindow*, int key, int, int action, int mod)
 	if (action == GLFW_PRESS) {
 		switch (key) {
 		case GLFW_KEY_RIGHT: 
+		case GLFW_KEY_D:
 			m_salmon.add_movement_dir({ 1.f, 0.f });
 			break;
-		case GLFW_KEY_LEFT: 
+		case GLFW_KEY_LEFT:
+		case GLFW_KEY_A:
 			m_salmon.add_movement_dir({ -1.f, 0.f });
 			break;
-		case GLFW_KEY_UP:    
+		case GLFW_KEY_UP:
+		case GLFW_KEY_W:
 			m_salmon.add_movement_dir({ 0.f, -1.f });
 			break;
-		case GLFW_KEY_DOWN:  
+		case GLFW_KEY_DOWN:
+		case GLFW_KEY_S:
 			m_salmon.add_movement_dir({ 0.f, 1.f });
 			break;
 		}
@@ -362,15 +366,19 @@ void World::on_key(GLFWwindow*, int key, int, int action, int mod)
 	if (action == GLFW_RELEASE) {
 		switch (key) {
 		case GLFW_KEY_RIGHT:
+		case GLFW_KEY_D:
 			m_salmon.add_movement_dir({ -1.f, 0.f });
 			break;
 		case GLFW_KEY_LEFT:
+		case GLFW_KEY_A:
 			m_salmon.add_movement_dir({ 1.f, 0.f });
 			break;
 		case GLFW_KEY_UP:
+		case GLFW_KEY_W:
 			m_salmon.add_movement_dir({ 0.f, 1.f });
 			break;
 		case GLFW_KEY_DOWN:
+		case GLFW_KEY_S:
 			m_salmon.add_movement_dir({ 0.f, -1.f });
 			break;
 		}
@@ -406,5 +414,6 @@ void World::on_mouse_move(GLFWwindow* window, double xpos, double ypos)
 	// default facing direction is (1, 0)
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+	m_salmon.set_mouse((float)xpos, (float)ypos);
 
 }

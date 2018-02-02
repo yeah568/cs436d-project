@@ -108,14 +108,18 @@ void Player::update(float ms)
 		// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		// UPDATE SALMON POSITION HERE BASED ON KEY PRESSED (World::on_key())
 		// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		printf("Before %d \n" , m_movement_dir.x);
 		vec2 normalized_movement = m_movement_dir;
 		if (m_movement_dir.x != 0 && m_movement_dir.y != 0) {
 			normalized_movement = normalize(normalized_movement);
 		}
 		
-		printf("After %d \n", normalized_movement.x);
 		move({ normalized_movement.x * 10, normalized_movement.y * 10 });
+
+		// Set player to face mouse
+		float delta_x = m_mouse.x - m_position.x;
+		float delta_y = m_position.y - m_mouse.y;
+		float angle = (float)atan2(delta_y, delta_x);
+		set_rotation(angle);
 	}
 	else
 	{
@@ -145,6 +149,7 @@ void Player::draw(const mat3& projection)
 	// REMOVE THE FOLLOWING LINES BEFORE ADDING ANY TRANSFORMATION CODE
 	transform_translate({ m_position.x, m_position.y });
 	transform_scale(m_scale);
+	transform_rotate(m_rotation);
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
@@ -237,6 +242,11 @@ void Player::move(vec2 off)
 void Player::set_rotation(float radians)
 {
 	m_rotation = radians;
+}
+
+void Player::set_mouse(float x, float y)
+{
+	m_mouse = { x, y };
 }
 
 bool Player::is_alive()const
