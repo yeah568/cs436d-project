@@ -1,4 +1,11 @@
 language: cpp
 
+script: make && make test
+
+os:
+- linux
+- osx
+
 sudo: false
 dist: trusty
+
