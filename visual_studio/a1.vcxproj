@@ -506,12 +506,10 @@
     <ClCompile Include="..\src\player.cpp" />
     <ClCompile Include="$(ProjectDir)..\src\fish.cpp" />
     <ClCompile Include="$(ProjectDir)..\src\turtle.cpp" />
-    <ClCompile Include="OsuParser.cpp" />
+    <ClCompile Include="$(ProjectDir)..\src\OsuParser.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\src\background.hpp" />
-    <ClInclude Include="..\src\bullet.hpp" />
-    <ClInclude Include="OsuParser.hpp" />
+    <ClInclude Include="$(ProjectDir)..\src\OsuParser.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
