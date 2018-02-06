@@ -1,23 +1,16 @@
-// Header
-#include "player.hpp"
+#include "bullet.hpp"
 
-// internal
-#include "turtle.hpp"
-#include "fish.hpp"
 #include "common.hpp"
 
-// stlib
 #include <vector>
-#include <string>
-#include <algorithm>
 
-bool Player::init()
+bool Bullet::init(float angle, vec2 position)
 {
 	std::vector<Vertex> vertices;
 	std::vector<uint16_t> indices;
 
 	// Reads the salmon mesh from a file, which contains a list of vertices and indices
-	FILE* mesh_file = fopen(mesh_path("character.mesh"), "r");
+	FILE* mesh_file = fopen(mesh_path("salmon.mesh"), "r");
 	if (mesh_file == nullptr)
 		return false;
 
@@ -29,9 +22,9 @@ bool Player::init()
 		float x, y, z;
 		float _u[3]; // unused
 		int r, g, b;
-		fscanf(mesh_file, "%f %f %f %f %f %f %d %d %d\n", &x, &y, &z, _u, _u+1, _u+2, &r, &g, &b);
+		fscanf(mesh_file, "%f %f %f %f %f %f %d %d %d\n", &x, &y, &z, _u, _u + 1, _u + 2, &r, &g, &b);
 		Vertex vertex;
-		vertex.position = { x, y, -z }; 
+		vertex.position = { x, y, -z };
 		vertex.color = { (float)r / 255, (float)g / 255, (float)b / 255 };
 		vertices.push_back(vertex);
 	}
@@ -72,22 +65,17 @@ bool Player::init()
 	// Loading shaders
 	if (!effect.load_from_file(shader_path("colored.vs.glsl"), shader_path("colored.fs.glsl")))
 		return false;
-	
-	// Setting initial values
-	m_scale.x = -35.f;
-	m_scale.y = 35.f;
-	m_is_alive = true;
-	m_num_indices = indices.size();
-	m_position = { 50.f, 100.f };
-	m_rotation = 0.f;
-	m_light_up_countdown_ms = -1.f;
-	m_movement_dir = { 0.f, 0.f };
 
-	return true;
+	// Setting initial values
+	m_scale.x = -15.f;
+	m_scale.y = 15.f;
+	m_num_indices = indices.size();
+	m_position = position;
+	m_rotation = angle;
+	m_movement_dir = { (float) cos(angle), (float) -sin(angle) };
 }
 
-// Releases all graphics resources
-void Player::destroy()
+void Bullet::destroy()
 {
 	glDeleteBuffers(1, &mesh.vbo);
 	glDeleteBuffers(1, &mesh.ibo);
@@ -98,41 +86,14 @@ void Player::destroy()
 	glDeleteShader(effect.program);
 }
 
-// Called on each frame by World::update()
-void Player::update(float ms)
+void Bullet::update(float ms)
 {
-	const float SALMON_SPEED = 200.f;
-	float step = SALMON_SPEED * (ms / 1000);
-	if (m_is_alive)
-	{
-		// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		// UPDATE SALMON POSITION HERE BASED ON KEY PRESSED (World::on_key())
-		// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		vec2 normalized_movement = m_movement_dir;
-		if (m_movement_dir.x != 0 && m_movement_dir.y != 0) {
-			normalized_movement = normalize(normalized_movement);
-		}
-		
-		move({ normalized_movement.x * 10, normalized_movement.y * 10 });
-
-		// Set player to face mouse
-		float delta_x = m_mouse.x - m_position.x;
-		float delta_y = m_position.y - m_mouse.y;
-		float angle = (float)atan2(delta_y, delta_x);
-		set_rotation(angle);
-	}
-	else
-	{
-		// If dead we make it face upwards and sink deep down
-		set_rotation(3.1415f);
-		move({ 0.f, step });
-	}
-
-	if (m_light_up_countdown_ms > 0.f)
-		m_light_up_countdown_ms -= ms;
+	const float BULLET_SPEED = 400.f;
+	float step = BULLET_SPEED * (ms / 1000);
+	move({ step * m_movement_dir.x, step * m_movement_dir.y });
 }
 
-void Player::draw(const mat3& projection)
+void Bullet::draw(const mat3& projection)
 {
 	transform_begin();
 
@@ -197,85 +158,24 @@ void Player::draw(const mat3& projection)
 
 
 	// Drawing!
-	glDrawElements(GL_TRIANGLES,(GLsizei)m_num_indices, GL_UNSIGNED_SHORT, nullptr);
+	glDrawElements(GL_TRIANGLES, (GLsizei)m_num_indices, GL_UNSIGNED_SHORT, nullptr);
 }
 
-// Simple bounding box collision check, 
-bool Player::collides_with(const Turtle& turtle)
-{
-	float dx = m_position.x - turtle.get_position().x;
-	float dy = m_position.y - turtle.get_position().y;
-	float d_sq = dx * dx + dy * dy;
-	float other_r = std::max(turtle.get_bounding_box().x, turtle.get_bounding_box().y);
-	float my_r = std::max(m_scale.x, m_scale.y);
-	float r = std::max(other_r, my_r);
-	r *= 0.6f;
-	if (d_sq < r * r)
-		return true;
-	return false;
-}
-
-bool Player::collides_with(const Fish& fish)
-{
-	float dx = m_position.x - fish.get_position().x;
-	float dy = m_position.y - fish.get_position().y;
-	float d_sq = dx * dx + dy * dy;
-	float other_r = std::max(fish.get_bounding_box().x, fish.get_bounding_box().y);
-	float my_r = std::max(m_scale.x, m_scale.y);
-	float r = std::max(other_r, my_r);
-	r *= 0.6f;
-	if (d_sq < r * r)
-		return true;
-	return false;
-}
-
-vec2 Player::get_position()const
+vec2 Bullet::get_position()const
 {
 	return m_position;
 }
 
-float Player::get_rotation()const
-{
-	return m_rotation;
-}
-
-void Player::move(vec2 off)
+void Bullet::move(vec2 off)
 {
 	m_position.x += off.x; m_position.y += off.y;
 }
 
-void Player::set_rotation(float radians)
+void Bullet::set_rotation(float radians)
 {
 	m_rotation = radians;
 }
 
-void Player::set_mouse(float x, float y)
-{
-	m_mouse = { x, y };
-}
-
-bool Player::is_alive()const
-{
-	return m_is_alive;
-}
-
-// Called when the salmon collides with a turtle
-void Player::kill()
-{
-	m_is_alive = false;
-}
-
-// Called when the salmon collides with a fish
-void Player::light_up()
-{
-	m_light_up_countdown_ms = 1500.f;
-}
-
-void Player::set_movement_dir(vec2 dir) {
+void Bullet::set_movement_dir(vec2 dir) {
 	m_movement_dir = dir;
-}
-
-void Player::add_movement_dir(vec2 dir) {
-	m_movement_dir.x += dir.x;
-	m_movement_dir.y += dir.y;
 }
