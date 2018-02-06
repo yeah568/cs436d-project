@@ -1,6 +1,7 @@
 // Header
 #include "world.hpp"
 #include "common.hpp"
+#include "OsuParser.hpp"
 
 // stlib
 #include <string.h>
@@ -108,6 +109,9 @@ bool World::init(vec2 screen)
 	fprintf(stderr, "Loaded music");
 
 	m_current_speed = 1.f;
+
+	OsuParser* parser = new OsuParser(song_path("598830 Shawn Wasabi - Marble Soda/Shawn Wasabi - Marble Soda (Stingy) [Oni Zero].osu"));
+	delete parser;
 
 	return m_salmon.init();
 }
