@@ -503,15 +503,15 @@
     <ClCompile Include="$(ProjectDir)..\src\a1.cpp" />
     <ClCompile Include="$(ProjectDir)..\src\common.cpp" />
     <ClCompile Include="$(ProjectDir)..\src\world.cpp" />
-    <ClCompile Include="..\src\player.cpp" />
+    <ClCompile Include="$(ProjectDir)..\src\player.cpp" />
     <ClCompile Include="$(ProjectDir)..\src\fish.cpp" />
     <ClCompile Include="$(ProjectDir)..\src\turtle.cpp" />
     <ClCompile Include="$(ProjectDir)..\src\OsuParser.cpp" />
-    <ClCompile Include="..\src\utils\StringUtils.cpp" />
+    <ClCompile Include="$(ProjectDir)..\src\utils\StringUtils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(ProjectDir)..\src\OsuParser.hpp" />
-    <ClInclude Include="..\src\utils\StringUtils.hpp" />
+    <ClInclude Include="$(ProjectDir)..\src\utils\StringUtils.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
