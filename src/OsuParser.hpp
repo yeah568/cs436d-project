@@ -3,15 +3,9 @@
 #include <string>
 #include <vector>
 
+#include "common.hpp"
+
 #pragma once
-
-struct OsuBeatmap {
-	struct GeneralInfo generalInfo;
-	struct Metadata metadata;
-	struct Difficulty difficulty;
-
-	std::vector<HitObject> hitObjects;
-};
 
 struct GeneralInfo {
 	std::string audioFilename;
@@ -23,6 +17,14 @@ struct GeneralInfo {
 	int mode;
 	bool letterboxInBreaks;
 	bool widescreenStoryboard;
+};
+
+struct Editor {
+	std::vector<int> bookmarks;
+	float distanceSpacing;
+	int beatDivisor;
+	int gridSize;
+	int timelineZoom;
 };
 
 struct Metadata {
@@ -45,6 +47,26 @@ struct Difficulty {
 	float approachRate;
 	float sliderMultiplier;
 	float sliderTickRate;
+};
+
+struct TimingPoint {
+	int offset; // milliseconds
+	// when positive, millisecondsPerBeat is the duration of one beat
+	// when negative, it is a percentage of previous non-negative
+	// milliseconds per beat.
+	// For instance, 3 consecutive timing points with 500, -50, -100 will
+	// have a resulting beat duration of half a second, a quarter of a second,
+	// and half a second, respectively.
+	float millisecondsPerBeat;
+	int meter; // number of beats in a measure
+	int sampleSet;
+	int sampleIndex;
+	int volume; // 0 to 100
+	bool inherited; // says if it can be inherited from. Redundant with mPB.
+	bool kialMode;
+};
+
+struct Colour {
 };
 
 // notes from osu docs:
@@ -91,6 +113,7 @@ struct HitObject {
 	std::string filename;
 };
 
+// no special fields
 struct HitCircle : HitObject {};
 struct Slider : HitObject {
 	
@@ -98,6 +121,17 @@ struct Slider : HitObject {
 struct Spinner : HitObject {};
 struct ManiaHold : HitObject {};
 
+
+struct OsuBeatmap {
+	struct GeneralInfo generalInfo;
+	struct Editor editor;
+	struct Metadata metadata;
+	struct Difficulty difficulty;
+
+	//	std::vector<TimingPoint> timingPoints;
+	//	std::vector<Colour> colours;
+	//	std::vector<HitObject> hitObjects;
+};
 
 class OsuParser
 {
@@ -107,6 +141,7 @@ public:
 
 private:
 	struct GeneralInfo parseGeneralInfo(std::string generalInfo);
+	struct Editor parseEditor(std::string editor);
 	struct Metadata parseMetadata(std::string metadata);
 	struct Difficulty parseDifficulty(std::string difficulty);
 	std::ifstream osufile;

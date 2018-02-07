@@ -1,7 +1,10 @@
 #include "OsuParser.hpp"
 
+#include "utils\StringUtils.hpp"
+
 #include <string>
 #include <sstream>
+
 
 OsuParser::OsuParser(const char* path)
 {
@@ -9,11 +12,21 @@ OsuParser::OsuParser(const char* path)
 
 	std::string line;
 	int lineNum = 0;
-	Metadata m;
-
+	
+	OsuBeatmap beatmap = OsuBeatmap();
+	
+	std::string generalInfo;
 	std::string metadata;
+
+
 	while (getline(osufile, line))
 	{
+		if (line.find("[General]" == 0)) {
+			while (getline(osufile, line) && line.find("[") != 0) {
+				generalInfo.append(line);
+				generalInfo.append("\n");
+			}
+		}		
 		if (line.find("[Metadata]" == 0)) {
 			while (getline(osufile, line) && line.find("[") != 0) {
 				metadata.append(line);
@@ -23,7 +36,8 @@ OsuParser::OsuParser(const char* path)
 		std::cout << line << '\n';
 	}
 
-	m = parseMetadata(metadata);
+	beatmap.generalInfo = parseGeneralInfo(generalInfo);
+	beatmap.metadata = parseMetadata(metadata);
 }
 
 
@@ -71,7 +85,39 @@ struct GeneralInfo OsuParser::parseGeneralInfo(std::string generalInfo) {
 
 		return gi;
 	}
+}
 
+struct Editor OsuParser::parseEditor(std::string editor) {
+	Editor e = Editor();
+
+	std::istringstream iss(editor);
+
+	for (std::string line; std::getline(iss, line); ) {
+		std::string delim = ":";
+		size_t pos = line.find(delim);
+		std::string rest = line.substr(pos + 1);
+		if (line.find("Bookmarks:") == 0) {
+			std::vector<std::string> bookmarkStrings;
+			str_split(bookmarkStrings, rest, ',');
+			std::vector<int> bookmarks;
+
+			e.bookmarks = bookmarks;
+		}
+		else if (line.find("DistanceSpacing:" == 0)) {
+			e.distanceSpacing = stof(rest);
+		}
+		else if (line.find("BeatDivisor:" == 0)) {
+			e.beatDivisor = stoi(rest);
+		}
+		else if (line.find("GridSize:" == 0)) {
+			e.gridSize = stoi(rest); // warning-less cast to bool
+		}
+		else if (line.find("TimelineZoom:" == 0)) {
+			e.timelineZoom = stoi(rest);
+		}
+
+		return e;
+	}
 }
 
 struct Metadata OsuParser::parseMetadata(std::string metadata)
