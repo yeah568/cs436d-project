@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "common.hpp"
+#include "utils\StringUtils.hpp"
 
 #pragma once
 

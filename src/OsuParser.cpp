@@ -1,7 +1,5 @@
 #include "OsuParser.hpp"
 
-#include "utils\StringUtils.hpp"
-
 #include <string>
 #include <sstream>
 
@@ -18,23 +16,40 @@ OsuParser::OsuParser(const char* path)
 	std::string generalInfo;
 	std::string metadata;
 
+	// check file version
+	getline(osufile, line);
+	if (line.compare("osu file format v14") != 0) {
+		return;
+	}
+
 
 	while (getline(osufile, line))
 	{
-		if (line.find("[General]" == 0)) {
-			while (getline(osufile, line) && line.find("[") != 0) {
-				generalInfo.append(line);
-				generalInfo.append("\n");
+		if (line.compare("[General]") == 0) {
+			while (getline(osufile, line)) {
+				if (line.find("[") == 0) {
+					break;
+				}
+				else {
+					generalInfo.append(line);
+					generalInfo.append("\n");
+				}
 			}
-		}		
-		if (line.find("[Metadata]" == 0)) {
-			while (getline(osufile, line) && line.find("[") != 0) {
+		}
+		if (line.compare("[Metadata]") == 0) {
+			while (getline(osufile, line)) {
+				if (line.find("[") != 0) {
+					break;
+				}
 				metadata.append(line);
 				metadata.append("\n");
 			}
 		}
 		std::cout << line << '\n';
 	}
+
+	trim(generalInfo);
+	trim(metadata);
 
 	beatmap.generalInfo = parseGeneralInfo(generalInfo);
 	beatmap.metadata = parseMetadata(metadata);
@@ -55,36 +70,36 @@ struct GeneralInfo OsuParser::parseGeneralInfo(std::string generalInfo) {
 		std::string delim = ":";
 		size_t pos = line.find(delim);
 		std::string rest = line.substr(pos + 1);
+		trim(rest);
 		if (line.find("AudioFilename:") == 0) {
 			gi.audioFilename = rest;
 		}
-		else if (line.find("AudioLeadIn:" == 0)) {
+		else if (line.find("AudioLeadIn:") == 0) {
 			gi.audioLeadIn = stoi(rest);
 		}
-		else if (line.find("PreviewTime:" == 0)) {
+		else if (line.find("PreviewTime:") == 0) {
 			gi.previewTime = stoi(rest);
 		}
-		else if (line.find("Countdown:" == 0)) {
+		else if (line.find("Countdown:") == 0) {
 			gi.countdown = !!stoi(rest); // warning-less cast to bool
 		}
-		else if (line.find("SampleSet:" == 0)) {
+		else if (line.find("SampleSet:") == 0) {
 			gi.sampleSet = rest;
 		}
-		else if (line.find("StackLeniency:" == 0)) {
+		else if (line.find("StackLeniency:") == 0) {
 			gi.stackLeniency = stof(rest);
 		}
-		else if (line.find("Mode:" == 0)) {
+		else if (line.find("Mode:") == 0) {
 			gi.mode = stoi(rest);
 		}
-		else if (line.find("LetterboxInBreaks:" == 0)) {
+		else if (line.find("LetterboxInBreaks:") == 0) {
 			gi.letterboxInBreaks = !!stoi(rest);
 		}
-		else if (line.find("WidescreenStoryboard:" == 0)) {
+		else if (line.find("WidescreenStoryboard:") == 0) {
 			gi.widescreenStoryboard = !!stoi(rest);
 		}
-
-		return gi;
 	}
+	return gi;
 }
 
 struct Editor OsuParser::parseEditor(std::string editor) {
@@ -96,28 +111,27 @@ struct Editor OsuParser::parseEditor(std::string editor) {
 		std::string delim = ":";
 		size_t pos = line.find(delim);
 		std::string rest = line.substr(pos + 1);
+		trim(rest);
 		if (line.find("Bookmarks:") == 0) {
-			std::vector<std::string> bookmarkStrings;
-			str_split(bookmarkStrings, rest, ',');
+			std::vector<std::string> bookmarkStrings = split(rest, ',');
 			std::vector<int> bookmarks;
 
 			e.bookmarks = bookmarks;
 		}
-		else if (line.find("DistanceSpacing:" == 0)) {
+		else if (line.find("DistanceSpacing:") == 0) {
 			e.distanceSpacing = stof(rest);
 		}
-		else if (line.find("BeatDivisor:" == 0)) {
+		else if (line.find("BeatDivisor:") == 0) {
 			e.beatDivisor = stoi(rest);
 		}
-		else if (line.find("GridSize:" == 0)) {
+		else if (line.find("GridSize:") == 0) {
 			e.gridSize = stoi(rest); // warning-less cast to bool
 		}
-		else if (line.find("TimelineZoom:" == 0)) {
+		else if (line.find("TimelineZoom:") == 0) {
 			e.timelineZoom = stoi(rest);
 		}
-
-		return e;
 	}
+	return e;
 }
 
 struct Metadata OsuParser::parseMetadata(std::string metadata)
