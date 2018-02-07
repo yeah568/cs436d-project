@@ -24,14 +24,54 @@ OsuParser::OsuParser(const char* path)
 	}
 
 	m = parseMetadata(metadata);
-	m = parseMetadata(metadata);
-
 }
 
 
 OsuParser::~OsuParser()
 {
 	osufile.close();
+}
+
+struct GeneralInfo OsuParser::parseGeneralInfo(std::string generalInfo) {
+	GeneralInfo gi = GeneralInfo();
+
+	std::istringstream iss(generalInfo);
+
+	for (std::string line; std::getline(iss, line); ) {
+		std::string delim = ":";
+		size_t pos = line.find(delim);
+		std::string rest = line.substr(pos + 1);
+		if (line.find("AudioFilename:") == 0) {
+			gi.audioFilename = rest;
+		}
+		else if (line.find("AudioLeadIn:" == 0)) {
+			gi.audioLeadIn = stoi(rest);
+		}
+		else if (line.find("PreviewTime:" == 0)) {
+			gi.previewTime = stoi(rest);
+		}
+		else if (line.find("Countdown:" == 0)) {
+			gi.countdown = !!stoi(rest); // warning-less cast to bool
+		}
+		else if (line.find("SampleSet:" == 0)) {
+			gi.sampleSet = rest;
+		}
+		else if (line.find("StackLeniency:" == 0)) {
+			gi.stackLeniency = stof(rest);
+		}
+		else if (line.find("Mode:" == 0)) {
+			gi.mode = stoi(rest);
+		}
+		else if (line.find("LetterboxInBreaks:" == 0)) {
+			gi.letterboxInBreaks = !!stoi(rest);
+		}
+		else if (line.find("WidescreenStoryboard:" == 0)) {
+			gi.widescreenStoryboard = !!stoi(rest);
+		}
+
+		return gi;
+	}
+
 }
 
 struct Metadata OsuParser::parseMetadata(std::string metadata)
@@ -78,4 +118,38 @@ struct Metadata OsuParser::parseMetadata(std::string metadata)
 	}
 
 	return m;
+}
+
+struct Difficulty OsuParser::parseDifficulty(std::string difficulty)
+{
+	Difficulty d = Difficulty();
+
+	// TODO jamesliu: replace this with boost functions?
+	std::istringstream iss(difficulty);
+	for (std::string line; std::getline(iss, line); )
+	{
+		std::string delim = ":";
+		size_t pos = line.find(delim);
+		std::string rest = line.substr(pos + 1);
+		if (line.find("HPDrainRate:") == 0) {
+			d.hpDrainRate = stof(rest);
+		}
+		else if (line.find("CircleSize:") == 0) {
+			d.circleSize = stof(rest);
+		}
+		else if (line.find("OverallDifficulty:") == 0) {
+			d.overallDifficulty = stof(rest);
+		}
+		else if (line.find("ApproachRate:") == 0) {
+			d.approachRate = stof(rest);
+		}
+		else if (line.find("SliderMultiplier:") == 0) {
+			d.sliderMultiplier = stof(rest);
+		}
+		else if (line.find("SliderTickRate:") == 0) {
+			d.sliderTickRate = stof(rest);
+		}
+	}
+
+	return d;
 }

@@ -1,8 +1,17 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <vector>
 
 #pragma once
+
+struct OsuBeatmap {
+	struct GeneralInfo generalInfo;
+	struct Metadata metadata;
+	struct Difficulty difficulty;
+
+	std::vector<HitObject> hitObjects;
+};
 
 struct GeneralInfo {
 	std::string audioFilename;
@@ -96,11 +105,10 @@ public:
 	OsuParser(const char* path);
 	~OsuParser();
 
-
-
 private:
-	struct GeneralInfo parseGeneralInfo();
+	struct GeneralInfo parseGeneralInfo(std::string generalInfo);
 	struct Metadata parseMetadata(std::string metadata);
+	struct Difficulty parseDifficulty(std::string difficulty);
 	std::ifstream osufile;
 };
 
