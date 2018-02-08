@@ -3,11 +3,11 @@
 #include <vector>
 
 struct Beat {	
-	int offset;
+	float offset;
 	int x;
 	int y;
 
-	Beat(int offset, int x, int y) : offset(offset), x(x), y(y) {}
+	Beat(float offset, int x, int y) : offset(offset), x(x), y(y) {}
 };
 
 class BeatList

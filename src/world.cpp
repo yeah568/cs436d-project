@@ -80,11 +80,10 @@ bool World::init(vec2 screen)
 	glfwSetCursorPosCallback(m_window, cursor_pos_redirect);
 
 	//-------------------------------------------------------------------------
-	OsuParser* parser = new OsuParser(song_path("598830 Shawn Wasabi - Marble Soda/Shawn Wasabi - Marble Soda (Stingy) [Oni Zero].osu"));
+	OsuParser* parser = new OsuParser(song_path("598830 Shawn Wasabi - Marble Soda/Shawn Wasabi - Marble Soda (Exa) [Normal].osu"));
 	OsuBeatmap beatmap = parser->parse();
 
-
-
+	beatlist = new BeatList(beatmap);
 
 	//-------------------------------------------------------------------------
 	// Loading music and sounds
@@ -94,14 +93,14 @@ bool World::init(vec2 screen)
 		return false;
 	}
 
-	int result = 0;
-	int flags = MIX_INIT_MP3;
+	//int result = 0;
+	//int flags = MIX_INIT_MP3;
 
-	if (flags != (result = Mix_Init(flags))) {
-		printf("Could not initialize mixer (result: %d).\n", result);
-		printf("Mix_Init: %s\n", Mix_GetError());
-		return false;
-	}
+	//if (flags != (result = Mix_Init(flags))) {
+	//	printf("Could not initialize mixer (result: %d).\n", result);
+	//	printf("Mix_Init: %s\n", Mix_GetError());
+	//	return false;
+	//}
 
 	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) == -1)
 	{
@@ -110,7 +109,7 @@ bool World::init(vec2 screen)
 	}
 
 	//m_background_music = Mix_LoadMUS(audio_path("music.wav"));
-	m_background_music = Mix_LoadMUS("../data/audio/marblesoda.mp3");
+	m_background_music = Mix_LoadMUS(song_path("598830 Shawn Wasabi - Marble Soda/Marble Soda.wav"));
 
 	if (!m_background_music) {
 		printf("Mix_LoadMUS(\"music.mp3\"): %s\n", Mix_GetError());
@@ -125,13 +124,11 @@ bool World::init(vec2 screen)
 		fprintf(stderr, "Failed to load sounds, make sure the data directory is present");
 		return false;
 	}
-
-	// Playing background music undefinitely
-	Mix_PlayMusic(m_background_music, -1);
 	
 	fprintf(stderr, "Loaded music");
 
 	m_current_speed = 1.f;
+
 
 	return m_salmon.init();
 }
@@ -161,9 +158,33 @@ void World::destroy()
 // Update our game world
 bool World::update(float elapsed_ms)
 {
+	if (!Mix_PlayingMusic()) {
+		Mix_PlayMusic(m_background_music, 1);
+	}
+	
+	float remaining_offset  = elapsed_ms;
+
 	int w, h;
         glfwGetFramebufferSize(m_window, &w, &h);
 	vec2 screen = { (float)w, (float)h };
+
+	Beat curBeat = beatlist->beats.at(beatPos);
+
+	if (curBeat.offset <= elapsed_ms) {
+		// spawn thing
+		remaining_offset -= curBeat.offset;
+
+		printf("spawn %f\n", curBeat.offset);
+
+		spawn_fish({ ((64.f + (float)curBeat.x)/640.f)*screen.x, ((48.f + (float)curBeat.y) / 480.f)*screen.y });
+
+		// next
+		beatPos++;
+	}
+	if (beatPos < beatlist->beats.size()) {
+		beatlist->beats.at(beatPos).offset -= remaining_offset;
+	}
+	
 
 	// Checking Salmon - Turtle collisions
 	for (const auto& turtle : m_turtles)
@@ -197,8 +218,8 @@ bool World::update(float elapsed_ms)
 	m_salmon.update(elapsed_ms);
 	for (auto& turtle : m_turtles)
 		turtle.update(elapsed_ms * m_current_speed);
-	for (auto& fish : m_fish)
-		fish.update(elapsed_ms * m_current_speed);
+	//for (auto& fish : m_fish)
+	//	fish.update(elapsed_ms * m_current_speed);
 
 	// Removing out of screen turtles
 	auto turtle_it = m_turtles.begin();
@@ -215,18 +236,18 @@ bool World::update(float elapsed_ms)
 	}
 
 	// Removing out of screen fish
-	fish_it = m_fish.begin();
-	while (fish_it != m_fish.end())
-	{
-		float w = fish_it->get_bounding_box().x / 2;
-		if (fish_it->get_position().x + w < 0.f)
-		{
-			fish_it = m_fish.erase(fish_it);
-			continue;
-		}
+	//fish_it = m_fish.begin();
+	//while (fish_it != m_fish.end())
+	//{
+	//	float w = fish_it->get_bounding_box().x / 2;
+	//	if (fish_it->get_position().x + w < 0.f)
+	//	{
+	//		fish_it = m_fish.erase(fish_it);
+	//		continue;
+	//	}
 
-		++fish_it;
-	}
+	//	++fish_it;
+	//}
 
 	// Spawning new turtles
 	/*
@@ -339,6 +360,20 @@ bool World::spawn_fish()
 	Fish fish;
 	if (fish.init())
 	{
+		m_fish.emplace_back(fish);
+		return true;
+	}
+	fprintf(stderr, "Failed to spawn fish");
+	return false;
+}
+
+// Creates a new fish and if successfull adds it to the list of fish
+bool World::spawn_fish(vec2 pos)
+{
+	Fish fish;
+	if (fish.init())
+	{
+		fish.set_position(pos);
 		m_fish.emplace_back(fish);
 		return true;
 	}

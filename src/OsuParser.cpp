@@ -387,7 +387,7 @@ Slider OsuParser::parseSlider(std::vector<std::string> parts) {
 
 	hitObject.repeat = stoi(parts.at(6));
 	hitObject.pixelLength = stof(parts.at(7));
-	hitObject.edgeHitsounds = strs_to_ints(split(parts.at(8), '|'));
+	//hitObject.edgeHitsounds = strs_to_ints(split(parts.at(8), '|'));
 	parseHitObjectExtras(hitObject, parts.back());
 	return hitObject;
 }
@@ -409,12 +409,12 @@ ManiaHold OsuParser::parseManiaHold(std::vector<std::string> parts) {
 }
 
 void OsuParser::parseHitObjectExtras(HitObject &hitObject, std::string extras) {
-	trim(extras);
-	std::vector<std::string> parts = split(extras, ':');
-	parts.resize(5, "");
-	hitObject.sampleSet = stoi(parts.at(0));
-	hitObject.additionSet = stoi(parts.at(1));
-	hitObject.customIndex = stoi(parts.at(2));
-	hitObject.sampleVolume = stoi(parts.at(3));
-	hitObject.filename = parts.at(4);
+	//trim(extras);
+	//std::vector<std::string> parts = split(extras, ':');
+	//parts.resize(5, "");
+	//hitObject.sampleSet = stoi(parts.at(0));
+	//hitObject.additionSet = stoi(parts.at(1));
+	//hitObject.customIndex = stoi(parts.at(2));
+	//hitObject.sampleVolume = stoi(parts.at(3));
+	//hitObject.filename = parts.at(4);
 }

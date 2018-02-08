@@ -5,6 +5,7 @@
 #include "player.hpp"
 #include "turtle.hpp"
 #include "fish.hpp"
+#include "BeatList.hpp"
 
 // stlib
 #include <vector>
@@ -44,6 +45,8 @@ private:
 	// Generates a new fish
 	bool spawn_fish();
 
+	bool spawn_fish(vec2 pos);
+
 	// !!! INPUT CALLBACK FUNCTIONS
 	void on_key(GLFWwindow*, int key, int, int action, int mod);
 	void on_mouse_move(GLFWwindow* window, double xpos, double ypos);
@@ -54,6 +57,9 @@ private:
 
 	// Number of fish eaten by the salmon, displayed in the window title
 	unsigned int m_points;
+
+	BeatList* beatlist;
+	int beatPos = 0;
 
 	// Game entities
 	Player m_salmon;
