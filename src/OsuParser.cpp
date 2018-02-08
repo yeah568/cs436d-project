@@ -9,12 +9,8 @@ OsuParser::OsuParser(const char* path)
 	osufile.open(path);
 
 	std::string line;
-	int lineNum = 0;
 	
 	OsuBeatmap beatmap = OsuBeatmap();
-	
-	std::string generalInfo;
-	std::string metadata;
 
 	// check file version
 	getline(osufile, line);
@@ -26,6 +22,7 @@ OsuParser::OsuParser(const char* path)
 	while (getline(osufile, line))
 	{
 		if (line.compare("[General]") == 0) {
+			std::string generalInfo;
 			while (getline(osufile, line)) {
 				if (line.find("[") == 0) {
 					break;
@@ -35,24 +32,52 @@ OsuParser::OsuParser(const char* path)
 					generalInfo.append("\n");
 				}
 			}
+			trim(generalInfo);
+			beatmap.generalInfo = parseGeneralInfo(generalInfo);		
+		}
+		if (line.compare("[Editor]") == 0) {
+			std::string editor;
+			while (getline(osufile, line)) {
+				if (line.find("[") == 0) {
+					break;
+				}
+				else {
+					editor.append(line);
+					editor.append("\n");
+				}
+			}
+			trim(editor);
+			beatmap.editor = parseEditor(editor);
 		}
 		if (line.compare("[Metadata]") == 0) {
+			std::string metadata;
 			while (getline(osufile, line)) {
-				if (line.find("[") != 0) {
+				if (line.find("[") == 0) {
 					break;
 				}
 				metadata.append(line);
 				metadata.append("\n");
 			}
+			trim(metadata);
+			beatmap.metadata = parseMetadata(metadata);
+		}
+		if (line.compare("[Difficulty]") == 0) {
+			std::string difficulty;
+			while (getline(osufile, line)) {
+				if (line.find("[") == 0) {
+					break;
+				}
+				difficulty.append(line);
+				difficulty.append("\n");
+			}
+			trim(difficulty);
+			beatmap.difficulty = parseDifficulty(difficulty);
 		}
 		std::cout << line << '\n';
 	}
 
-	trim(generalInfo);
-	trim(metadata);
+	int i = 0;
 
-	beatmap.generalInfo = parseGeneralInfo(generalInfo);
-	beatmap.metadata = parseMetadata(metadata);
 }
 
 
@@ -114,9 +139,7 @@ struct Editor OsuParser::parseEditor(std::string editor) {
 		trim(rest);
 		if (line.find("Bookmarks:") == 0) {
 			std::vector<std::string> bookmarkStrings = split(rest, ',');
-			std::vector<int> bookmarks;
-
-			e.bookmarks = bookmarks;
+			e.bookmarks = strs_to_ints(bookmarkStrings);
 		}
 		else if (line.find("DistanceSpacing:") == 0) {
 			e.distanceSpacing = stof(rest);
@@ -128,7 +151,7 @@ struct Editor OsuParser::parseEditor(std::string editor) {
 			e.gridSize = stoi(rest); // warning-less cast to bool
 		}
 		else if (line.find("TimelineZoom:") == 0) {
-			e.timelineZoom = stoi(rest);
+			e.timelineZoom = stoi(rest); // TODO jamesliu: spec says int, but decimals show up?
 		}
 	}
 	return e;
@@ -145,6 +168,7 @@ struct Metadata OsuParser::parseMetadata(std::string metadata)
 		std::string delim = ":";
 		size_t pos = line.find(delim);
 		std::string rest = line.substr(pos + 1);
+		trim(rest);
 		if (line.find("Title:") == 0) {
 			m.title = rest;
 		}
@@ -191,6 +215,7 @@ struct Difficulty OsuParser::parseDifficulty(std::string difficulty)
 		std::string delim = ":";
 		size_t pos = line.find(delim);
 		std::string rest = line.substr(pos + 1);
+		trim(rest);
 		if (line.find("HPDrainRate:") == 0) {
 			d.hpDrainRate = stof(rest);
 		}

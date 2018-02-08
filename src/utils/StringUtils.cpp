@@ -37,3 +37,12 @@ std::vector<std::string> split(const std::string &s, char delim) {
 	split(s, delim, std::back_inserter(elems));
 	return elems;
 }
+
+// TODO jamesliu: abstract this to different types
+std::vector<int> strs_to_ints(std::vector<std::string> strs) {
+	std::vector<int> ints;
+	for (auto const& value : strs) {
+		ints.push_back(stoi(value));
+	}
+	return ints;
+}
