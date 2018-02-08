@@ -134,6 +134,8 @@ struct Slider : HitObject {
 	std::vector<CurvePoint> curvePoints;
 	int repeat;
 	float pixelLength;
+	std::vector<int> edgeHitsounds;
+	std::vector<int> edgeAdditions;
 };
 struct Spinner : HitObject {
 	int endTime;
@@ -144,10 +146,10 @@ struct ManiaHold : HitObject {
 
 
 struct OsuBeatmap {
-	struct GeneralInfo generalInfo;
-	struct Editor editor;
-	struct Metadata metadata;
-	struct Difficulty difficulty;
+	GeneralInfo generalInfo;
+	Editor editor;
+	Metadata metadata;
+	Difficulty difficulty;
 
 	std::vector<TimingPoint> timingPoints;
 	std::vector<Colour> colours;
@@ -159,21 +161,26 @@ class OsuParser
 public:
 	OsuParser(const char* path);
 	~OsuParser();
-	struct OsuBeatmap parse();
+	OsuBeatmap parse();
 
 private:
 	std::ifstream osufile;
 
-	struct GeneralInfo parseGeneralInfo(std::string generalInfo);
-	struct Editor parseEditor(std::string editor);
-	struct Metadata parseMetadata(std::string metadata);
-	struct Difficulty parseDifficulty(std::string difficulty);
-	std::vector<struct Colour> parseColours(std::string colours);
-	struct Colour parseColour(std::string colour);
-	std::vector<struct TimingPoint> parseTimingPoints(std::string timingPoints);
-	struct TimingPoint parseTimingPoint(std::string tp);
-	std::vector<struct HitObject> parseHitObjects(std::string hitObjects);
-	struct HitObject parseHitObject(std::string hitObjectString);
-	void parseHitObjectExtras(HitObject hitObject, std::string extras);
+	GeneralInfo parseGeneralInfo(std::string generalInfo);
+	Editor parseEditor(std::string editor);
+	Metadata parseMetadata(std::string metadata);
+	Difficulty parseDifficulty(std::string difficulty);
+	std::vector<Colour> parseColours(std::string colours);
+	Colour parseColour(std::string colour);
+	std::vector<TimingPoint> parseTimingPoints(std::string timingPoints);
+	TimingPoint parseTimingPoint(std::string tp);
+	std::vector<HitObject> parseHitObjects(std::string hitObjects);
+	HitObject parseHitObject(std::string hitObjectString);
+	void parseHitObjectCommon(HitObject &hitObject, std::vector<std::string> parts);
+	HitCircle parseHitCircle(std::vector<std::string> parts);
+	Slider parseSlider(std::vector<std::string> parts);
+	Spinner parseSpinner(std::vector<std::string> parts);
+	ManiaHold parseManiaHold(std::vector<std::string> parts);
+	void parseHitObjectExtras(HitObject &hitObject, std::string extras);
 };
 

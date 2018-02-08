@@ -14,7 +14,7 @@ OsuParser::~OsuParser()
 	osufile.close();
 }
 
-struct OsuBeatmap OsuParser::parse() {
+OsuBeatmap OsuParser::parse() {
 	std::string line;
 	OsuBeatmap beatmap = OsuBeatmap();
 
@@ -122,7 +122,7 @@ struct OsuBeatmap OsuParser::parse() {
 	return beatmap;
 }
 
-struct GeneralInfo OsuParser::parseGeneralInfo(std::string generalInfo) {
+GeneralInfo OsuParser::parseGeneralInfo(std::string generalInfo) {
 	GeneralInfo gi = GeneralInfo();
 
 	std::istringstream iss(generalInfo);
@@ -163,7 +163,7 @@ struct GeneralInfo OsuParser::parseGeneralInfo(std::string generalInfo) {
 	return gi;
 }
 
-struct Editor OsuParser::parseEditor(std::string editor) {
+Editor OsuParser::parseEditor(std::string editor) {
 	Editor e = Editor();
 
 	std::istringstream iss(editor);
@@ -193,7 +193,7 @@ struct Editor OsuParser::parseEditor(std::string editor) {
 	return e;
 }
 
-struct Metadata OsuParser::parseMetadata(std::string metadata)
+Metadata OsuParser::parseMetadata(std::string metadata)
 {
 	Metadata m = Metadata();
 
@@ -240,7 +240,7 @@ struct Metadata OsuParser::parseMetadata(std::string metadata)
 	return m;
 }
 
-struct Difficulty OsuParser::parseDifficulty(std::string difficulty)
+Difficulty OsuParser::parseDifficulty(std::string difficulty)
 {
 	Difficulty d = Difficulty();
 
@@ -275,10 +275,10 @@ struct Difficulty OsuParser::parseDifficulty(std::string difficulty)
 	return d;
 }
 
-std::vector<struct Colour> OsuParser::parseColours(std::string colours) {
+std::vector<Colour> OsuParser::parseColours(std::string colours) {
 	trim(colours);
 	std::vector<std::string> colourStrings = split(colours, '\n');
-	std::vector<struct Colour> colourObjects;
+	std::vector<Colour> colourObjects;
 
 	for (auto const& value : colourStrings) {
 		std::vector<std::string> lineValues = split(value, ':');
@@ -291,7 +291,7 @@ std::vector<struct Colour> OsuParser::parseColours(std::string colours) {
 	return colourObjects;
 }
 
-struct Colour OsuParser::parseColour(std::string colour) {
+Colour OsuParser::parseColour(std::string colour) {
 	Colour c = Colour();
 	
 	trim(colour);
@@ -305,10 +305,10 @@ struct Colour OsuParser::parseColour(std::string colour) {
 	return c;
 }
 
-std::vector<struct TimingPoint> OsuParser::parseTimingPoints(std::string timingPoints) {
+std::vector<TimingPoint> OsuParser::parseTimingPoints(std::string timingPoints) {
 	trim(timingPoints);
 	std::vector<std::string> timingPointStrings = split(timingPoints, '\n');
-	std::vector<struct TimingPoint> timingPointObjects;
+	std::vector<TimingPoint> timingPointObjects;
 
 	for (auto const& value : timingPointStrings) {
 		timingPointObjects.push_back(parseTimingPoint(value));
@@ -316,7 +316,7 @@ std::vector<struct TimingPoint> OsuParser::parseTimingPoints(std::string timingP
 	return timingPointObjects;
 }
 
-struct TimingPoint OsuParser::parseTimingPoint(std::string timingPoint)
+TimingPoint OsuParser::parseTimingPoint(std::string timingPoint)
 {
 	TimingPoint tp = TimingPoint();
 
@@ -334,9 +334,9 @@ struct TimingPoint OsuParser::parseTimingPoint(std::string timingPoint)
 	return tp;
 }
 
-std::vector<struct HitObject> OsuParser::parseHitObjects(std::string hitObjectsString) {
+std::vector<HitObject> OsuParser::parseHitObjects(std::string hitObjectsString) {
 	trim(hitObjectsString);
-	std::vector<struct HitObject> hitObjects;
+	std::vector<HitObject> hitObjects;
 	std::vector<std::string> hitObjectStrings = split(hitObjectsString, '\n');
 
 	for (auto const& value : hitObjectStrings) {
@@ -346,53 +346,69 @@ std::vector<struct HitObject> OsuParser::parseHitObjects(std::string hitObjectsS
 	return hitObjects;
 }
 
-struct HitObject OsuParser::parseHitObject(std::string hitObjectString) {
+HitObject OsuParser::parseHitObject(std::string hitObjectString) {
 	trim(hitObjectString);
 	std::vector<std::string> parts = split(hitObjectString, ',');
 	int type = stoi(parts.at(3));
 
-	HitObject hitObject;
-
 	if (type & HIT_CIRCLE_TYPE) {
-		hitObject = HitCircle();
+		return parseHitCircle(parts);
 	}
 	else if (type & SLIDER_TYPE) {
-		hitObject = Slider();
+		return parseSlider(parts);
 	}
 	else if (type & SPINNER_TYPE) {
-		hitObject = Spinner();
+		return parseSpinner(parts);
 	}
 	else if (type & MANIA_HOLD_TYPE) {
-		hitObject = ManiaHold();
+		return parseManiaHold(parts);
 	}
+	return HitObject();
+}
 
+void OsuParser::parseHitObjectCommon(HitObject &hitObject, std::vector<std::string> parts) {
 	hitObject.x = stoi(parts.at(0));
 	hitObject.y = stoi(parts.at(1));
 	hitObject.time = stoi(parts.at(2));
-	hitObject.type = type;
+	hitObject.type = stoi(parts.at(3));
 	hitObject.hitSound = stoi(parts.at(4));
+}
 
-	if (type & HIT_CIRCLE_TYPE) {
-		
-	}
-	else if (type & SLIDER_TYPE) {
-		hitObject = Slider();
-	}
-	else if (type & SPINNER_TYPE) {
-		hitObject = Spinner();
-		// hitObject.endTime = stoi(parts.at(5));
-	}
-	else if (type & MANIA_HOLD_TYPE) {
-		hitObject = ManiaHold();
-	}
-
-	// TODO jamesliu: check
+HitCircle OsuParser::parseHitCircle(std::vector<std::string> parts) {
+	HitCircle hitObject = HitCircle();
+	parseHitObjectCommon(hitObject, parts);
 	parseHitObjectExtras(hitObject, parts.back());
-
 	return hitObject;
 }
 
-void OsuParser::parseHitObjectExtras(HitObject hitObject, std::string extras) {
+Slider OsuParser::parseSlider(std::vector<std::string> parts) {
+	Slider hitObject = Slider();
+	parseHitObjectCommon(hitObject, parts);
+
+	hitObject.repeat = stoi(parts.at(6));
+	hitObject.pixelLength = stof(parts.at(7));
+	hitObject.edgeHitsounds = strs_to_ints(split(parts.at(8), '|'));
+	parseHitObjectExtras(hitObject, parts.back());
+	return hitObject;
+}
+
+Spinner OsuParser::parseSpinner(std::vector<std::string> parts) {
+	Spinner hitObject = Spinner();
+	parseHitObjectCommon(hitObject, parts);
+	hitObject.endTime = stoi(parts.at(5));
+	parseHitObjectExtras(hitObject, parts.back());
+	return hitObject;
+}
+
+ManiaHold OsuParser::parseManiaHold(std::vector<std::string> parts) {
+	ManiaHold hitObject = ManiaHold();
+	parseHitObjectCommon(hitObject, parts);
+	hitObject.endTime = stoi(parts.at(5));
+	parseHitObjectExtras(hitObject, parts.back());
+	return hitObject;
+}
+
+void OsuParser::parseHitObjectExtras(HitObject &hitObject, std::string extras) {
 	trim(extras);
 	std::vector<std::string> parts = split(extras, ':');
 	parts.resize(5, "");
