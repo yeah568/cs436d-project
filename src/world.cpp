@@ -80,10 +80,26 @@ bool World::init(vec2 screen)
 	glfwSetCursorPosCallback(m_window, cursor_pos_redirect);
 
 	//-------------------------------------------------------------------------
+	OsuParser* parser = new OsuParser(song_path("598830 Shawn Wasabi - Marble Soda/Shawn Wasabi - Marble Soda (Stingy) [Oni Zero].osu"));
+	OsuBeatmap beatmap = parser->parse();
+
+
+
+
+	//-------------------------------------------------------------------------
 	// Loading music and sounds
 	if (SDL_Init(SDL_INIT_AUDIO) < 0)
 	{
 		fprintf(stderr, "Failed to initialize SDL Audio");
+		return false;
+	}
+
+	int result = 0;
+	int flags = MIX_INIT_MP3;
+
+	if (flags != (result = Mix_Init(flags))) {
+		printf("Could not initialize mixer (result: %d).\n", result);
+		printf("Mix_Init: %s\n", Mix_GetError());
 		return false;
 	}
 
@@ -93,7 +109,14 @@ bool World::init(vec2 screen)
 		return false;
 	}
 
-	m_background_music = Mix_LoadMUS(audio_path("music.wav"));
+	//m_background_music = Mix_LoadMUS(audio_path("music.wav"));
+	m_background_music = Mix_LoadMUS("../data/audio/marblesoda.mp3");
+
+	if (!m_background_music) {
+		printf("Mix_LoadMUS(\"music.mp3\"): %s\n", Mix_GetError());
+		// this might be a critical error...
+	}
+
 	m_salmon_dead_sound = Mix_LoadWAV(audio_path("salmon_dead.wav"));
 	m_salmon_eat_sound = Mix_LoadWAV(audio_path("salmon_eat.wav"));
 
@@ -109,9 +132,6 @@ bool World::init(vec2 screen)
 	fprintf(stderr, "Loaded music");
 
 	m_current_speed = 1.f;
-
-	OsuParser* parser = new OsuParser(song_path("598830 Shawn Wasabi - Marble Soda/Shawn Wasabi - Marble Soda (Stingy) [Oni Zero].osu"));
-	parser->parse();
 
 	return m_salmon.init();
 }
