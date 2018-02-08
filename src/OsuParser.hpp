@@ -68,6 +68,9 @@ struct TimingPoint {
 };
 
 struct Colour {
+	int r;
+	int g;
+	int b;
 };
 
 // notes from osu docs:
@@ -114,13 +117,30 @@ struct HitObject {
 	std::string filename;
 };
 
+#define HIT_CIRCLE_TYPE 1
+#define SLIDER_TYPE 2
+#define NEW_COMBO_TYPE 4
+#define SPINNER_TYPE 8
+#define MANIA_HOLD_TYPE 128
+
 // no special fields
 struct HitCircle : HitObject {};
-struct Slider : HitObject {
-	
+struct CurvePoint {
+	int x;
+	int y;
 };
-struct Spinner : HitObject {};
-struct ManiaHold : HitObject {};
+struct Slider : HitObject {
+	std::string sliderType; // TODO jamesliu: replace with enum?
+	std::vector<CurvePoint> curvePoints;
+	int repeat;
+	float pixelLength;
+};
+struct Spinner : HitObject {
+	int endTime;
+};
+struct ManiaHold : HitObject {
+	int endTime;
+};
 
 
 struct OsuBeatmap {
@@ -129,9 +149,9 @@ struct OsuBeatmap {
 	struct Metadata metadata;
 	struct Difficulty difficulty;
 
-	//	std::vector<TimingPoint> timingPoints;
-	//	std::vector<Colour> colours;
-	//	std::vector<HitObject> hitObjects;
+	std::vector<TimingPoint> timingPoints;
+	std::vector<Colour> colours;
+	std::vector<HitObject> hitObjects;
 };
 
 class OsuParser
@@ -139,12 +159,21 @@ class OsuParser
 public:
 	OsuParser(const char* path);
 	~OsuParser();
+	struct OsuBeatmap parse();
 
 private:
+	std::ifstream osufile;
+
 	struct GeneralInfo parseGeneralInfo(std::string generalInfo);
 	struct Editor parseEditor(std::string editor);
 	struct Metadata parseMetadata(std::string metadata);
 	struct Difficulty parseDifficulty(std::string difficulty);
-	std::ifstream osufile;
+	std::vector<struct Colour> parseColours(std::string colours);
+	struct Colour parseColour(std::string colour);
+	std::vector<struct TimingPoint> parseTimingPoints(std::string timingPoints);
+	struct TimingPoint parseTimingPoint(std::string tp);
+	std::vector<struct HitObject> parseHitObjects(std::string hitObjects);
+	struct HitObject parseHitObject(std::string hitObjectString);
+	void parseHitObjectExtras(HitObject hitObject, std::string extras);
 };
 

@@ -111,7 +111,7 @@ bool World::init(vec2 screen)
 	m_current_speed = 1.f;
 
 	OsuParser* parser = new OsuParser(song_path("598830 Shawn Wasabi - Marble Soda/Shawn Wasabi - Marble Soda (Stingy) [Oni Zero].osu"));
-	delete parser;
+	parser->parse();
 
 	return m_salmon.init();
 }

@@ -7,17 +7,23 @@
 OsuParser::OsuParser(const char* path)
 {
 	osufile.open(path);
+}
+ 
+OsuParser::~OsuParser()
+{
+	osufile.close();
+}
 
+struct OsuBeatmap OsuParser::parse() {
 	std::string line;
-	
 	OsuBeatmap beatmap = OsuBeatmap();
 
 	// check file version
 	getline(osufile, line);
 	if (line.compare("osu file format v14") != 0) {
-		return;
+		// TODO jamesliu: return an error
+		return beatmap;
 	}
-
 
 	while (getline(osufile, line))
 	{
@@ -33,7 +39,7 @@ OsuParser::OsuParser(const char* path)
 				}
 			}
 			trim(generalInfo);
-			beatmap.generalInfo = parseGeneralInfo(generalInfo);		
+			beatmap.generalInfo = parseGeneralInfo(generalInfo);
 		}
 		if (line.compare("[Editor]") == 0) {
 			std::string editor;
@@ -73,17 +79,47 @@ OsuParser::OsuParser(const char* path)
 			trim(difficulty);
 			beatmap.difficulty = parseDifficulty(difficulty);
 		}
+		if (line.compare("[TimingPoints]") == 0) {
+			std::string timingPoints;
+			while (getline(osufile, line)) {
+				if (line.find("[") == 0) {
+					break;
+				}
+				timingPoints.append(line);
+				timingPoints.append("\n");
+			}
+			trim(timingPoints);
+			beatmap.timingPoints = parseTimingPoints(timingPoints);
+		}
+		if (line.compare("[Colours]") == 0) {
+			std::string colours;
+			while (getline(osufile, line)) {
+				if (line.find("[") == 0) {
+					break;
+				}
+				colours.append(line);
+				colours.append("\n");
+			}
+			trim(colours);
+			beatmap.colours = parseColours(colours);
+		}
+		if (line.compare("[HitObjects]") == 0) {
+			std::string hitObjects;
+			while (getline(osufile, line)) {
+				if (line.find("[") == 0) {
+					break;
+				}
+				hitObjects.append(line);
+				hitObjects.append("\n");
+			}
+			trim(hitObjects);
+			beatmap.hitObjects = parseHitObjects(hitObjects);
+		}
+
 		std::cout << line << '\n';
 	}
-
-	int i = 0;
-
-}
-
-
-OsuParser::~OsuParser()
-{
-	osufile.close();
+	
+	return beatmap;
 }
 
 struct GeneralInfo OsuParser::parseGeneralInfo(std::string generalInfo) {
@@ -237,4 +273,132 @@ struct Difficulty OsuParser::parseDifficulty(std::string difficulty)
 	}
 
 	return d;
+}
+
+std::vector<struct Colour> OsuParser::parseColours(std::string colours) {
+	trim(colours);
+	std::vector<std::string> colourStrings = split(colours, '\n');
+	std::vector<struct Colour> colourObjects;
+
+	for (auto const& value : colourStrings) {
+		std::vector<std::string> lineValues = split(value, ':');
+		if (lineValues.at(0).find("Combo") == 0) {
+			colourObjects.push_back(parseColour(lineValues.at(1)));
+
+		}
+	}
+
+	return colourObjects;
+}
+
+struct Colour OsuParser::parseColour(std::string colour) {
+	Colour c = Colour();
+	
+	trim(colour);
+
+	std::vector<std::string> rgbStrings = split(colour, ',');
+
+	c.r = stoi(rgbStrings.at(0));
+	c.g = stoi(rgbStrings.at(1));
+	c.b = stoi(rgbStrings.at(2));
+
+	return c;
+}
+
+std::vector<struct TimingPoint> OsuParser::parseTimingPoints(std::string timingPoints) {
+	trim(timingPoints);
+	std::vector<std::string> timingPointStrings = split(timingPoints, '\n');
+	std::vector<struct TimingPoint> timingPointObjects;
+
+	for (auto const& value : timingPointStrings) {
+		timingPointObjects.push_back(parseTimingPoint(value));
+	}
+	return timingPointObjects;
+}
+
+struct TimingPoint OsuParser::parseTimingPoint(std::string timingPoint)
+{
+	TimingPoint tp = TimingPoint();
+
+	std::vector<std::string> parts = split(timingPoint, ',');
+
+	tp.offset = stoi(parts.at(0));
+	tp.millisecondsPerBeat = stof(parts.at(1));
+	tp.meter = stoi(parts.at(2));
+	tp.sampleSet = stoi(parts.at(3));
+	tp.sampleIndex = stoi(parts.at(4));
+	tp.volume = stoi(parts.at(5));
+	tp.inherited = !!stoi(parts.at(6));
+	tp.kialMode = !!stoi(parts.at(7));
+	
+	return tp;
+}
+
+std::vector<struct HitObject> OsuParser::parseHitObjects(std::string hitObjectsString) {
+	trim(hitObjectsString);
+	std::vector<struct HitObject> hitObjects;
+	std::vector<std::string> hitObjectStrings = split(hitObjectsString, '\n');
+
+	for (auto const& value : hitObjectStrings) {
+		hitObjects.push_back(parseHitObject(value));
+	}
+
+	return hitObjects;
+}
+
+struct HitObject OsuParser::parseHitObject(std::string hitObjectString) {
+	trim(hitObjectString);
+	std::vector<std::string> parts = split(hitObjectString, ',');
+	int type = stoi(parts.at(3));
+
+	HitObject hitObject;
+
+	if (type & HIT_CIRCLE_TYPE) {
+		hitObject = HitCircle();
+	}
+	else if (type & SLIDER_TYPE) {
+		hitObject = Slider();
+	}
+	else if (type & SPINNER_TYPE) {
+		hitObject = Spinner();
+	}
+	else if (type & MANIA_HOLD_TYPE) {
+		hitObject = ManiaHold();
+	}
+
+	hitObject.x = stoi(parts.at(0));
+	hitObject.y = stoi(parts.at(1));
+	hitObject.time = stoi(parts.at(2));
+	hitObject.type = type;
+	hitObject.hitSound = stoi(parts.at(4));
+
+	if (type & HIT_CIRCLE_TYPE) {
+		
+	}
+	else if (type & SLIDER_TYPE) {
+		hitObject = Slider();
+	}
+	else if (type & SPINNER_TYPE) {
+		hitObject = Spinner();
+		// hitObject.endTime = stoi(parts.at(5));
+	}
+	else if (type & MANIA_HOLD_TYPE) {
+		hitObject = ManiaHold();
+	}
+
+	// TODO jamesliu: check
+	parseHitObjectExtras(hitObject, parts.back());
+
+	return hitObject;
+}
+
+void OsuParser::parseHitObjectExtras(HitObject hitObject, std::string extras) {
+	trim(extras);
+	std::vector<std::string> parts = split(extras, ':');
+	parts.resize(5, "");
+	hitObject.sampleSet = stoi(parts.at(0));
+	hitObject.additionSet = stoi(parts.at(1));
+	hitObject.customIndex = stoi(parts.at(2));
+	hitObject.sampleVolume = stoi(parts.at(3));
+	hitObject.filename = parts.at(4);
 }
