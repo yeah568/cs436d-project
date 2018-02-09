@@ -124,6 +124,20 @@ void Player::update(float ms)
 		move({ 0.f, step });
 	}
 
+	if (abs(m_scale.x * 0.95) < 35.f) {
+		m_scale.x = -35.f;
+	}
+	else {
+		m_scale.x *= 0.95;
+	}
+
+	if (abs(m_scale.y * 0.95) < 35.f) {
+		m_scale.y = -35.f;
+	}
+	else {
+		m_scale.y *= 0.95;
+	}
+
 	if (m_light_up_countdown_ms > 0.f)
 		m_light_up_countdown_ms -= ms;
 }
@@ -263,4 +277,9 @@ void Player::set_movement_dir(vec2 dir) {
 void Player::add_movement_dir(vec2 dir) {
 	m_movement_dir.x += dir.x;
 	m_movement_dir.y += dir.y;
+}
+
+void Player::scale_by(float scale) {
+	m_scale.x *= scale;
+	m_scale.y *= scale;
 }

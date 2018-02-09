@@ -47,6 +47,8 @@ public:
 
 	void add_movement_dir(vec2 dir);
 
+	void scale_by(float scale);
+
 private:
 	float m_light_up_countdown_ms; // Used to keep track for how long the salmon should be lit up
 	bool m_is_alive; // True if the salmon is alive

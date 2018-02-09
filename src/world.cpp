@@ -80,7 +80,7 @@ bool World::init(vec2 screen)
 	glfwSetCursorPosCallback(m_window, cursor_pos_redirect);
 
 	//-------------------------------------------------------------------------
-	OsuParser* parser = new OsuParser(song_path("598830 Shawn Wasabi - Marble Soda/Shawn Wasabi - Marble Soda (Exa) [Normal].osu"));
+	OsuParser* parser = new OsuParser(song_path("598830 Shawn Wasabi - Marble Soda/Shawn Wasabi - Marble Soda (Exa) [Insane].osu"));
 	OsuBeatmap beatmap = parser->parse();
 
 	beatlist = new BeatList(beatmap);
@@ -162,25 +162,35 @@ bool World::update(float elapsed_ms)
 		Mix_PlayMusic(m_background_music, 1);
 	}
 	
-	float remaining_offset  = elapsed_ms;
+	float remaining_offset = elapsed_ms;
 
 	int w, h;
         glfwGetFramebufferSize(m_window, &w, &h);
 	vec2 screen = { (float)w, (float)h };
 
-	Beat curBeat;
-	while (beatPos < beatlist->beats.size() && (curBeat = beatlist->beats.at(beatPos)).offset <= elapsed_ms) {
-		// spawn thing
-		remaining_offset -= curBeat.offset;
+	Beat* curBeat;
+	while (beatPos < beatlist->beats.size()) {
+		curBeat = &beatlist->beats.at(beatPos);
+		//printf("remaining offset %f", remaining_offset);
 
-		printf("spawn %f\n", curBeat.offset);
+		if (curBeat->offset <= remaining_offset) {
+			remaining_offset -= curBeat->offset;
+			beatPos++;
+			// do beat things
+			// spawn thing
 
-		spawn_fish({ ((64.f + (float)curBeat.x)/640.f)*screen.x, ((48.f + (float)curBeat.y) / 480.f)*screen.y });
+			printf("spawn %f\n", curBeat->offset);
 
-		// next
-		beatPos++;
+			// spawn a thing
+			//spawn_fish({ ((64.f + (float)curBeat.x)/640.f)*screen.x, ((48.f + (float)curBeat.y) / 480.f)*screen.y });
 
-		curBeat.offset -= remaining_offset;
+			m_salmon.scale_by(1.3);
+		}
+		else {
+			curBeat->offset -= remaining_offset;
+			//printf("offset: %f\n", curBeat->offset);
+			break;
+		}
 	}
 
 
@@ -358,20 +368,6 @@ bool World::spawn_fish()
 	Fish fish;
 	if (fish.init())
 	{
-		m_fish.emplace_back(fish);
-		return true;
-	}
-	fprintf(stderr, "Failed to spawn fish");
-	return false;
-}
-
-// Creates a new fish and if successfull adds it to the list of fish
-bool World::spawn_fish(vec2 pos)
-{
-	Fish fish;
-	if (fish.init())
-	{
-		fish.set_position(pos);
 		m_fish.emplace_back(fish);
 		return true;
 	}

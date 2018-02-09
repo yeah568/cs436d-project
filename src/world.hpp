@@ -45,8 +45,6 @@ private:
 	// Generates a new fish
 	bool spawn_fish();
 
-	bool spawn_fish(vec2 pos);
-
 	// !!! INPUT CALLBACK FUNCTIONS
 	void on_key(GLFWwindow*, int key, int, int action, int mod);
 	void on_mouse_move(GLFWwindow* window, double xpos, double ypos);
