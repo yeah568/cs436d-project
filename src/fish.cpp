@@ -4,13 +4,22 @@
 #include <cmath>
 
 Texture Fish::fish_texture;
+Texture Fish::fish_texture2;
 
-bool Fish::init()
+bool Fish::init(bool type)
 {
 	// Load shared texture
 	if (!fish_texture.is_valid())
 	{
-		if (!fish_texture.load_from_file(textures_path("bullet.png")))
+		if (!fish_texture.load_from_file(textures_path("bullet_1.png")))
+		{
+			fprintf(stderr, "Failed to load turtle texture!");
+			return false;
+		}
+	}
+	if (!fish_texture2.is_valid())
+	{
+		if (!fish_texture2.load_from_file(textures_path("bullet_2.png")))
 		{
 			fprintf(stderr, "Failed to load turtle texture!");
 			return false;
@@ -62,6 +71,7 @@ bool Fish::init()
 	m_scale.y = 1.1f;
 	m_position.x = -50;
 	m_position.y = 50;
+	bullet_type = type;
 
 
 	return true;
@@ -128,7 +138,12 @@ void Fish::draw(const mat3& projection)
 
 	// Enabling and binding texture to slot 0
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, fish_texture.id);
+	if (bullet_type) {
+		glBindTexture(GL_TEXTURE_2D, fish_texture.id);
+	}
+	else {
+		glBindTexture(GL_TEXTURE_2D, fish_texture2.id);
+	}
 
 	// Setting uniform values to the currently bound program
 	glUniformMatrix3fv(transform_uloc, 1, GL_FALSE, (float*)&transform);
