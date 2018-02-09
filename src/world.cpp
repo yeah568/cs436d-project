@@ -168,9 +168,9 @@ bool World::update(float elapsed_ms)
         glfwGetFramebufferSize(m_window, &w, &h);
 	vec2 screen = { (float)w, (float)h };
 
-	Beat curBeat = beatlist->beats.at(beatPos);
+	Beat curBeat;
 
-	if (curBeat.offset <= elapsed_ms) {
+	while (beatPos < beatlist->beats.size() && (curBeat = beatlist->beats.at(beatPos)).offset <= elapsed_ms) {
 		// spawn thing
 		remaining_offset -= curBeat.offset;
 
@@ -180,11 +180,10 @@ bool World::update(float elapsed_ms)
 
 		// next
 		beatPos++;
+
+		curBeat.offset -= remaining_offset;
 	}
-	if (beatPos < beatlist->beats.size()) {
-		beatlist->beats.at(beatPos).offset -= remaining_offset;
-	}
-	
+
 
 	// Checking Salmon - Turtle collisions
 	for (const auto& turtle : m_turtles)
