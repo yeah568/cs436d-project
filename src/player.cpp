@@ -271,6 +271,10 @@ void Player::light_up()
 	m_light_up_countdown_ms = 1500.f;
 }
 
+void Player::dash() {
+	move({ m_movement_dir.x*60, m_movement_dir.y *60});
+}
+
 void Player::set_movement_dir(vec2 dir) {
 	m_movement_dir = dir;
 }

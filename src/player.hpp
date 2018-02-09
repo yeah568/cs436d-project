@@ -46,6 +46,8 @@ public:
 
 	// Callesd when the salmon collides with a fish, starts lighting up the salmon
 	void light_up();
+	
+	void dash();
 
 	void set_movement_dir(vec2 dir);
 

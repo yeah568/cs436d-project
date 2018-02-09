@@ -386,7 +386,11 @@ void World::on_key(GLFWwindow*, int key, int, int action, int mod)
 		case GLFW_KEY_S:
 			m_salmon.add_movement_dir({ 0.f, 1.f });
 			break;
+		case GLFW_KEY_LEFT_SHIFT:
+			m_salmon.dash();
+			break;
 		}
+		
 	}
 
 	if (action == GLFW_RELEASE) {
