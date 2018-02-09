@@ -160,6 +160,7 @@ bool World::update(float elapsed_ms)
 
 	// Checking Salmon - Fish collisions
 	auto fish_it = m_fish.begin();
+	/*
 	while (fish_it != m_fish.end())
 	{
 		if (m_salmon.collides_with(*fish_it))
@@ -172,6 +173,7 @@ bool World::update(float elapsed_ms)
 		else
 			++fish_it;
 	}
+	*/
 	
 	// Updating all entities, making the turtle and fish
 	// faster based on current
@@ -325,12 +327,16 @@ bool World::spawn_turtle()
 }
 
 // Creates a new fish and if successfull adds it to the list of fish
-bool World::spawn_fish()
+bool World::spawn_fish(vec2 position, float angle)
 {
 	Fish fish;
 	if (fish.init())
 	{
+		fish.set_position(position);
+		fish.set_rotation(angle);
+		fish.m_movement_dir = { (float)cos(angle), (float)-sin(angle) };
 		m_fish.emplace_back(fish);
+		
 		return true;
 	}
 	fprintf(stderr, "Failed to spawn fish");
@@ -365,7 +371,7 @@ void World::on_key(GLFWwindow*, int key, int, int action, int mod)
 	if (action == GLFW_PRESS && key == GLFW_KEY_SPACE) {
 		float player_angle = m_salmon.get_rotation();
 		vec2 salmon_pos = m_salmon.get_position();
-		spawn_bullet(player_angle, salmon_pos);
+		spawn_fish(salmon_pos, player_angle);
 	}
 
 	if (action == GLFW_PRESS) {

@@ -10,7 +10,7 @@ bool Fish::init()
 	// Load shared texture
 	if (!fish_texture.is_valid())
 	{
-		if (!fish_texture.load_from_file(textures_path("fish.png")))
+		if (!fish_texture.load_from_file(textures_path("bullet.png")))
 		{
 			fprintf(stderr, "Failed to load turtle texture!");
 			return false;
@@ -58,9 +58,11 @@ bool Fish::init()
 
 	// Setting initial values, scale is negative to make it face the opposite way
 	// 1.0 would be as big as the original texture
-	m_scale.x = -0.4f;
-	m_scale.y = 0.4f;
-	m_rotation = 0.f;
+	m_scale.x = -1.8f;
+	m_scale.y = 1.8f;
+	m_position.x = -50;
+	m_position.y = 50;
+
 
 	return true;
 }
@@ -82,9 +84,11 @@ void Fish::update(float ms)
 {
 	// Move fish along -X based on how much time has passed, this is to (partially) avoid
 	// having entities move at different speed based on the machine.
-	const float FISH_SPEED = 380.f;
-	float step = -FISH_SPEED * (ms / 1000);
-	m_position.x += step;
+	const float BULLET_SPEED = 400.f;
+	float step = BULLET_SPEED * (ms / 1000);
+	
+	m_position.x += m_movement_dir.x*step;
+	m_position.y += m_movement_dir.y*step;
 }
 
 void Fish::draw(const mat3& projection)
@@ -93,7 +97,7 @@ void Fish::draw(const mat3& projection)
 	// Incrementally updates transformation matrix, thus ORDER IS IMPORTANT
 	transform_begin();
 	transform_translate(m_position);
-	transform_rotate(m_rotation);
+	transform_rotate(-m_rotation);
 	transform_scale(m_scale);
 	transform_end();
 
@@ -144,6 +148,11 @@ vec2 Fish::get_position()const
 void Fish::set_position(vec2 position)
 {
 	m_position = position;
+}
+
+void Fish::set_rotation(float angle)
+{
+	m_rotation = angle;
 }
 
 // Returns the local bounding coordinates scaled by the current size of the fish 
