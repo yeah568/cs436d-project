@@ -5,6 +5,8 @@
 #include "player.hpp"
 #include "turtle.hpp"
 #include "fish.hpp"
+#include "background.hpp"
+#include "bullet.hpp"
 #include "BeatList.hpp"
 
 // stlib
@@ -19,6 +21,9 @@
 // deferred to the relative update() methods
 class World
 {
+
+	static Texture background_texture;
+
 public:
 	World();
 	~World();
@@ -35,6 +40,8 @@ public:
 	// Renders our scene
 	void draw();
 
+	void drawBackground();
+
 	// Should the game be over ?
 	bool is_over()const;
 
@@ -43,7 +50,9 @@ private:
 	bool spawn_turtle();
 
 	// Generates a new fish
-	bool spawn_fish();
+	bool spawn_fish(vec2 position, float angle);
+
+	bool spawn_bullet(float angle, vec2 position);
 
 	// !!! INPUT CALLBACK FUNCTIONS
 	void on_key(GLFWwindow*, int key, int, int action, int mod);
@@ -63,6 +72,8 @@ private:
 	Player m_salmon;
 	std::vector<Turtle> m_turtles;
 	std::vector<Fish> m_fish;
+	Background m_background;
+	std::vector<Bullet> m_bullets;
 
 	float m_current_speed;
 	float m_next_turtle_spawn;
