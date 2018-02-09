@@ -94,6 +94,43 @@ void Player::update(float ms)
 {
 	const float SALMON_SPEED = 200.f;
 	float step = SALMON_SPEED * (ms / 1000);
+	if (exploding_timer > 0 && exploding_timer < 1.25) {
+		m_scale.y = 0.4f;
+		player_texture.load_from_file(textures_path("explosion_1.png"));
+		exploding_timer += ms/1000;
+	}
+	if (exploding_timer > 1.25 && exploding_timer < 1.5) {
+		player_texture.load_from_file(textures_path("explosion_2.png"));
+		exploding_timer += ms/1000;
+	}
+	if (exploding_timer > 1.5 && exploding_timer < 1.75) {
+		player_texture.load_from_file(textures_path("explosion_3.png"));
+		exploding_timer += ms/1000;
+	}
+	if (exploding_timer > 1.75 && exploding_timer < 2) {
+		player_texture.load_from_file(textures_path("explosion_4.png"));
+		exploding_timer += ms/1000;
+	}
+	if (exploding_timer > 2 && exploding_timer < 2.25) {
+		player_texture.load_from_file(textures_path("explosion_5.png"));
+		exploding_timer += ms / 1000;
+	}
+	if (exploding_timer > 2.25 && exploding_timer < 2.5) {
+		player_texture.load_from_file(textures_path("explosion_6.png"));
+		exploding_timer += ms / 1000;
+	}
+	if (exploding_timer > 2.5 && exploding_timer < 3) {
+		player_texture.load_from_file(textures_path("explosion_7.png"));
+		exploding_timer += ms / 1000;
+	}
+	if (exploding_timer > 3 && exploding_timer <3.5) {
+		player_texture.load_from_file(textures_path("explosion_8.png"));
+		exploding_timer += ms / 1000;
+	}
+	if (exploding_timer > 3.5 && exploding_timer < 4) {
+		player_texture.load_from_file(textures_path("explosion_9.png"));
+		exploding_timer += ms / 1000;
+	}
 	if (m_is_alive)
 	{
 		// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -140,7 +177,13 @@ void Player::draw(const mat3& projection)
 	// REMOVE THE FOLLOWING LINES BEFORE ADDING ANY TRANSFORMATION CODE
 	transform_translate({ m_position.x, m_position.y });
 	transform_scale(m_scale);
-	transform_rotate(m_rotation);
+	if (exploding_timer > 0) {
+		transform_rotate(0);
+	}
+	else {
+		transform_rotate(m_rotation);
+	}
+	
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
@@ -232,6 +275,11 @@ void Player::move(vec2 off)
 void Player::set_rotation(float radians)
 {
 	m_rotation = radians;
+}
+
+void Player::set_scale(vec2 scale)
+{
+	m_scale = scale;
 }
 
 void Player::set_mouse(float x, float y)

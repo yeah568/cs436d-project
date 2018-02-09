@@ -376,7 +376,7 @@ void World::on_key(GLFWwindow*, int key, int, int action, int mod)
 
 	if (action == GLFW_PRESS) {
 		switch (key) {
-		case GLFW_KEY_RIGHT: 
+		case GLFW_KEY_RIGHT:
 		case GLFW_KEY_D:
 			m_salmon.add_movement_dir({ 1.f, 0.f });
 			break;
@@ -395,8 +395,17 @@ void World::on_key(GLFWwindow*, int key, int, int action, int mod)
 		case GLFW_KEY_LEFT_SHIFT:
 			m_salmon.dash();
 			break;
+
+		case GLFW_KEY_U:
+			m_salmon.exploding_timer = 1;
+			break;
+
+		case GLFW_KEY_I:
+			m_salmon.player_texture.load_from_file(textures_path("character.png"));
+			m_salmon.exploding_timer = 0;
+			m_salmon.set_scale({ -0.2f, 0.2f });
+			break;
 		}
-		
 	}
 
 	if (action == GLFW_RELEASE) {

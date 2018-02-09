@@ -7,10 +7,11 @@ class Fish;
 
 class Player : public Renderable
 {
-	static Texture player_texture;
+	
 public:
 	// Creates all the associated render resources and default transform
 	bool init();
+	static Texture player_texture;
 
 	// Releases all associated resources
 	void destroy();
@@ -50,9 +51,13 @@ public:
 	
 	void dash();
 
+	void set_scale(vec2 scale);
+
 	void set_movement_dir(vec2 dir);
 
 	void add_movement_dir(vec2 dir);
+
+	float exploding_timer;
 
 private:
 	float m_light_up_countdown_ms; // Used to keep track for how long the salmon should be lit up
