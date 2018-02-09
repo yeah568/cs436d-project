@@ -6,7 +6,7 @@ BeatList::BeatList(OsuBeatmap beatmap)
 {
 	int prevOffset = 0;
 	for (auto const& hitObject : beatmap.hitObjects) {
-		int delta = hitObject.time - prevOffset;
+		float delta = hitObject.time - prevOffset;
 		prevOffset = hitObject.time;
 		beats.push_back(Beat(delta, hitObject.x, hitObject.y));
 	}
