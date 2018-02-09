@@ -7,6 +7,7 @@ class Fish;
 
 class Player : public Renderable
 {
+	static Texture player_texture;
 public:
 	// Creates all the associated render resources and default transform
 	bool init();

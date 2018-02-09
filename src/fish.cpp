@@ -58,8 +58,8 @@ bool Fish::init()
 
 	// Setting initial values, scale is negative to make it face the opposite way
 	// 1.0 would be as big as the original texture
-	m_scale.x = -1.8f;
-	m_scale.y = 1.8f;
+	m_scale.x = -1.1f;
+	m_scale.y = 1.1f;
 	m_position.x = -50;
 	m_position.y = 50;
 
