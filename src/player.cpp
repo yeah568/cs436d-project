@@ -65,8 +65,9 @@ bool Player::init()
 		return false;
 	
 	// Setting initial values
-	m_scale.x = -0.2f;
-	m_scale.y = 0.2f;
+	bullet_type = true;
+	m_scale.x = -1.f;
+	m_scale.y = 1.f;
 	m_is_alive = true;
 	//m_num_indices = indices.size();
 	m_position = { 50.f, 100.f };
@@ -181,7 +182,7 @@ void Player::draw(const mat3& projection)
 		transform_rotate(0);
 	}
 	else {
-		transform_rotate(m_rotation);
+		transform_rotate(m_rotation - 3.14/2);
 	}
 	
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

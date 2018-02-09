@@ -49,7 +49,7 @@ private:
 	bool spawn_turtle();
 
 	// Generates a new fish
-	bool spawn_fish(vec2 position, float angle);
+	bool spawn_fish(vec2 position, float angle, bool type);
 
 	bool spawn_bullet(float angle, vec2 position);
 

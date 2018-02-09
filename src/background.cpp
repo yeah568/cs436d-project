@@ -10,7 +10,7 @@ bool Background::init()
 	// Load shared texture
 	if (!background_texture.is_valid())
 	{
-		if (!background_texture.load_from_file(textures_path("background1.jpg")))
+		if (!background_texture.load_from_file(textures_path("background2.png")))
 		{
 			fprintf(stderr, "Failed to load background texture!");
 			return false;
