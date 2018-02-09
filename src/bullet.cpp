@@ -3,6 +3,7 @@
 #include "common.hpp"
 
 #include <vector>
+#include <math.h>
 
 bool Bullet::init(float angle, vec2 position)
 {
