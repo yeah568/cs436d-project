@@ -379,10 +379,10 @@ bool World::spawn_turtle()
 }
 
 // Creates a new fish and if successfull adds it to the list of fish
-bool World::spawn_fish(vec2 position, float angle)
+bool World::spawn_fish(vec2 position, float angle,bool bullet_type)
 {
 	Fish fish;
-	if (fish.init())
+	if (fish.init(bullet_type))
 	{
 		fish.set_position(position);
 		fish.set_rotation(angle);
@@ -423,7 +423,8 @@ void World::on_key(GLFWwindow*, int key, int, int action, int mod)
 	if (action == GLFW_PRESS && key == GLFW_KEY_SPACE) {
 		float player_angle = m_salmon.get_rotation();
 		vec2 salmon_pos = m_salmon.get_position();
-		spawn_fish(salmon_pos, player_angle);
+		spawn_fish(salmon_pos, player_angle, m_salmon.bullet_type);
+		m_salmon.bullet_type = !m_salmon.bullet_type;
 	}
 
 	if (action == GLFW_PRESS) {

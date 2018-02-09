@@ -65,14 +65,15 @@ bool Player::init()
 		return false;
 	
 	// Setting initial values
-	m_scale.x = -0.2f;
-	m_scale.y = 0.2f;
+	m_scale.x = -1.f;
+	m_scale.y = 1.f;
 	m_is_alive = true;
 	//m_num_indices = indices.size();
 	m_position = { 50.f, 100.f };
 	m_rotation = 0.f;
 	m_light_up_countdown_ms = -1.f;
 	m_movement_dir = { 0.f, 0.f };
+	bullet_type = false;
 
 	return true;
 }
@@ -156,15 +157,15 @@ void Player::update(float ms)
 		move({ 0.f, step });
 	}
 
-	if (abs(m_scale.x * 0.95) < 0.2f) {
-		m_scale.x = -0.2f;
+	if (abs(m_scale.x * 0.95) < 1.f) {
+		m_scale.x = -1.f;
 	}
 	else {
 		m_scale.x *= 0.95;
 	}
 
-	if (abs(m_scale.y * 0.95) < 0.2f) {
-		m_scale.y = 0.2f;
+	if (abs(m_scale.y * 0.95) < 1.f) {
+		m_scale.y = 1.f;
 	}
 	else {
 		m_scale.y *= 0.95;
@@ -195,7 +196,7 @@ void Player::draw(const mat3& projection)
 		transform_rotate(0);
 	}
 	else {
-		transform_rotate(m_rotation);
+		transform_rotate(m_rotation - 3.14/2);
 	}
 	
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

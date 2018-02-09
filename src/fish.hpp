@@ -7,10 +7,11 @@ class Fish : public Renderable
 {
 	// Shared between all fish, no need to load one for each instance
 	static Texture fish_texture;
+	static Texture fish_texture2;
 
 public:
 	// Creates all the associated render resources and default transform
-	bool init();
+	bool init(bool bullet_type);
 
 	// Releases all the associated resources
 	void destroy();
@@ -34,6 +35,7 @@ public:
 
 	void set_rotation(float angle);
 	vec2 m_movement_dir;
+	bool bullet_type;
 private:
 	vec2 m_position; // Window coordinates
 	vec2 m_scale; // 1.f in each dimension. 1.f is as big as the associated texture
