@@ -439,6 +439,7 @@ void World::on_key(GLFWwindow*, int key, int, int action, int mod)
 		glfwGetWindowSize(m_window, &w, &h);
 		m_salmon.destroy(); 
 		m_salmon.init();
+		m_background.init();
 		m_turtles.clear();
 		m_fish.clear();
 		m_current_speed = 1.f;
