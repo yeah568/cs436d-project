@@ -156,15 +156,15 @@ void Player::update(float ms)
 		move({ 0.f, step });
 	}
 
-	if (abs(m_scale.x * 0.95) < 35.f) {
-		m_scale.x = -35.f;
+	if (abs(m_scale.x * 0.95) < 0.2f) {
+		m_scale.x = -0.2f;
 	}
 	else {
 		m_scale.x *= 0.95;
 	}
 
-	if (abs(m_scale.y * 0.95) < 35.f) {
-		m_scale.y = -35.f;
+	if (abs(m_scale.y * 0.95) < 0.2f) {
+		m_scale.y = 0.2f;
 	}
 	else {
 		m_scale.y *= 0.95;
