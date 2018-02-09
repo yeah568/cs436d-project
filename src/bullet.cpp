@@ -73,6 +73,8 @@ bool Bullet::init(float angle, vec2 position)
 	m_position = position;
 	m_rotation = angle;
 	m_movement_dir = { (float) cos(angle), (float) -sin(angle) };
+
+	return true;
 }
 
 void Bullet::destroy()
