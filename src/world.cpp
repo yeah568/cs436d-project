@@ -185,8 +185,11 @@ bool World::update(float elapsed_ms)
 
 			printf("spawn %f\n", curBeat->offset);
 
+
 			// spawn a thing
-			//spawn_fish({ ((64.f + (float)curBeat.x)/640.f)*screen.x, ((48.f + (float)curBeat.y) / 480.f)*screen.y });
+			spawn_turtle();
+			Turtle& new_turtle = m_turtles.back();
+			new_turtle.set_position({ ((64.f + (float)curBeat->x) / 640.f)*screen.x, ((48.f + (float)curBeat->y) / 480.f)*screen.y });
 
 			m_salmon.scale_by(1.3);
 		}
@@ -344,10 +347,9 @@ void World::draw()
 	m_background.draw(projection_2D);
 
 	// Drawing entities
-	/*
+	
 	for (auto& turtle : m_turtles)
 		turtle.draw(projection_2D);
-	*/
 	for (auto& fish : m_fish)
 		fish.draw(projection_2D);
 	for (auto& bullet : m_bullets)
