@@ -169,7 +169,6 @@ bool World::update(float elapsed_ms)
 	vec2 screen = { (float)w, (float)h };
 
 	Beat curBeat;
-
 	while (beatPos < beatlist->beats.size() && (curBeat = beatlist->beats.at(beatPos)).offset <= elapsed_ms) {
 		// spawn thing
 		remaining_offset -= curBeat.offset;
