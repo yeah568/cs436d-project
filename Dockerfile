@@ -6,5 +6,3 @@ RUN apt -y install mesa-common-dev libgles2-mesa-dev libegl1-mesa-dev libglfw3-d
 RUN mkdir -p /beatcoin
 WORKDIR /beatcoin
 COPY . .
-
-CMD ["make", "make test"]

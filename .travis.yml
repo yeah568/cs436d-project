@@ -7,3 +7,6 @@ services:
 
 before_install:
 - docker build -t beatcoin/dockerbuild .
+
+script:
+- make && make test
