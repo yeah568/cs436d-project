@@ -24,7 +24,7 @@ test: build
 	./$(BIN)
 
 %.o: src/%.cpp
-	$(CC) -c $(CXXFLAGS) -o $@ $<
+	$(CC) -c $(CXXFLAGS) $(LIB) -o $@ $<
 
 $(BIN): $(OBJ)
 	$(CC) -o $@ $(OBJ) $(LIB)
