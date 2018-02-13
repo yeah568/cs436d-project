@@ -4,7 +4,7 @@ ifeq ($(OS), Darwin)
     CXXFLAGS = -Iext/gl3w -std=c++11 -Wall -pedantic -DENABLE_SOUND
     LIB = -ldl -framework OpenGL -framework Cocoa -framework CoreFoundation -lglfw -lSDL -lSDL_mixer -lpthread -lSDLmain
 else ifeq ($(OS), Linux)
-    CXXFLAGS = -Iext/gl3w -std=c++11 -Wall -pedantic -DENABLE_SOUND
+    CXXFLAGS = -Iext/gl3w -Iext/glfw/include/GLFW -std=c++11 -Wall -pedantic -DENABLE_SOUND
     LIB = -lglfw3 -lGL -lm -lXrandr -lXi -lX11 -lXxf86vm -lpthread -ldl -lSDL -lSDL_mixer -lSDLmain
 else
     $(error Your OS $(OS) is not supported.) 
