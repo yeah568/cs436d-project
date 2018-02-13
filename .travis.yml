@@ -12,8 +12,8 @@ before_install:
 - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then docker build -t beatcoin/dockerbuild . ; fi
 - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update          ; fi 
 - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install glfw3 sdl sdl_mixer  ; fi
-- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then cat /usr/local/include/GLFW/glfw3.h  ; fi
-- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then cat ext/glfw/include/GLFW/glfw3.h  ; fi
+- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cat /usr/local/include/GLFW/glfw3.h  ; fi
+- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cat ext/glfw/include/GLFW/glfw3.h  ; fi
 
 script:
 - make
