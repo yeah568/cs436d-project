@@ -4,7 +4,11 @@ matrix:
           sudo: required
           services:
             - docker
+          script: 
+            - docker run beatcoin/dockerbuild /bin/sh -c "make"
         - os: osx
+          script:
+            - make
 
 language: cpp
 
@@ -15,5 +19,3 @@ before_install:
 - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cat /usr/local/include/GLFW/glfw3.h  ; fi
 - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cat ext/glfw/include/GLFW/glfw3.h  ; fi
 
-script:
-- make
