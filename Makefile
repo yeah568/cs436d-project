@@ -5,7 +5,7 @@ ifeq ($(OS), Darwin)
     LIB = -ldl -framework OpenGL -framework Cocoa -framework CoreFoundation -lglfw -lSDL -lSDL_mixer -lpthread -lSDLmain
     CC = gcc
 else ifeq ($(OS), Linux)
-    CXXFLAGS = -Iext/gl3w -Iext/glfw/include/GLFW -std=c++11 -Wall -pedantic -DENABLE_SOUND
+    CXXFLAGS = -Iext/gl3w -I/usr/local/include/GLFW -std=c++11 -Wall -pedantic -DENABLE_SOUND
     LIB = -lglfw3 -lGL -lm -lXrandr -lXi -lX11 -lXxf86vm -lpthread -ldl -lSDL -lSDL_mixer -lSDLmain
     CC = clang
 else
@@ -24,7 +24,7 @@ test: build
 	./$(BIN)
 
 %.o: src/%.cpp
-	$(CC) -c $(CXXFLAGS) $(LIB) -o $@ $<
+	$(CC) -c $(CXXFLAGS) -o $@ $<
 
 $(BIN): $(OBJ)
 	$(CC) -o $@ $(OBJ) $(LIB)
