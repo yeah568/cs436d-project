@@ -133,8 +133,14 @@ bool World::init(vec2 screen)
 	m_background.init();
 
 	BeatCircle::player = &m_salmon;
-
-	return m_salmon.init();
+	
+	if (m_salmon.init()) {
+		blue_center_beat_circle.init(false);
+		orange_center_beat_circle.init(true);
+		CenterBeatCircle::player = &m_salmon;
+		return true;
+	}
+	return false;
 }
 
 // Releases all the associated resources
@@ -158,6 +164,8 @@ void World::destroy()
 		bullet.destroy();
 	for (auto& beatcircle : m_beatcircles)
 		beatcircle.destroy();
+	orange_center_beat_circle.destroy();
+	blue_center_beat_circle.destroy();
 	m_turtles.clear();
 	m_fish.clear();
 	m_bullets.clear();
@@ -416,7 +424,8 @@ void World::draw()
 		bullet.draw(projection_2D);
 	for (auto& beatcircle : m_beatcircles)
 		beatcircle.draw(projection_2D);
-
+	orange_center_beat_circle.draw(projection_2D);
+	blue_center_beat_circle.draw(projection_2D);
 	m_salmon.draw(projection_2D);
 
 	// Presenting
@@ -505,7 +514,19 @@ void World::on_key(GLFWwindow*, int key, int, int action, int mod)
 	if (action == GLFW_PRESS && key == GLFW_KEY_SPACE) {
 		bool on_beat =false;
 		if (m_beatcircles.size() > 0) {
-			on_beat = length(m_beatcircles[0].get_position()) <= 20;
+			BeatCircle closest = m_beatcircles[0];
+			float on_beat_radius = 20;
+			switch (closest.dir) {
+				case 1:
+				case 3:
+					on_beat_radius = 50;
+					break;
+				case 2:
+				case 4:
+					on_beat_radius = 40;
+					break;
+			}
+			on_beat = length(m_beatcircles[0].get_position()) <= on_beat_radius;
 			m_beatcircles.erase(m_beatcircles.begin());
 		}
 		

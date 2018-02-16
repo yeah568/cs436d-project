@@ -9,6 +9,7 @@
 #include "bullet.hpp"
 #include "BeatList.hpp"
 #include "BeatCircle.hpp"
+#include "CenterBeatCircle.hpp"
 
 // stlib
 #include <vector>
@@ -85,6 +86,9 @@ private:
 	float m_next_turtle_spawn;
 	float m_next_fish_spawn;
 	
+	CenterBeatCircle blue_center_beat_circle;
+	CenterBeatCircle orange_center_beat_circle;
+
 	Mix_Music* m_background_music;
 	Mix_Chunk* m_salmon_dead_sound;
 	Mix_Chunk* m_salmon_eat_sound;

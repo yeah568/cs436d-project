@@ -298,6 +298,10 @@ void Player::set_scale(vec2 scale)
 	m_scale = scale;
 }
 
+vec2 Player::get_scale() {
+	return m_scale;
+}
+
 void Player::set_mouse(float x, float y)
 {
 	m_mouse = { x, y };

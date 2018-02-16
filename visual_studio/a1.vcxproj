@@ -502,6 +502,7 @@
   <ItemGroup>
     <ClCompile Include="$(ProjectDir)..\src\a1.cpp" />
     <ClCompile Include="$(ProjectDir)..\src\BeatCircle.cpp" />
+    <ClCompile Include="$(ProjectDir)..\src\CenterBeatCircle.cpp" />
     <ClCompile Include="$(ProjectDir)..\src\common.cpp" />
     <ClCompile Include="$(ProjectDir)..\src\world.cpp" />
     <ClCompile Include="..\src\background.cpp" />

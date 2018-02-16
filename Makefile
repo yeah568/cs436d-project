@@ -12,7 +12,7 @@ else
 endif
 
 BIN=a1
-OBJ=$(BIN).o common.o fish.o player.o turtle.o world.o bullet.o background.o BeatCircle.o BeatList.o OsuParser.o StringUtils.o
+OBJ=$(BIN).o common.o fish.o player.o turtle.o world.o bullet.o background.o BeatCircle.o BeatList.o OsuParser.o StringUtils.o CenterBeatCircle.o
 
 default: build
 	
@@ -28,7 +28,7 @@ test: build
 	g++ -c $(CXXFLAGS) -o $@ $<
 
 $(BIN): $(OBJ)
-	g++ -o $@ $(OBJ) $(LIB)
+	g++ -g -rdynamic -o $@ $(OBJ) $(LIB)
 
 clean:
 	- rm -f $(BIN) $(OBJ)
