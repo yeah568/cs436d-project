@@ -503,12 +503,17 @@ void World::on_key(GLFWwindow*, int key, int, int action, int mod)
 
 
 	if (action == GLFW_PRESS && key == GLFW_KEY_SPACE) {
-		bool on_beat = length(m_beatcircles[0].get_position()) <= 20;
+		bool on_beat =false;
+		if (m_beatcircles.size() > 0) {
+			on_beat = length(m_beatcircles[0].get_position()) <= 20;
+			m_beatcircles.erase(m_beatcircles.begin());
+		}
+		
 		float player_angle = m_salmon.get_rotation()+1.57;
 		vec2 salmon_pos = m_salmon.get_position();
 		spawn_fish(salmon_pos, player_angle, m_salmon.bullet_type, on_beat);
 		m_salmon.bullet_type = !m_salmon.bullet_type;
-		m_beatcircles.erase(m_beatcircles.begin());
+		
 	}
 
 	if (action == GLFW_PRESS) {
