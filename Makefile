@@ -31,10 +31,10 @@ test: build
 	./$(BIN)
 
 %.o: src/%.cpp
-	$(CXX) -c $(CXXFLAGS) -o $@ $< $(wildcard $(addsuffix /*.o,$(SUBDIRS)))
+	$(CXX) -c $(CXXFLAGS) -o $@ $< 
 
 $(BIN): $(SUBDIRS) $(OBJ)
-	$(CXX) -o $@ $(OBJ) $(LIB)
+	$(CXX) -o $@ $(OBJ) $(wildcard $(addsuffix /*.o,$(SUBDIRS))) $(LIB)
 
 clean:
 	- rm -f $(BIN) $(OBJ)
