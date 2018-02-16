@@ -20,7 +20,7 @@ SUBDIRS = src/utils
 
 default: build
 	
-build: $(BIN) $(SUBDIRS)
+build: $(BIN)
 	
 .PHONY: subdirs $(SUBDIRS)
 subdirs: $(SUBDIRS)
@@ -33,7 +33,7 @@ test: build
 %.o: src/%.cpp
 	$(CXX) -c $(CXXFLAGS) -o $@ $< $(wildcard $(addsuffix /*.o,$(SUBDIRS)))
 
-$(BIN): $(OBJ)
+$(BIN): $(SUBDIRS) $(OBJ)
 	$(CXX) -o $@ $(OBJ) $(LIB)
 
 clean:
