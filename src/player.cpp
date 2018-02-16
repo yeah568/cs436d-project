@@ -70,7 +70,7 @@ bool Player::init()
 	m_scale.y = 1.f;
 	m_is_alive = true;
 	//m_num_indices = indices.size();
-	m_position = { 50.f, 100.f };
+	m_position = { 600.f, 700.f };
 	m_rotation = 0.f;
 	m_light_up_countdown_ms = -1.f;
 	m_movement_dir = { 0.f, 0.f };
@@ -149,7 +149,7 @@ void Player::update(float ms)
 		float delta_x = m_mouse.x - m_position.x;
 		float delta_y = m_position.y - m_mouse.y;
 		float angle = (float)atan2(delta_y, delta_x);
-		set_rotation(angle);
+		set_rotation(3.14/2);
 	}
 	else
 	{

@@ -28,7 +28,7 @@ namespace
 
 World::World() :
 	m_points(0),
-	m_next_turtle_spawn(0.f),
+	//m_next_turtle_spawn(0.f),
 	m_next_fish_spawn(0.f)
 {
 	// Seeding rng with random device
@@ -174,11 +174,11 @@ void World::handle_beat(float remaining_offset, Beat* curBeat, vec2 screen) {
 
 	printf("spawn %f\n", curBeat->offset);
 
-
+	
 	// spawn a thing
-	spawn_turtle();
-	Turtle& new_turtle = m_turtles.back();
-	new_turtle.set_position({ ((64.f + (float)curBeat->x) / 640.f)*screen.x, ((48.f + (float)curBeat->y) / 480.f)*screen.y });
+	//spawn_turtle();
+	//Turtle& new_turtle = m_turtles.back();
+	//new_turtle.set_position({ ((64.f + (float)curBeat->x) / 640.f)*screen.x, ((48.f + (float)curBeat->y) / 480.f)*screen.y });
 
 	m_salmon.scale_by(1.3);
 }
@@ -521,14 +521,14 @@ void World::on_key(GLFWwindow*, int key, int, int action, int mod)
 		case GLFW_KEY_A:
 			m_salmon.add_movement_dir({ -1.f, 0.f });
 			break;
-		case GLFW_KEY_UP:
-		case GLFW_KEY_W:
-			m_salmon.add_movement_dir({ 0.f, -1.f });
-			break;
-		case GLFW_KEY_DOWN:
-		case GLFW_KEY_S:
-			m_salmon.add_movement_dir({ 0.f, 1.f });
-			break;
+		//case GLFW_KEY_UP:
+		//case GLFW_KEY_W:
+		//	m_salmon.add_movement_dir({ 0.f, -1.f });
+		//	break;
+		//case GLFW_KEY_DOWN:
+		//case GLFW_KEY_S:
+		//	m_salmon.add_movement_dir({ 0.f, 1.f });
+		//	break;
 		case GLFW_KEY_LEFT_SHIFT:
 			m_salmon.dash();
 			break;
@@ -555,14 +555,14 @@ void World::on_key(GLFWwindow*, int key, int, int action, int mod)
 		case GLFW_KEY_A:
 			m_salmon.add_movement_dir({ 1.f, 0.f });
 			break;
-		case GLFW_KEY_UP:
-		case GLFW_KEY_W:
-			m_salmon.add_movement_dir({ 0.f, 1.f });
-			break;
-		case GLFW_KEY_DOWN:
-		case GLFW_KEY_S:
-			m_salmon.add_movement_dir({ 0.f, -1.f });
-			break;
+		//case GLFW_KEY_UP:
+		//case GLFW_KEY_W:
+		//	m_salmon.add_movement_dir({ 0.f, 1.f });
+		///	break;
+		//case GLFW_KEY_DOWN:
+		//case GLFW_KEY_S:
+		//	m_salmon.add_movement_dir({ 0.f, -1.f });
+		//	break;
 		}
 	}
 
