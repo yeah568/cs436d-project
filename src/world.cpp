@@ -108,7 +108,6 @@ bool World::init(vec2 screen)
 		return false;
 	}
 
-	//m_background_music = Mix_LoadMUS(audio_path("music.wav"));
 	m_background_music = Mix_LoadMUS(song_path("598830 Shawn Wasabi - Marble Soda/Marble Soda.wav"));
 
 	if (!m_background_music) {
@@ -224,8 +223,8 @@ bool World::update(float elapsed_ms)
 	m_salmon.update(elapsed_ms);
 	for (auto& turtle : m_turtles)
 		turtle.update(elapsed_ms * m_current_speed);
-	//for (auto& fish : m_fish)
-	//	fish.update(elapsed_ms * m_current_speed);
+	for (auto& fish : m_fish)
+		fish.update(elapsed_ms * m_current_speed);
 
 	// Removing out of screen turtles
 	auto turtle_it = m_turtles.begin();
@@ -242,18 +241,18 @@ bool World::update(float elapsed_ms)
 	}
 
 	// Removing out of screen fish
-	//fish_it = m_fish.begin();
-	//while (fish_it != m_fish.end())
-	//{
-	//	float w = fish_it->get_bounding_box().x / 2;
-	//	if (fish_it->get_position().x + w < 0.f)
-	//	{
-	//		fish_it = m_fish.erase(fish_it);
-	//		continue;
-	//	}
+	fish_it = m_fish.begin();
+	while (fish_it != m_fish.end())
+	{
+		float w = fish_it->get_bounding_box().x / 2;
+		if (fish_it->get_position().x + w < 0.f)
+		{
+			fish_it = m_fish.erase(fish_it);
+			continue;
+		}
 
-	//	++fish_it;
-	//}
+		++fish_it;
+	}
 
 	// Spawning new turtles
 	/*
