@@ -14,11 +14,18 @@ else
 endif
 
 BIN=a1
-OBJ=$(BIN).o common.o fish.o player.o turtle.o world.o OsuParser.o
+OBJ=$(BIN).o common.o fish.o player.o turtle.o world.o OsuParser.o utils/StringUtils.o
+
+SUBDIRS = src/utils
 
 default: build
 	
-build: $(BIN)
+build: $(BIN) subdirs
+	
+.PHONY: subdirs $(SUBDIRS)
+subdirs: $(SUBDIRS)
+$(SUBDIRS):
+	$(MAKE) -C $@
 
 test: build
 	./$(BIN)
