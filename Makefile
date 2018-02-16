@@ -14,7 +14,7 @@ else
 endif
 
 BIN=a1
-OBJ=$(BIN).o common.o fish.o player.o turtle.o world.o OsuParser.o utils/StringUtils.o
+OBJ=$(BIN).o common.o fish.o player.o turtle.o world.o OsuParser.o
 
 SUBDIRS = src/utils
 
