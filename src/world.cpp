@@ -169,26 +169,24 @@ bool World::update(float elapsed_ms)
 	vec2 screen = { (float)w, (float)h };
 
 	Beat* curBeat;
+	// In each update call, iterate through all beat objects and spawn all things
+	// needed up to that point.
 	while (beatPos < beatlist->beats.size()) {
 		curBeat = &beatlist->beats.at(beatPos);
-		//printf("remaining offset %f", remaining_offset);
 
+		// if the time elapsed is less than the delta for the next beat, iterate
+		// and subtract the beat offset amount from the remaining_offset.
 		if (curBeat->offset <= remaining_offset) {
 			remaining_offset -= curBeat->offset;
 			beatPos++;
-			// do beat things
-			// spawn thing
 
-			printf("spawn %f\n", curBeat->offset);
-
-			// spawn a thing
-			//spawn_fish({ ((64.f + (float)curBeat.x)/640.f)*screen.x, ((48.f + (float)curBeat.y) / 480.f)*screen.y });
-
+			// TODO jamesliu: replace this "pulsing" with actual desired features
+			// TODO jamesliu: try a max_scale or set_scale instead of compounding
+			// the scaling
 			m_salmon.scale_by(1.3);
 		}
 		else {
 			curBeat->offset -= remaining_offset;
-			//printf("offset: %f\n", curBeat->offset);
 			break;
 		}
 	}
