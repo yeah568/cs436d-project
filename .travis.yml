@@ -1,4 +1,19 @@
+matrix:
+    include:
+        - os: linux
+          sudo: required
+          services:
+            - docker
+          script: 
+            - docker run beatcoin/dockerbuild /bin/sh -c "make"
+        - os: osx
+          script:
+            - make
+
 language: cpp
 
-sudo: false
-dist: trusty
+before_install:
+- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then docker build -t beatcoin/dockerbuild . ; fi
+- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update          ; fi 
+- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install glfw3 sdl sdl_mixer  ; fi
+
