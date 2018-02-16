@@ -1,17 +1,19 @@
 #pragma once
-
 #include "common.hpp"
+#include "player.hpp"
 
 // Salmon food
-class Fish : public Renderable
+class BeatCircle : public Renderable
 {
 	// Shared between all fish, no need to load one for each instance
-	static Texture fish_texture;
-	static Texture fish_texture2;
+	static Texture beatCircle_texture;
+	static Texture beatCircle_texture2;
+	
 
 public:
+	static Player* player;
 	// Creates all the associated render resources and default transform
-	bool init(bool bullet_type);
+	bool init(float speed);
 
 	// Releases all the associated resources
 	void destroy();
@@ -35,11 +37,13 @@ public:
 
 	void set_rotation(float angle);
 	vec2 m_movement_dir;
-	bool bullet_type;
-
+	bool beat_circle_type;
+	int dir;
+	void set_dir(int direction);
 	void set_scale(vec2 scale);
 private:
 	vec2 m_position; // Window coordinates
 	vec2 m_scale; // 1.f in each dimension. 1.f is as big as the associated texture
 	float m_rotation; // in radians
+	float SPEED;
 };

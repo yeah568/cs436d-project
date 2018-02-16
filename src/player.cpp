@@ -10,6 +10,7 @@
 #include <vector>
 #include <string>
 #include <algorithm>
+#include <math.h>
 
 Texture Player::player_texture;
 
@@ -279,7 +280,7 @@ vec2 Player::get_position()const
 
 float Player::get_rotation()const
 {
-	return m_rotation;
+	return m_rotation - 1.57;
 }
 
 void Player::move(vec2 off)

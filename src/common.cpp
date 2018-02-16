@@ -78,10 +78,30 @@ mat3 mul(const mat3 & l, const mat3 & r)
 	return ret;
 }
 
+vec2 operator/(const vec2& lhs, const vec2& rhs) {
+	return {lhs.x/rhs.x, lhs.y/rhs.y};
+}
+
+vec2 operator-(const vec2& lhs, const vec2& rhs) {
+	return {lhs.x - rhs.x, lhs.y - rhs.y};
+}
+vec2 operator+(const vec2& lhs, const vec2& rhs) {
+	return {lhs.x + rhs.x, lhs.y+ rhs.y};
+}
+vec2 operator*(const float lhs, const vec2& rhs) {
+	return {rhs.x * lhs, rhs.y * lhs};
+}
+vec2 rotate(const vec2& vector, const float angle) {
+	return {vector.x*cos(angle) - vector.y*sin(angle), vector.x*sin(angle) + vector.y*cos(angle)};
+}
 vec2 normalize(vec2 v)
 {
 	float m = sqrtf(dot(v, v));
 	return { v.x / m, v.y / m };
+}
+
+float length(vec2 v) {
+	return sqrtf(v.x * v.x + v.y * v.y);
 }
 
 Texture::Texture()

@@ -12,7 +12,7 @@ else
 endif
 
 BIN=a1
-OBJ=$(BIN).o common.o fish.o player.o turtle.o world.o bullet.o background.o
+OBJ=$(BIN).o common.o fish.o player.o turtle.o world.o bullet.o background.o BeatCircle.o BeatList.o OsuParser.o StringUtils.o
 
 default: build
 	
@@ -22,6 +22,9 @@ test: build
 	./$(BIN)
 
 %.o: src/%.cpp
+	g++ -c $(CXXFLAGS) -o $@ $<
+
+%.o: src/utils/%.cpp
 	g++ -c $(CXXFLAGS) -o $@ $<
 
 $(BIN): $(OBJ)

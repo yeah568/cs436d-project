@@ -8,6 +8,7 @@
 #include "background.hpp"
 #include "bullet.hpp"
 #include "BeatList.hpp"
+#include "BeatCircle.hpp"
 
 // stlib
 #include <vector>
@@ -50,10 +51,12 @@ private:
 	bool spawn_turtle();
 
 	// Generates a new fish
-	bool spawn_fish(vec2 position, float angle, bool bullet_type);
+	bool spawn_fish(vec2 position, float angle, bool bullet_type, bool on_beat);
 
 	bool spawn_bullet(float angle, vec2 position);
 
+	bool spawn_beat_circle(int dir, float pos, float speed);
+	
 	// !!! INPUT CALLBACK FUNCTIONS
 	void on_key(GLFWwindow*, int key, int, int action, int mod);
 	void on_mouse_move(GLFWwindow* window, double xpos, double ypos);
@@ -74,6 +77,9 @@ private:
 	std::vector<Fish> m_fish;
 	Background m_background;
 	std::vector<Bullet> m_bullets;
+	std::vector<BeatCircle> m_beatcircles;
+
+	void handle_beat(float remaining_offset, Beat* curBeat, vec2 screen);
 
 	float m_current_speed;
 	float m_next_turtle_spawn;
