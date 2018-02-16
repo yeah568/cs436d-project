@@ -15,17 +15,17 @@ OBJ = StringUtils.o
 
 SUBDIRS =
 
-.PHONY: subdirs $(SUBDIRS)
-subdirs: $(SUBDIRS)
-$(SUBDIRS): 
-	$(MAKE) -C $@
-
 default: build
 	
 build: $(OBJ)
 
 %.o: %.cpp
 	g++ -c $(CXXFLAGS) -o $@ $<
+
+.PHONY: subdirs $(SUBDIRS)
+subdirs: $(SUBDIRS)
+$(SUBDIRS): 
+	$(MAKE) -C $@
 
 clean:
 	- rm -f $(OBJ)

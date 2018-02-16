@@ -14,20 +14,27 @@ else
 endif
 
 BIN=a1
-OBJ=$(BIN).o common.o fish.o player.o turtle.o world.o
+OBJ=$(BIN).o common.o fish.o player.o turtle.o world.o OsuParser.o
+
+SUBDIRS = src/utils
 
 default: build
 	
 build: $(BIN)
+	
+.PHONY: subdirs $(SUBDIRS)
+subdirs: $(SUBDIRS)
+$(SUBDIRS):
+	$(MAKE) -C $@
 
 test: build
 	./$(BIN)
 
 %.o: src/%.cpp
-	$(CXX) -c $(CXXFLAGS) -o $@ $<
+	$(CXX) -c $(CXXFLAGS) -o $@ $< 
 
-$(BIN): $(OBJ)
-	$(CXX) -o $@ $(OBJ) $(LIB)
+$(BIN): $(SUBDIRS) $(OBJ)
+	$(CXX) -o $@ $(OBJ) $(wildcard $(addsuffix /*.o,$(SUBDIRS))) $(LIB)
 
 clean:
 	- rm -f $(BIN) $(OBJ)

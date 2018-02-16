@@ -108,13 +108,13 @@ void Player::update(float ms)
 		// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		// UPDATE SALMON POSITION HERE BASED ON KEY PRESSED (World::on_key())
 		// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		printf("Before %d \n" , m_movement_dir.x);
+		// printf("Before %d \n" , m_movement_dir.x);
 		vec2 normalized_movement = m_movement_dir;
 		if (m_movement_dir.x != 0 && m_movement_dir.y != 0) {
 			normalized_movement = normalize(normalized_movement);
 		}
 		
-		printf("After %d \n", normalized_movement.x);
+		// printf("After %d \n", normalized_movement.x);
 		move({ normalized_movement.x * 10, normalized_movement.y * 10 });
 	}
 	else
