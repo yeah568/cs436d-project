@@ -13,8 +13,13 @@
 #include <random>
 
 #define SDL_MAIN_HANDLED
+#if defined(__linux__) || defined(LINUX)
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_mixer.h>
+#else
 #include <SDL/SDL.h>
 #include <SDL/SDL_mixer.h>
+#endif
 
 // Container for all our entities and game logic. Individual rendering / update is 
 // deferred to the relative update() methods

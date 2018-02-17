@@ -137,11 +137,19 @@ void Player::update(float ms)
 		// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		// UPDATE SALMON POSITION HERE BASED ON KEY PRESSED (World::on_key())
 		// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+<<<<<<< HEAD
+=======
+		// printf("Before %d \n" , m_movement_dir.x);
+>>>>>>> master
 		vec2 normalized_movement = m_movement_dir;
 		if (m_movement_dir.x != 0 && m_movement_dir.y != 0) {
 			normalized_movement = normalize(normalized_movement);
 		}
 		
+<<<<<<< HEAD
+=======
+		// printf("After %d \n", normalized_movement.x);
+>>>>>>> master
 		move({ normalized_movement.x * 10, normalized_movement.y * 10 });
 
 		// Set player to face mouse
