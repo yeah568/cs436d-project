@@ -11,7 +11,7 @@ bool Bullet::init(float angle, vec2 position)
 	std::vector<uint16_t> indices;
 
 	// Reads the salmon mesh from a file, which contains a list of vertices and indices
-	FILE* mesh_file = fopen(mesh_path("salmon.mesh"), "r");
+	FILE* mesh_file = fopen(mesh_path("bullet.mesh"), "r");
 	if (mesh_file == nullptr)
 		return false;
 
