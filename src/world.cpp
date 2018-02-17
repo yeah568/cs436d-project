@@ -108,6 +108,7 @@ bool World::init(vec2 screen)
 		return false;
 	}
 
+	// TODO jamesliu: load music in from filename field from beatmap
 	m_background_music = Mix_LoadMUS(song_path("598830 Shawn Wasabi - Marble Soda/Marble Soda.wav"));
 
 	if (!m_background_music) {
@@ -129,9 +130,6 @@ bool World::init(vec2 screen)
 	m_current_speed = 1.f;
 
 	m_background.init();
-	
-	OsuParser* parser = new OsuParser(song_path("598830 Shawn Wasabi - Marble Soda/Shawn Wasabi - Marble Soda (Stingy) [Oni Zero].osu"));
-	parser->parse();
 
 	return m_salmon.init();
 }
