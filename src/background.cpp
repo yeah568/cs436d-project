@@ -1,47 +1,34 @@
 // Header
-#include "fish.hpp"
+#include "background.hpp"
 
 #include <cmath>
 
-Texture Fish::fish_texture;
-Texture Fish::fish_texture2;
+Texture Background::background_texture;
 
-bool Fish::init(bool type)
+bool Background::init()
 {
 	// Load shared texture
-	
-	if (!fish_texture.is_valid())
+	if (!background_texture.is_valid())
 	{
-		if (!fish_texture.load_from_file(textures_path("bullet_1.png")))
+		if (!background_texture.load_from_file(textures_path("background2.png")))
 		{
-			fprintf(stderr, "Failed to load turtle texture!");
+			fprintf(stderr, "Failed to load background texture!");
 			return false;
 		}
 	}
-	
-	
-	if (!fish_texture2.is_valid())
-	{
-		if (!fish_texture2.load_from_file(textures_path("bullet_2.png")))
-		{
-			fprintf(stderr, "Failed to load turtle texture!");
-			return false;
-		}
-	}
-	
 
 	// The position corresponds to the center of the texture
-	float wr = fish_texture.width * 0.5f;
-	float hr = fish_texture.height * 0.5f;
+	float wr = background_texture.width * 0.5f;
+	float hr = background_texture.height * 0.5f;
 
 	TexturedVertex vertices[4];
-	vertices[0].position = { -wr, +hr, -0.01f };
+	vertices[0].position = { -wr, +hr, -0.02f };
 	vertices[0].texcoord = { 0.f, 1.f };
-	vertices[1].position = { +wr, +hr, -0.01f };
-	vertices[1].texcoord = { 1.f, 1.f,  };
-	vertices[2].position = { +wr, -hr, -0.01f };
+	vertices[1].position = { +wr, +hr, -0.02f };
+	vertices[1].texcoord = { 1.f, 1.f };
+	vertices[2].position = { +wr, -hr, -0.02f };
 	vertices[2].texcoord = { 1.f, 0.f };
-	vertices[3].position = { -wr, -hr, -0.01f };
+	vertices[3].position = { -wr, -hr, -0.02f };
 	vertices[3].texcoord = { 0.f, 0.f };
 
 	// counterclockwise as it's the default opengl front winding direction
@@ -49,7 +36,7 @@ bool Fish::init(bool type)
 
 	// Clearing errors
 	gl_flush_errors();
-
+	
 	// Vertex Buffer creation
 	glGenBuffers(1, &mesh.vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, mesh.vbo);
@@ -71,19 +58,16 @@ bool Fish::init(bool type)
 
 	// Setting initial values, scale is negative to make it face the opposite way
 	// 1.0 would be as big as the original texture
-	m_scale.x = -0.8f;
-	m_scale.y = 0.5f;
-	m_position.x = -50;
-	m_position.y = 50;
-	bullet_type = type;
-
+	m_scale.x = 1.f;
+	m_scale.y = 1.f;
+	m_rotation = 0.f;
 
 	return true;
 }
 
 // Call if init() was successful
 // Releases all graphics resources
-void Fish::destroy()
+void Background::destroy()
 {
 	glDeleteBuffers(1, &mesh.vbo);
 	glDeleteBuffers(1, &mesh.ibo);
@@ -94,24 +78,22 @@ void Fish::destroy()
 	glDeleteShader(effect.program);
 }
 
-void Fish::update(float ms)
+void Background::update(float ms)
 {
 	// Move fish along -X based on how much time has passed, this is to (partially) avoid
 	// having entities move at different speed based on the machine.
-	const float BULLET_SPEED = 400.f;
-	float step = BULLET_SPEED * (ms / 1000);
-	
-	m_position.x += m_movement_dir.x*step;
-	m_position.y += m_movement_dir.y*step;
+	const float TURTLE_SPEED = 200.f;
+	float step = -TURTLE_SPEED * (ms / 1000);
+	m_position.x += step;
 }
 
-void Fish::draw(const mat3& projection)
+void Background::draw(const mat3& projection)
 {
 	// Transformation code, see Rendering and Transformation in the template specification for more info
 	// Incrementally updates transformation matrix, thus ORDER IS IMPORTANT
 	transform_begin();
 	transform_translate(m_position);
-	transform_rotate(-m_rotation);
+	transform_rotate(m_rotation);
 	transform_scale(m_scale);
 	transform_end();
 
@@ -142,13 +124,7 @@ void Fish::draw(const mat3& projection)
 
 	// Enabling and binding texture to slot 0
 	glActiveTexture(GL_TEXTURE0);
-	if (bullet_type) {
-		glBindTexture(GL_TEXTURE_2D, fish_texture2.id);
-	}
-	else {
-		glBindTexture(GL_TEXTURE_2D, fish_texture.id);
-	}
-	
+	glBindTexture(GL_TEXTURE_2D, background_texture.id);
 
 	// Setting uniform values to the currently bound program
 	glUniformMatrix3fv(transform_uloc, 1, GL_FALSE, (float*)&transform);
@@ -160,24 +136,6 @@ void Fish::draw(const mat3& projection)
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, nullptr);
 }
 
-vec2 Fish::get_position()const
-{
-	return m_position;
-}
-
-void Fish::set_position(vec2 position)
-{
-	m_position = position;
-}
-
-void Fish::set_rotation(float angle)
-{
-	m_rotation = angle;
-}
-
-// Returns the local bounding coordinates scaled by the current size of the fish 
-vec2 Fish::get_bounding_box()const
-{
-	// fabs is to avoid negative scale due to the facing direction
-	return { std::fabs(m_scale.x) * fish_texture.width, std::fabs(m_scale.y) * fish_texture.height };
+void Background::set_position(vec2 pos) {
+	m_position = pos;
 }
