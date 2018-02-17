@@ -128,6 +128,10 @@ bool World::init(vec2 screen)
 
 	m_current_speed = 1.f;
 
+	m_background.init();
+	
+	OsuParser* parser = new OsuParser(song_path("598830 Shawn Wasabi - Marble Soda/Shawn Wasabi - Marble Soda (Stingy) [Oni Zero].osu"));
+	parser->parse();
 
 	return m_salmon.init();
 }
@@ -149,8 +153,11 @@ void World::destroy()
 		turtle.destroy();
 	for (auto& fish : m_fish)
 		fish.destroy();
+	for (auto& bullet : m_bullets)
+		bullet.destroy();
 	m_turtles.clear();
 	m_fish.clear();
+	m_bullets.clear();
 	glfwDestroyWindow(m_window);
 }
 
@@ -205,6 +212,7 @@ bool World::update(float elapsed_ms)
 
 	// Checking Salmon - Fish collisions
 	auto fish_it = m_fish.begin();
+	/*
 	while (fish_it != m_fish.end())
 	{
 		if (m_salmon.collides_with(*fish_it))
@@ -217,6 +225,7 @@ bool World::update(float elapsed_ms)
 		else
 			++fish_it;
 	}
+	*/
 	
 	// Updating all entities, making the turtle and fish
 	// faster based on current
@@ -225,6 +234,8 @@ bool World::update(float elapsed_ms)
 		turtle.update(elapsed_ms * m_current_speed);
 	for (auto& fish : m_fish)
 		fish.update(elapsed_ms * m_current_speed);
+	for (auto& bullet : m_bullets)
+		bullet.update(elapsed_ms * m_current_speed);
 
 	// Removing out of screen turtles
 	auto turtle_it = m_turtles.begin();
@@ -253,6 +264,8 @@ bool World::update(float elapsed_ms)
 
 		++fish_it;
 	}
+
+	// TODO: remove out of screen bullets
 
 	// Spawning new turtles
 	/*
@@ -326,6 +339,10 @@ void World::draw()
 	float ty = -(top + bottom) / (top - bottom);
 	mat3 projection_2D{ { sx, 0.f, 0.f },{ 0.f, sy, 0.f },{ tx, ty, 1.f } };
 
+	m_background.set_position({ (float)w / 2, (float)h / 2 });
+
+	m_background.draw(projection_2D);
+
 	// Drawing entities
 	/*
 	for (auto& turtle : m_turtles)
@@ -333,6 +350,8 @@ void World::draw()
 	*/
 	for (auto& fish : m_fish)
 		fish.draw(projection_2D);
+	for (auto& bullet : m_bullets)
+		bullet.draw(projection_2D);
 	
 	m_salmon.draw(projection_2D);
 	
@@ -360,15 +379,31 @@ bool World::spawn_turtle()
 }
 
 // Creates a new fish and if successfull adds it to the list of fish
-bool World::spawn_fish()
+bool World::spawn_fish(vec2 position, float angle, bool type)
 {
 	Fish fish;
-	if (fish.init())
+	if (fish.init(type))
 	{
+		fish.set_position(position);
+		fish.set_rotation(angle);
+		fish.m_movement_dir = { (float)cos(angle), (float)-sin(angle) };
 		m_fish.emplace_back(fish);
+		
 		return true;
 	}
 	fprintf(stderr, "Failed to spawn fish");
+	return false;
+}
+
+bool World::spawn_bullet(float angle, vec2 position)
+{
+	Bullet bullet;
+	if (bullet.init(angle, position))
+	{
+		m_bullets.emplace_back(bullet);
+		return true;
+	}
+	fprintf(stderr, "Failed to spawn bullet");
 	return false;
 }
 
@@ -386,25 +421,43 @@ void World::on_key(GLFWwindow*, int key, int, int action, int mod)
 	
 
 	if (action == GLFW_PRESS && key == GLFW_KEY_SPACE) {
+		float player_angle = m_salmon.get_rotation();
 		vec2 salmon_pos = m_salmon.get_position();
-		spawn_fish();
-		Fish& new_fish = m_fish.back();
-		new_fish.set_position({ salmon_pos.x, salmon_pos.y+ 200});
+		spawn_fish(salmon_pos, player_angle, m_salmon.bullet_type);
+		m_salmon.bullet_type = !m_salmon.bullet_type;
+		printf("Salmon bullet type %d", m_salmon.bullet_type);
 	}
 
 	if (action == GLFW_PRESS) {
 		switch (key) {
-		case GLFW_KEY_RIGHT: 
+		case GLFW_KEY_RIGHT:
+		case GLFW_KEY_D:
 			m_salmon.add_movement_dir({ 1.f, 0.f });
 			break;
-		case GLFW_KEY_LEFT: 
+		case GLFW_KEY_LEFT:
+		case GLFW_KEY_A:
 			m_salmon.add_movement_dir({ -1.f, 0.f });
 			break;
-		case GLFW_KEY_UP:    
+		case GLFW_KEY_UP:
+		case GLFW_KEY_W:
 			m_salmon.add_movement_dir({ 0.f, -1.f });
 			break;
-		case GLFW_KEY_DOWN:  
+		case GLFW_KEY_DOWN:
+		case GLFW_KEY_S:
 			m_salmon.add_movement_dir({ 0.f, 1.f });
+			break;
+		case GLFW_KEY_LEFT_SHIFT:
+			m_salmon.dash();
+			break;
+
+		case GLFW_KEY_U:
+			m_salmon.exploding_timer = 1;
+			break;
+
+		case GLFW_KEY_I:
+			m_salmon.player_texture.load_from_file(textures_path("character.png"));
+			m_salmon.exploding_timer = 0;
+			m_salmon.set_scale({ -0.2f, 0.2f });
 			break;
 		}
 	}
@@ -412,15 +465,19 @@ void World::on_key(GLFWwindow*, int key, int, int action, int mod)
 	if (action == GLFW_RELEASE) {
 		switch (key) {
 		case GLFW_KEY_RIGHT:
+		case GLFW_KEY_D:
 			m_salmon.add_movement_dir({ -1.f, 0.f });
 			break;
 		case GLFW_KEY_LEFT:
+		case GLFW_KEY_A:
 			m_salmon.add_movement_dir({ 1.f, 0.f });
 			break;
 		case GLFW_KEY_UP:
+		case GLFW_KEY_W:
 			m_salmon.add_movement_dir({ 0.f, 1.f });
 			break;
 		case GLFW_KEY_DOWN:
+		case GLFW_KEY_S:
 			m_salmon.add_movement_dir({ 0.f, -1.f });
 			break;
 		}
@@ -434,6 +491,7 @@ void World::on_key(GLFWwindow*, int key, int, int action, int mod)
 		glfwGetWindowSize(m_window, &w, &h);
 		m_salmon.destroy(); 
 		m_salmon.init();
+		m_background.init();
 		m_turtles.clear();
 		m_fish.clear();
 		m_current_speed = 1.f;
@@ -456,5 +514,6 @@ void World::on_mouse_move(GLFWwindow* window, double xpos, double ypos)
 	// default facing direction is (1, 0)
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+	m_salmon.set_mouse((float)xpos, (float)ypos);
 
 }

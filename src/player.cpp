@@ -7,49 +7,41 @@
 #include "common.hpp"
 
 // stlib
+#include <math.h>
 #include <vector>
 #include <string>
 #include <algorithm>
 
+Texture Player::player_texture;
+
 bool Player::init()
 {
-	std::vector<Vertex> vertices;
-	std::vector<uint16_t> indices;
-
-	// Reads the salmon mesh from a file, which contains a list of vertices and indices
-	FILE* mesh_file = fopen(mesh_path("character.mesh"), "r");
-	if (mesh_file == nullptr)
-		return false;
-
-	// Reading vertices and colors
-	size_t num_vertices;
-	fscanf(mesh_file, "%zu\n", &num_vertices);
-	for (size_t i = 0; i < num_vertices; ++i)
+	// Load shared texture
+	if (!player_texture.is_valid())
 	{
-		float x, y, z;
-		float _u[3]; // unused
-		int r, g, b;
-		fscanf(mesh_file, "%f %f %f %f %f %f %d %d %d\n", &x, &y, &z, _u, _u+1, _u+2, &r, &g, &b);
-		Vertex vertex;
-		vertex.position = { x, y, -z }; 
-		vertex.color = { (float)r / 255, (float)g / 255, (float)b / 255 };
-		vertices.push_back(vertex);
+		if (!player_texture.load_from_file(textures_path("character.png")))
+		{
+			fprintf(stderr, "Failed to load turtle texture!");
+			return false;
+		}
 	}
 
-	// Reading associated indices
-	size_t num_indices;
-	fscanf(mesh_file, "%zu\n", &num_indices);
-	for (size_t i = 0; i < num_indices; ++i)
-	{
-		int idx[3];
-		fscanf(mesh_file, "%d %d %d\n", idx, idx + 1, idx + 2);
-		indices.push_back((uint16_t)idx[0]);
-		indices.push_back((uint16_t)idx[1]);
-		indices.push_back((uint16_t)idx[2]);
-	}
+	// The position corresponds to the center of the texture
+	float wr = player_texture.width * 0.5f;
+	float hr = player_texture.height * 0.5f;
 
-	// Done reading
-	fclose(mesh_file);
+	TexturedVertex vertices[4];
+	vertices[0].position = { -wr, +hr, -0.01f };
+	vertices[0].texcoord = { 0.f, 1.f };
+	vertices[1].position = { +wr, +hr, -0.01f };
+	vertices[1].texcoord = { 1.f, 1.f, };
+	vertices[2].position = { +wr, -hr, -0.01f };
+	vertices[2].texcoord = { 1.f, 0.f };
+	vertices[3].position = { -wr, -hr, -0.01f };
+	vertices[3].texcoord = { 0.f, 0.f };
+
+	// counterclockwise as it's the default opengl front winding direction
+	uint16_t indices[] = { 0, 3, 1, 1, 3, 2 };
 
 	// Clearing errors
 	gl_flush_errors();
@@ -57,12 +49,12 @@ bool Player::init()
 	// Vertex Buffer creation
 	glGenBuffers(1, &mesh.vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, mesh.vbo);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * vertices.size(), vertices.data(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(TexturedVertex) * 4, vertices, GL_STATIC_DRAW);
 
 	// Index Buffer creation
 	glGenBuffers(1, &mesh.ibo);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.ibo);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint16_t) * indices.size(), indices.data(), GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint16_t) * 6, indices, GL_STATIC_DRAW);
 
 	// Vertex Array (Container for Vertex + Index buffer)
 	glGenVertexArrays(1, &mesh.vao);
@@ -70,14 +62,15 @@ bool Player::init()
 		return false;
 
 	// Loading shaders
-	if (!effect.load_from_file(shader_path("colored.vs.glsl"), shader_path("colored.fs.glsl")))
+	if (!effect.load_from_file(shader_path("textured.vs.glsl"), shader_path("textured.fs.glsl")))
 		return false;
 	
 	// Setting initial values
-	m_scale.x = -35.f;
-	m_scale.y = 35.f;
+	bullet_type = true;
+	m_scale.x = -1.f;
+	m_scale.y = 1.f;
 	m_is_alive = true;
-	m_num_indices = indices.size();
+	//m_num_indices = indices.size();
 	m_position = { 50.f, 100.f };
 	m_rotation = 0.f;
 	m_light_up_countdown_ms = -1.f;
@@ -103,19 +96,60 @@ void Player::update(float ms)
 {
 	const float SALMON_SPEED = 200.f;
 	float step = SALMON_SPEED * (ms / 1000);
+	if (exploding_timer > 0 && exploding_timer < 1.25) {
+		m_scale.y = 0.4f;
+		player_texture.load_from_file(textures_path("explosion_1.png"));
+		exploding_timer += ms/1000;
+	}
+	if (exploding_timer > 1.25 && exploding_timer < 1.5) {
+		player_texture.load_from_file(textures_path("explosion_2.png"));
+		exploding_timer += ms/1000;
+	}
+	if (exploding_timer > 1.5 && exploding_timer < 1.75) {
+		player_texture.load_from_file(textures_path("explosion_3.png"));
+		exploding_timer += ms/1000;
+	}
+	if (exploding_timer > 1.75 && exploding_timer < 2) {
+		player_texture.load_from_file(textures_path("explosion_4.png"));
+		exploding_timer += ms/1000;
+	}
+	if (exploding_timer > 2 && exploding_timer < 2.25) {
+		player_texture.load_from_file(textures_path("explosion_5.png"));
+		exploding_timer += ms / 1000;
+	}
+	if (exploding_timer > 2.25 && exploding_timer < 2.5) {
+		player_texture.load_from_file(textures_path("explosion_6.png"));
+		exploding_timer += ms / 1000;
+	}
+	if (exploding_timer > 2.5 && exploding_timer < 3) {
+		player_texture.load_from_file(textures_path("explosion_7.png"));
+		exploding_timer += ms / 1000;
+	}
+	if (exploding_timer > 3 && exploding_timer <3.5) {
+		player_texture.load_from_file(textures_path("explosion_8.png"));
+		exploding_timer += ms / 1000;
+	}
+	if (exploding_timer > 3.5 && exploding_timer < 4) {
+		player_texture.load_from_file(textures_path("explosion_9.png"));
+		exploding_timer += ms / 1000;
+	}
 	if (m_is_alive)
 	{
 		// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		// UPDATE SALMON POSITION HERE BASED ON KEY PRESSED (World::on_key())
 		// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		// printf("Before %d \n" , m_movement_dir.x);
 		vec2 normalized_movement = m_movement_dir;
 		if (m_movement_dir.x != 0 && m_movement_dir.y != 0) {
 			normalized_movement = normalize(normalized_movement);
 		}
 		
-		// printf("After %d \n", normalized_movement.x);
 		move({ normalized_movement.x * 10, normalized_movement.y * 10 });
+
+		// Set player to face mouse
+		float delta_x = m_mouse.x - m_position.x;
+		float delta_y = m_position.y - m_mouse.y;
+		float angle = (float)atan2(delta_y, delta_x);
+		set_rotation(angle);
 	}
 	else
 	{
@@ -159,6 +193,13 @@ void Player::draw(const mat3& projection)
 	// REMOVE THE FOLLOWING LINES BEFORE ADDING ANY TRANSFORMATION CODE
 	transform_translate({ m_position.x, m_position.y });
 	transform_scale(m_scale);
+	if (exploding_timer > 0) {
+		transform_rotate(0);
+	}
+	else {
+		transform_rotate(m_rotation - 3.14/2);
+	}
+	
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
@@ -169,13 +210,12 @@ void Player::draw(const mat3& projection)
 
 	// Enabling alpha channel for textures
 	glEnable(GL_BLEND); glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glEnable(GL_DEPTH_TEST);
+	glDisable(GL_DEPTH_TEST);
 
-	// Getting uniform locations
+	// Getting uniform locations for glUniform* calls
 	GLint transform_uloc = glGetUniformLocation(effect.program, "transform");
 	GLint color_uloc = glGetUniformLocation(effect.program, "fcolor");
 	GLint projection_uloc = glGetUniformLocation(effect.program, "projection");
-	GLint light_up_uloc = glGetUniformLocation(effect.program, "light_up");
 
 	// Setting vertices and indices
 	glBindVertexArray(mesh.vao);
@@ -184,29 +224,24 @@ void Player::draw(const mat3& projection)
 
 	// Input data location as in the vertex buffer
 	GLint in_position_loc = glGetAttribLocation(effect.program, "in_position");
-	GLint in_color_loc = glGetAttribLocation(effect.program, "in_color");
+	GLint in_texcoord_loc = glGetAttribLocation(effect.program, "in_texcoord");
 	glEnableVertexAttribArray(in_position_loc);
-	glEnableVertexAttribArray(in_color_loc);
-	glVertexAttribPointer(in_position_loc, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
-	glVertexAttribPointer(in_color_loc, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)sizeof(vec3));
+	glEnableVertexAttribArray(in_texcoord_loc);
+	glVertexAttribPointer(in_position_loc, 3, GL_FLOAT, GL_FALSE, sizeof(TexturedVertex), (void*)0);
+	glVertexAttribPointer(in_texcoord_loc, 2, GL_FLOAT, GL_FALSE, sizeof(TexturedVertex), (void*)sizeof(vec3));
+
+	// Enabling and binding texture to slot 0
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, player_texture.id);
 
 	// Setting uniform values to the currently bound program
 	glUniformMatrix3fv(transform_uloc, 1, GL_FALSE, (float*)&transform);
-
-	// !!! Salmon Color
 	float color[] = { 1.f, 1.f, 1.f };
 	glUniform3fv(color_uloc, 1, color);
 	glUniformMatrix3fv(projection_uloc, 1, GL_FALSE, (float*)&projection);
 
-	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	// HERE TO SET THE CORRECTLY LIGHT UP THE SALMON IF HE HAS EATEN RECENTLY
-	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	int light_up = 0;
-	glUniform1iv(light_up_uloc, 1, &light_up);
-
-
 	// Drawing!
-	glDrawElements(GL_TRIANGLES,(GLsizei)m_num_indices, GL_UNSIGNED_SHORT, nullptr);
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, nullptr);
 }
 
 // Simple bounding box collision check, 
@@ -243,6 +278,11 @@ vec2 Player::get_position()const
 	return m_position;
 }
 
+float Player::get_rotation()const
+{
+	return m_rotation;
+}
+
 void Player::move(vec2 off)
 {
 	m_position.x += off.x; m_position.y += off.y;
@@ -251,6 +291,16 @@ void Player::move(vec2 off)
 void Player::set_rotation(float radians)
 {
 	m_rotation = radians;
+}
+
+void Player::set_scale(vec2 scale)
+{
+	m_scale = scale;
+}
+
+void Player::set_mouse(float x, float y)
+{
+	m_mouse = { x, y };
 }
 
 bool Player::is_alive()const
@@ -268,6 +318,10 @@ void Player::kill()
 void Player::light_up()
 {
 	m_light_up_countdown_ms = 1500.f;
+}
+
+void Player::dash() {
+	move({ m_movement_dir.x*60, m_movement_dir.y *60});
 }
 
 void Player::set_movement_dir(vec2 dir) {

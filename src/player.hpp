@@ -7,9 +7,11 @@ class Fish;
 
 class Player : public Renderable
 {
+	
 public:
 	// Creates all the associated render resources and default transform
 	bool init();
+	static Texture player_texture;
 
 	// Releases all associated resources
 	void destroy();
@@ -28,11 +30,15 @@ public:
 	// Returns the current salmon position
 	vec2 get_position()const;
 
+	float get_rotation()const;
+
 	// Moves the salmon's position by the specified offset
 	void move(vec2 off);
 
 	// Set salmon rotation in radians
 	void set_rotation(float radians);
+
+	void set_mouse(float x, float y);
 
 	// True if the salmon is alive
 	bool is_alive()const;
@@ -42,12 +48,20 @@ public:
 
 	// Callesd when the salmon collides with a fish, starts lighting up the salmon
 	void light_up();
+	
+	void dash();
+
+	void set_scale(vec2 scale);
 
 	void set_movement_dir(vec2 dir);
 
 	void add_movement_dir(vec2 dir);
 
 	void scale_by(float scale);
+	
+	float exploding_timer;
+
+	bool bullet_type;
 
 private:
 	float m_light_up_countdown_ms; // Used to keep track for how long the salmon should be lit up
@@ -57,4 +71,5 @@ private:
 	float m_rotation; // in radians
 	size_t m_num_indices; // passed to glDrawElements
 	vec2 m_movement_dir;
+	vec2 m_mouse;
 };
