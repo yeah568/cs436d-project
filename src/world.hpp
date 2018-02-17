@@ -5,6 +5,7 @@
 #include "player.hpp"
 #include "turtle.hpp"
 #include "fish.hpp"
+#include "bullet.hpp"
 
 // stlib
 #include <vector>
@@ -49,6 +50,8 @@ private:
 	// Generates a new fish
 	bool spawn_fish();
 
+	bool spawn_bullet(float angle, vec2 position);
+
 	// !!! INPUT CALLBACK FUNCTIONS
 	void on_key(GLFWwindow*, int key, int, int action, int mod);
 	void on_mouse_move(GLFWwindow* window, double xpos, double ypos);
@@ -64,6 +67,7 @@ private:
 	Player m_salmon;
 	std::vector<Turtle> m_turtles;
 	std::vector<Fish> m_fish;
+	std::vector<Bullet> m_bullets;
 
 	float m_current_speed;
 	float m_next_turtle_spawn;
