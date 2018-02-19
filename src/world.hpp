@@ -4,10 +4,11 @@
 #include "common.hpp"
 #include "player.hpp"
 #include "turtle.hpp"
-#include "fish.hpp"
-#include "BeatList.hpp"
-#include "background.hpp"
 #include "bullet.hpp"
+#include "background.hpp"
+#include "BeatList.hpp"
+#include "BeatCircle.hpp"
+#include "CenterBeatCircle.hpp"
 
 // stlib
 #include <vector>
@@ -55,10 +56,12 @@ private:
 	bool spawn_turtle();
 
 	// Generates a new fish
-	bool spawn_fish(vec2 position, float angle, bool type);
+	bool spawn_bullet(vec2 position, float angle, bool bullet_type, bool on_beat);
 
-	bool spawn_bullet(float angle, vec2 position);
+	
 
+	bool spawn_beat_circle(int dir, float pos, float speed);
+	
 	// !!! INPUT CALLBACK FUNCTIONS
 	void on_key(GLFWwindow*, int key, int, int action, int mod);
 	void on_mouse_move(GLFWwindow* window, double xpos, double ypos);
@@ -76,14 +79,20 @@ private:
 	// Game entities
 	Player m_salmon;
 	std::vector<Turtle> m_turtles;
-	std::vector<Fish> m_fish;
-	Background m_background;
 	std::vector<Bullet> m_bullets;
+	Background m_background;
+	
+	std::vector<BeatCircle> m_beatcircles;
+
+	void handle_beat(float remaining_offset, Beat* curBeat, vec2 screen);
 
 	float m_current_speed;
 	float m_next_turtle_spawn;
 	float m_next_fish_spawn;
 	
+	CenterBeatCircle blue_center_beat_circle;
+	CenterBeatCircle orange_center_beat_circle;
+
 	Mix_Music* m_background_music;
 	Mix_Chunk* m_salmon_dead_sound;
 	Mix_Chunk* m_salmon_eat_sound;

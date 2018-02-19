@@ -28,6 +28,12 @@ struct vec2 { float x, y; };
 struct vec3 { float x, y, z; };
 struct mat3 { vec3 c0, c1, c2; };
 
+vec2 operator/(const vec2& lhs, const vec2& rhs);
+vec2 operator-(const vec2& lhs, const vec2& rhs);
+vec2 operator+(const vec2& lhs, const vec2& rhs);
+vec2 operator*(const float lhs, const vec2& rhs);
+vec2 rotate(const vec2& vector, const float angle);
+float length(vec2 v);
 // Utility functions
 float dot(vec2 l, vec2 r);
 float dot(vec3 l, vec3 r);

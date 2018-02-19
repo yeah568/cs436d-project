@@ -2,6 +2,7 @@
 #include "world.hpp"
 #include "common.hpp"
 #include "OsuParser.hpp"
+#include "BeatCircle.hpp"
 
 // stlib
 #include <string.h>
@@ -25,10 +26,11 @@ namespace
 	}
 }
 
-World::World() : 
+World::World() :
 	m_points(0),
-	m_next_turtle_spawn(0.f),
+	//m_next_turtle_spawn(0.f),
 	m_next_fish_spawn(0.f)
+
 {
 	// Seeding rng with random device
 	m_rng = std::default_random_engine(std::random_device()());
@@ -42,6 +44,7 @@ World::~World()
 // World initialization
 bool World::init(vec2 screen)
 {
+	printf("End of world");
 	//-------------------------------------------------------------------------
 	// GLFW / OGL Initialization
 	// Core Opengl 3.
@@ -80,7 +83,7 @@ bool World::init(vec2 screen)
 	glfwSetCursorPosCallback(m_window, cursor_pos_redirect);
 
 	//-------------------------------------------------------------------------
-	OsuParser* parser = new OsuParser(song_path("598830 Shawn Wasabi - Marble Soda/Shawn Wasabi - Marble Soda (Exa) [Insane].osu"));
+	OsuParser* parser = new OsuParser(song_path("598830 Shawn Wasabi - Marble Soda/Shawn Wasabi - Marble Soda (Exa) [Normal].osu"));
 	OsuBeatmap beatmap = parser->parse();
 
 	beatlist = new BeatList(beatmap);
@@ -108,7 +111,7 @@ bool World::init(vec2 screen)
 		return false;
 	}
 
-	// TODO jamesliu: load music in from filename field from beatmap
+	//m_background_music = Mix_LoadMUS(audio_path("music.wav"));
 	m_background_music = Mix_LoadMUS(song_path("598830 Shawn Wasabi - Marble Soda/Marble Soda.wav"));
 
 	if (!m_background_music) {
@@ -124,14 +127,24 @@ bool World::init(vec2 screen)
 		fprintf(stderr, "Failed to load sounds, make sure the data directory is present");
 		return false;
 	}
-	
+
 	fprintf(stderr, "Loaded music");
 
 	m_current_speed = 1.f;
 
 	m_background.init();
 
-	return m_salmon.init();
+	BeatCircle::player = &m_salmon;
+	
+	if (m_salmon.init()) {
+		blue_center_beat_circle.init(false);
+		orange_center_beat_circle.init(true);
+		CenterBeatCircle::player = &m_salmon;
+		printf("End of world");
+		return true;
+	}
+	printf("End of world");
+	return false;
 }
 
 // Releases all the associated resources
@@ -149,14 +162,35 @@ void World::destroy()
 	m_salmon.destroy();
 	for (auto& turtle : m_turtles)
 		turtle.destroy();
-	for (auto& fish : m_fish)
-		fish.destroy();
 	for (auto& bullet : m_bullets)
 		bullet.destroy();
+	for (auto& beatcircle : m_beatcircles)
+		beatcircle.destroy();
+	orange_center_beat_circle.destroy();
+	blue_center_beat_circle.destroy();
 	m_turtles.clear();
-	m_fish.clear();
 	m_bullets.clear();
+	
+	m_beatcircles.clear();
 	glfwDestroyWindow(m_window);
+}
+
+
+void World::handle_beat(float remaining_offset, Beat* curBeat, vec2 screen) {
+	remaining_offset -= curBeat->offset;
+	beatPos++;
+	// do beat things
+	// spawn thing
+
+	printf("spawn %f\n", curBeat->offset);
+
+	
+	// spawn a thing
+	//spawn_turtle();
+	//Turtle& new_turtle = m_turtles.back();
+	//new_turtle.set_position({ ((64.f + (float)curBeat->x) / 640.f)*screen.x, ((48.f + (float)curBeat->y) / 480.f)*screen.y });
+
+	m_salmon.scale_by(1.3);
 }
 
 // Update our game world
@@ -165,7 +199,7 @@ bool World::update(float elapsed_ms)
 	if (!Mix_PlayingMusic()) {
 		Mix_PlayMusic(m_background_music, 1);
 	}
-	
+
 	float remaining_offset = elapsed_ms;
 
 	int w, h;
@@ -173,43 +207,81 @@ bool World::update(float elapsed_ms)
 	vec2 screen = { (float)w, (float)h };
 
 	Beat* curBeat;
-	// In each update call, iterate through all beat objects and spawn all things
-	// needed up to that point.
 	while (beatPos < beatlist->beats.size()) {
 		curBeat = &beatlist->beats.at(beatPos);
+		//printf("remaining offset %f", remaining_offset);
+		float center_radius = 100.0f;  // TODO: use radius of circle around player
+		float ms_per_beat = curBeat->duration;
+		float speed = center_radius/ms_per_beat;
+		int dir = 0; // 1 = L, 2 = U, 3 = R, 4 = D
+		float pX = ((64.f + (float)curBeat->x) / 640.f);
+		float pY = ((48.f + (float)curBeat->y) / 480.f);
+		float dA = pX - pY;
+		float dB = -1*(pX + pY) + 1;
+		if (dA == 0 && dB == 0)
+			dir = 1;
+		else if (dA < 0 && dB >= 0)
+			dir = 1;
+		else if (dA >= 0 && dB >= 0)
+			dir = 2;
+		else if (dA >= 0 && dB < 0)
+			dir = 3;
+		else if (dA < 0 && dB < 0)
+			dir = 4;
 
-		// if the time elapsed is less than the delta for the next beat, iterate
-		// and subtract the beat offset amount from the remaining_offset.
+		// We should spawn a beat circle such that when the beat circle gets to the
+		// center circle, this event coincides with
+		// curBeat->offset <= remaining_offset
+		float some_fixed_spawn_distance = 300.0f;
+		float beat_spawn_time = speed/some_fixed_spawn_distance;
+		if (curBeat->offset - remaining_offset <= beat_spawn_time) {
+			float pos = some_fixed_spawn_distance;
+			spawn_beat_circle(dir, pos, speed);
+		}
+		// time_until_next_beat <= elapsed_ms
 		if (curBeat->offset <= remaining_offset) {
-			remaining_offset -= curBeat->offset;
-			beatPos++;
-
-			// TODO jamesliu: replace this "pulsing" with actual desired features
-			// TODO jamesliu: try a max_scale or set_scale instead of compounding
-			// the scaling
-			m_salmon.scale_by(1.3);
+			handle_beat(remaining_offset, curBeat, screen);
 		}
 		else {
 			curBeat->offset -= remaining_offset;
+			//printf("offset: %f\n", curBeat->offset);
 			break;
 		}
 	}
+
+	// Checking player - beatcircle complete overlaps/overshoots
+	auto beatcircle_it = m_beatcircles.begin();
+	BeatCircle bc;
+	vec2 player_pos = m_salmon.get_position();
+	bool bad = false;
+	vec2 mov_dir;
+	vec2 bc_player;
+	while (beatcircle_it != m_beatcircles.end()) {
+		bc = (*beatcircle_it);
+		bad = length(bc.get_position()) <= 10;
+		if (bad) {
+			beatcircle_it = m_beatcircles.erase(beatcircle_it);
+		} else {
+			++beatcircle_it;
+		}
+	}
+	
 
 
 	// Checking Salmon - Turtle collisions
-	for (const auto& turtle : m_turtles)
-	{
-		if (m_salmon.collides_with(turtle))
-		{
-			if (m_salmon.is_alive())
-				Mix_PlayChannel(-1, m_salmon_dead_sound, 0);
-			m_salmon.kill();
-			break;
-		}
-	}
+	// for (const auto& turtle : m_turtles)
+	// {
+	// 	if (m_salmon.collid es_with(turtle))
+	// 	{
+	// 		if (m_salmon.is_alive())
+	// 			Mix_PlayChannel(-1, m_salmon_dead_sound, 0);
+	// 		m_salmon.kill();
+	// 		break;
+	// 	}
+	// }
 
 	// Checking Salmon - Fish collisions
-	auto fish_it = m_fish.begin();
+	//auto fish_it = m_fish.begin();
 	/*
 	while (fish_it != m_fish.end())
 	{
@@ -224,16 +296,17 @@ bool World::update(float elapsed_ms)
 			++fish_it;
 	}
 	*/
-	
+
 	// Updating all entities, making the turtle and fish
 	// faster based on current
 	m_salmon.update(elapsed_ms);
+	float elapsed_modified_ms = elapsed_ms * m_current_speed;
 	for (auto& turtle : m_turtles)
-		turtle.update(elapsed_ms * m_current_speed);
-	for (auto& fish : m_fish)
-		fish.update(elapsed_ms * m_current_speed);
+		turtle.update(elapsed_modified_ms);
 	for (auto& bullet : m_bullets)
-		bullet.update(elapsed_ms * m_current_speed);
+		bullet.update(elapsed_modified_ms);
+	for (auto& beatcircle : m_beatcircles)
+		beatcircle.update(elapsed_modified_ms);
 
 	// Removing out of screen turtles
 	auto turtle_it = m_turtles.begin();
@@ -250,18 +323,18 @@ bool World::update(float elapsed_ms)
 	}
 
 	// Removing out of screen fish
-	fish_it = m_fish.begin();
-	while (fish_it != m_fish.end())
-	{
-		float w = fish_it->get_bounding_box().x / 2;
-		if (fish_it->get_position().x + w < 0.f)
-		{
-			fish_it = m_fish.erase(fish_it);
-			continue;
-		}
+	//fish_it = m_fish.begin();
+	//while (fish_it != m_fish.end())
+	//{
+	//	float w = fish_it->get_bounding_box().x / 2;
+	//	if (fish_it->get_position().x + w < 0.f)
+	//	{
+	//		fish_it = m_fish.erase(fish_it);
+	//		continue;
+	//	}
 
-		++fish_it;
-	}
+	//	++fish_it;
+	//}
 
 	// TODO: remove out of screen bullets
 
@@ -274,7 +347,7 @@ bool World::update(float elapsed_ms)
 			return false;
 
 		Turtle& new_turtle = m_turtles.back();
-	
+
 		// Setting random initial position
 		new_turtle.set_position({ screen.x + 150, 50 + m_dist(m_rng) * (screen.y - 100) });
 
@@ -342,17 +415,18 @@ void World::draw()
 	m_background.draw(projection_2D);
 
 	// Drawing entities
-	/*
+
 	for (auto& turtle : m_turtles)
 		turtle.draw(projection_2D);
-	*/
-	for (auto& fish : m_fish)
-		fish.draw(projection_2D);
 	for (auto& bullet : m_bullets)
 		bullet.draw(projection_2D);
 	
+	for (auto& beatcircle : m_beatcircles)
+		beatcircle.draw(projection_2D);
+	orange_center_beat_circle.draw(projection_2D);
+	blue_center_beat_circle.draw(projection_2D);
 	m_salmon.draw(projection_2D);
-	
+
 	// Presenting
 	glfwSwapBuffers(m_window);
 }
@@ -377,33 +451,40 @@ bool World::spawn_turtle()
 }
 
 // Creates a new fish and if successfull adds it to the list of fish
-bool World::spawn_fish(vec2 position, float angle, bool type)
+bool World::spawn_bullet(vec2 position, float angle,bool bullet_type, bool on_beat)
 {
-	Fish fish;
-	if (fish.init(type))
+	Bullet bullet;
+	if (bullet.init(bullet_type))
 	{
-		fish.set_position(position);
-		fish.set_rotation(angle);
-		fish.m_movement_dir = { (float)cos(angle), (float)-sin(angle) };
-		m_fish.emplace_back(fish);
-		
+		bullet.set_position(position);
+		bullet.set_rotation(angle);
+		if (on_beat) {
+			bullet.set_scale({2,2});
+		}
+		bullet.m_movement_dir = { (float)cos(angle), (float)-sin(angle) };
+		m_bullets.emplace_back(bullet);
+
 		return true;
 	}
 	fprintf(stderr, "Failed to spawn fish");
 	return false;
 }
 
-bool World::spawn_bullet(float angle, vec2 position)
-{
-	Bullet bullet;
-	if (bullet.init(angle, position))
-	{
-		m_bullets.emplace_back(bullet);
+bool World::spawn_beat_circle(int dir, float pos, float speed) {
+	BeatCircle beatcircle;
+	if (beatcircle.init(speed)) {
+		beatcircle.set_dir(dir);
+		float angle = m_salmon.get_rotation();
+		vec2 spawn_pos = -1*pos * beatcircle.m_movement_dir;
+		beatcircle.set_position(spawn_pos);
+		beatcircle.set_scale({1.5,1.5});
+		m_beatcircles.emplace_back(beatcircle);
 		return true;
 	}
-	fprintf(stderr, "Failed to spawn bullet");
+	fprintf(stderr, "Failed to spawn beat circle");
 	return false;
 }
+
 
 // On key callback
 void World::on_key(GLFWwindow*, int key, int, int action, int mod)
@@ -416,14 +497,32 @@ void World::on_key(GLFWwindow*, int key, int, int action, int mod)
 	int w, h;
 	glfwGetFramebufferSize(m_window, &w, &h);
 	vec2 screen = { (float)w, (float)h };
-	
+
 
 	if (action == GLFW_PRESS && key == GLFW_KEY_SPACE) {
-		float player_angle = m_salmon.get_rotation();
+		bool on_beat =false;
+		if (m_beatcircles.size() > 0) {
+			BeatCircle closest = m_beatcircles[0];
+			float on_beat_radius = 20;
+			switch (closest.dir) {
+				case 1:
+				case 3:
+					on_beat_radius = 50;
+					break;
+				case 2:
+				case 4:
+					on_beat_radius = 40;
+					break;
+			}
+			on_beat = length(m_beatcircles[0].get_position()) <= on_beat_radius;
+			m_beatcircles.erase(m_beatcircles.begin());
+		}
+		
+		float player_angle = m_salmon.get_rotation()+1.57;
 		vec2 salmon_pos = m_salmon.get_position();
-		spawn_fish(salmon_pos, player_angle, m_salmon.bullet_type);
+		spawn_bullet(salmon_pos, player_angle, m_salmon.bullet_type, on_beat);
 		m_salmon.bullet_type = !m_salmon.bullet_type;
-		printf("Salmon bullet type %d", m_salmon.bullet_type);
+		
 	}
 
 	if (action == GLFW_PRESS) {
@@ -436,14 +535,14 @@ void World::on_key(GLFWwindow*, int key, int, int action, int mod)
 		case GLFW_KEY_A:
 			m_salmon.add_movement_dir({ -1.f, 0.f });
 			break;
-		case GLFW_KEY_UP:
-		case GLFW_KEY_W:
-			m_salmon.add_movement_dir({ 0.f, -1.f });
-			break;
-		case GLFW_KEY_DOWN:
-		case GLFW_KEY_S:
-			m_salmon.add_movement_dir({ 0.f, 1.f });
-			break;
+		//case GLFW_KEY_UP:
+		//case GLFW_KEY_W:
+		//	m_salmon.add_movement_dir({ 0.f, -1.f });
+		//	break;
+		//case GLFW_KEY_DOWN:
+		//case GLFW_KEY_S:
+		//	m_salmon.add_movement_dir({ 0.f, 1.f });
+		//	break;
 		case GLFW_KEY_LEFT_SHIFT:
 			m_salmon.dash();
 			break;
@@ -470,14 +569,14 @@ void World::on_key(GLFWwindow*, int key, int, int action, int mod)
 		case GLFW_KEY_A:
 			m_salmon.add_movement_dir({ 1.f, 0.f });
 			break;
-		case GLFW_KEY_UP:
-		case GLFW_KEY_W:
-			m_salmon.add_movement_dir({ 0.f, 1.f });
-			break;
-		case GLFW_KEY_DOWN:
-		case GLFW_KEY_S:
-			m_salmon.add_movement_dir({ 0.f, -1.f });
-			break;
+		//case GLFW_KEY_UP:
+		//case GLFW_KEY_W:
+		//	m_salmon.add_movement_dir({ 0.f, 1.f });
+		///	break;
+		//case GLFW_KEY_DOWN:
+		//case GLFW_KEY_S:
+		//	m_salmon.add_movement_dir({ 0.f, -1.f });
+		//	break;
 		}
 	}
 
@@ -487,11 +586,11 @@ void World::on_key(GLFWwindow*, int key, int, int action, int mod)
 	{
 		int w, h;
 		glfwGetWindowSize(m_window, &w, &h);
-		m_salmon.destroy(); 
+		m_salmon.destroy();
 		m_salmon.init();
 		m_background.init();
 		m_turtles.clear();
-		m_fish.clear();
+		m_bullets.clear();
 		m_current_speed = 1.f;
 	}
 
@@ -500,7 +599,7 @@ void World::on_key(GLFWwindow*, int key, int, int action, int mod)
 		m_current_speed -= 0.1f;
 	if (action == GLFW_RELEASE && (mod & GLFW_MOD_SHIFT) && key == GLFW_KEY_PERIOD)
 		m_current_speed += 0.1f;
-	
+
 	m_current_speed = fmax(0.f, m_current_speed);
 }
 
@@ -508,7 +607,7 @@ void World::on_mouse_move(GLFWwindow* window, double xpos, double ypos)
 {
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	// HANDLE SALMON ROTATION HERE
-	// xpos and ypos are relative to the top-left of the window, the salmon's 
+	// xpos and ypos are relative to the top-left of the window, the salmon's
 	// default facing direction is (1, 0)
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 

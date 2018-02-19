@@ -8,6 +8,11 @@
 // stlib
 #include <chrono>
 #include <iostream>
+#include <stdio.h>
+//#include <execinfo.h>
+#include <signal.h>
+#include <stdlib.h>
+//#include <unistd.h>
 
 using Clock = std::chrono::high_resolution_clock;
 
@@ -17,9 +22,13 @@ const int width = 1200;
 const int height = 800;
 const char* title = "Your Title Here";
 
+
+
+
 // Entry point
 int main(int argc, char* argv[])
 {
+	printf("Start of main");
 	// Initializing world (after renderer.init().. sorry)
 	if (!world.init({ (float)width, (float)height }))
 	{
@@ -41,12 +50,12 @@ int main(int argc, char* argv[])
 		auto now = Clock::now();
 		float elapsed_sec = (float)(std::chrono::duration_cast<std::chrono::microseconds>(now - t)).count() / 1000;
 		t = now;
-
+		printf("Updating world");
 		world.update(elapsed_sec);
 		world.draw();
 	}
 
-	world.destroy();
+	world.destroy();    
 
 	return EXIT_SUCCESS;
 }

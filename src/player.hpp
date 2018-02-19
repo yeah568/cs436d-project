@@ -3,7 +3,7 @@
 #include "common.hpp"
 
 class Turtle;
-class Fish;
+class Bullet;
 
 class Player : public Renderable
 {
@@ -25,7 +25,7 @@ public:
 
 	// Collision routines for turtles and fish
 	bool collides_with(const Turtle& turtle);
-	bool collides_with(const Fish& fish);
+	bool collides_with(const Bullet& fish);
 
 	// Returns the current salmon position
 	vec2 get_position()const;
@@ -62,6 +62,8 @@ public:
 	float exploding_timer;
 
 	bool bullet_type;
+
+	vec2 get_scale();
 
 private:
 	float m_light_up_countdown_ms; // Used to keep track for how long the salmon should be lit up

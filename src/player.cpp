@@ -3,7 +3,7 @@
 
 // internal
 #include "turtle.hpp"
-#include "fish.hpp"
+#include "bullet.hpp"
 #include "common.hpp"
 
 // stlib
@@ -11,6 +11,7 @@
 #include <vector>
 #include <string>
 #include <algorithm>
+#include <math.h>
 
 Texture Player::player_texture;
 
@@ -66,15 +67,15 @@ bool Player::init()
 		return false;
 	
 	// Setting initial values
-	bullet_type = true;
 	m_scale.x = -1.f;
 	m_scale.y = 1.f;
 	m_is_alive = true;
 	//m_num_indices = indices.size();
-	m_position = { 50.f, 100.f };
+	m_position = { 600.f, 700.f };
 	m_rotation = 0.f;
 	m_light_up_countdown_ms = -1.f;
 	m_movement_dir = { 0.f, 0.f };
+	bullet_type = false;
 
 	return true;
 }
@@ -149,7 +150,7 @@ void Player::update(float ms)
 		float delta_x = m_mouse.x - m_position.x;
 		float delta_y = m_position.y - m_mouse.y;
 		float angle = (float)atan2(delta_y, delta_x);
-		set_rotation(angle);
+		set_rotation(3.14/2);
 	}
 	else
 	{
@@ -166,7 +167,7 @@ void Player::update(float ms)
 	}
 
 	if (abs(m_scale.y * 0.95) < 1.f) {
-		m_scale.y = -1.f;
+		m_scale.y = 1.f;
 	}
 	else {
 		m_scale.y *= 0.95;
@@ -259,7 +260,7 @@ bool Player::collides_with(const Turtle& turtle)
 	return false;
 }
 
-bool Player::collides_with(const Fish& fish)
+bool Player::collides_with(const Bullet& fish)
 {
 	float dx = m_position.x - fish.get_position().x;
 	float dy = m_position.y - fish.get_position().y;
@@ -280,7 +281,7 @@ vec2 Player::get_position()const
 
 float Player::get_rotation()const
 {
-	return m_rotation;
+	return m_rotation - 1.57;
 }
 
 void Player::move(vec2 off)
@@ -296,6 +297,10 @@ void Player::set_rotation(float radians)
 void Player::set_scale(vec2 scale)
 {
 	m_scale = scale;
+}
+
+vec2 Player::get_scale() {
+	return m_scale;
 }
 
 void Player::set_mouse(float x, float y)

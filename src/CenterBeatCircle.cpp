@@ -1,34 +1,37 @@
 // Header
-#include "bullet.hpp"
-
+#include "CenterBeatCircle.hpp"
 #include <cmath>
 
-Texture Bullet::bullet_texture;
-Texture Bullet::bullet_texture2;
+Player* CenterBeatCircle::player;
 
-bool Bullet::init(bool type)
+bool CenterBeatCircle::init(bool type)
 {
 	// Load shared texture
-	if (!bullet_texture.is_valid())
-	{
-		if (!bullet_texture.load_from_file(textures_path("bullet_1.png")))
-		{
-			fprintf(stderr, "Failed to load turtle texture!");
-			return false;
+	if (!center_beat_circle_texture.is_valid())
+	{	if (type) {
+			if (!center_beat_circle_texture.load_from_file(textures_path("orange_moving_beat.png")))
+			{
+				fprintf(stderr, "Failed to load turtle texture!");
+				return false;
+			}
+		} else {
+			if (!center_beat_circle_texture.load_from_file(textures_path("blue_moving_beat.png")))
+			{
+				fprintf(stderr, "Failed to load turtle texture!");
+				return false;
+			}
 		}
 	}
-	if (!bullet_texture2.is_valid())
-	{
-		if (!bullet_texture2.load_from_file(textures_path("bullet_2.png")))
-		{
-			fprintf(stderr, "Failed to load turtle texture!");
-			return false;
-		}
+	if (!type) {
+		m_scale.x = 4.0f;
+		m_scale.y = 2.0;
+	} else {
+		m_scale.x = 3.0f;
+		m_scale.y = 1.0f;
 	}
-
 	// The position corresponds to the center of the texture
-	float wr = bullet_texture.width * 0.5f;
-	float hr = bullet_texture.height * 0.5f;
+	float wr = center_beat_circle_texture.width * 0.5f;
+	float hr = center_beat_circle_texture.height * 0.5f;
 
 	TexturedVertex vertices[4];
 	vertices[0].position = { -wr, +hr, -0.01f };
@@ -65,13 +68,11 @@ bool Bullet::init(bool type)
 	if (!effect.load_from_file(shader_path("textured.vs.glsl"), shader_path("textured.fs.glsl")))
 		return false;
 
-	// Setting initial values, scale is negative to make it face the opposite way
+	// Setting initial values,
 	// 1.0 would be as big as the original texture
-	m_scale.x = -1.1f;
-	m_scale.y = 1.1f;
 	m_position.x = -50;
 	m_position.y = 50;
-	bullet_type = type;
+	beat_circle_type = type;
 
 
 	return true;
@@ -79,7 +80,7 @@ bool Bullet::init(bool type)
 
 // Call if init() was successful
 // Releases all graphics resources
-void Bullet::destroy()
+void CenterBeatCircle::destroy()
 {
 	glDeleteBuffers(1, &mesh.vbo);
 	glDeleteBuffers(1, &mesh.ibo);
@@ -90,29 +91,33 @@ void Bullet::destroy()
 	glDeleteShader(effect.program);
 }
 
-void Bullet::update(float ms)
+void CenterBeatCircle::update(float ms)
 {
 	// Move fish along -X based on how much time has passed, this is to (partially) avoid
 	// having entities move at different speed based on the machine.
-	float BULLET_SPEED;
-	if (m_scale.x > 1.1)
-		BULLET_SPEED = 1600.f;
-	else
-		BULLET_SPEED = 400.f;
-	float step = BULLET_SPEED * (ms / 1000);
+	// float step = SPEED * (ms / 1);
 	
-	m_position.x += m_movement_dir.x*step;
-	m_position.y += m_movement_dir.y*step;
+	// m_position.x += m_movement_dir.x*step;
+	// m_position.y += m_movement_dir.y*step;
+	// m_scale.x -= ms/1000;
+	// m_scale.y -= ms/1000;
 }
 
-void Bullet::draw(const mat3& projection)
+void CenterBeatCircle::set_scale(vec2 scale) {
+	m_scale = scale;
+}
+
+void CenterBeatCircle::draw(const mat3& projection)
 {
+	printf("Started Drawing\n");
 	// Transformation code, see Rendering and Transformation in the template specification for more info
 	// Incrementally updates transformation matrix, thus ORDER IS IMPORTANT
+	// vec2 rotated = rotate(m_position, -player->get_rotation());
+	// vec2 final_pos = rotated+player->get_position();
+	//printf("BC.x=%f,BC.y=%f\n", final_pos.x, final_pos.y);
 	transform_begin();
-	transform_translate(m_position);
-	transform_rotate(-m_rotation);
-	transform_scale(m_scale);
+	transform_translate(player->get_position());
+	transform_scale(m_scale+player->get_scale());
 	transform_end();
 
 	// Setting shaders
@@ -142,12 +147,7 @@ void Bullet::draw(const mat3& projection)
 
 	// Enabling and binding texture to slot 0
 	glActiveTexture(GL_TEXTURE0);
-	if (bullet_type) {
-		glBindTexture(GL_TEXTURE_2D, bullet_texture.id);
-	}
-	else {
-		glBindTexture(GL_TEXTURE_2D, bullet_texture2.id);
-	}
+	glBindTexture(GL_TEXTURE_2D, center_beat_circle_texture.id);
 
 	// Setting uniform values to the currently bound program
 	glUniformMatrix3fv(transform_uloc, 1, GL_FALSE, (float*)&transform);
@@ -157,31 +157,28 @@ void Bullet::draw(const mat3& projection)
 
 	// Drawing!
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, nullptr);
+	printf("Finished Drawing\n");
 }
 
-vec2 Bullet::get_position()const
+vec2 CenterBeatCircle::get_position()const
 {
 	return m_position;
 }
 
-void Bullet::set_position(vec2 position)
+void CenterBeatCircle::set_position(vec2 position)
 {
+	printf("BC.x=%f,BC.y=%f\n", position.x, position.y);
 	m_position = position;
 }
 
-void Bullet::set_rotation(float angle)
+void CenterBeatCircle::set_rotation(float angle)
 {
 	m_rotation = angle;
 }
 
-void Bullet::set_scale(vec2 scale) {
-	printf("scale\n");
-	m_scale = 5*scale;
-}
-
 // Returns the local bounding coordinates scaled by the current size of the fish 
-vec2 Bullet::get_bounding_box()const
+vec2 CenterBeatCircle::get_bounding_box()const
 {
 	// fabs is to avoid negative scale due to the facing direction
-	return { std::fabs(m_scale.x) * bullet_texture.width, std::fabs(m_scale.y) * bullet_texture.height };
+	return { std::fabs(m_scale.x) * center_beat_circle_texture.width, std::fabs(m_scale.y) * center_beat_circle_texture.height };
 }
