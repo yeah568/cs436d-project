@@ -92,7 +92,7 @@ vec2 operator*(const float lhs, const vec2& rhs) {
 	return {rhs.x * lhs, rhs.y * lhs};
 }
 vec2 rotate(const vec2& vector, const float angle) {
-	return {vector.x*cos(angle) - vector.y*sin(angle), vector.x*sin(angle) + vector.y*cos(angle)};
+	return {(float) vector.x*cos(angle) - vector.y*sin(angle), (float) vector.x*sin(angle) + vector.y*cos(angle)};
 }
 vec2 normalize(vec2 v)
 {
