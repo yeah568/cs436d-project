@@ -15,7 +15,7 @@ endif
 
 BIN=a1
 
-OBJ=$(BIN).o common.o fish.o player.o turtle.o world.o bullet.o background.o OsuParser.o
+OBJ=$(BIN).o common.o fish.o player.o turtle.o world.o bullet.o background.o OsuParser.o BeatList.o
 
 SUBDIRS = src/utils
 

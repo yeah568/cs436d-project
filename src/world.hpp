@@ -5,6 +5,7 @@
 #include "player.hpp"
 #include "turtle.hpp"
 #include "fish.hpp"
+#include "BeatList.hpp"
 #include "background.hpp"
 #include "bullet.hpp"
 
@@ -68,6 +69,9 @@ private:
 
 	// Number of fish eaten by the salmon, displayed in the window title
 	unsigned int m_points;
+
+	BeatList* beatlist;
+	int beatPos = 0;
 
 	// Game entities
 	Player m_salmon;

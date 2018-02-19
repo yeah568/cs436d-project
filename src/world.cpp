@@ -80,6 +80,12 @@ bool World::init(vec2 screen)
 	glfwSetCursorPosCallback(m_window, cursor_pos_redirect);
 
 	//-------------------------------------------------------------------------
+	OsuParser* parser = new OsuParser(song_path("598830 Shawn Wasabi - Marble Soda/Shawn Wasabi - Marble Soda (Exa) [Insane].osu"));
+	OsuBeatmap beatmap = parser->parse();
+
+	beatlist = new BeatList(beatmap);
+
+	//-------------------------------------------------------------------------
 	// Loading music and sounds
 	if (SDL_Init(SDL_INIT_AUDIO) < 0)
 	{
@@ -87,13 +93,29 @@ bool World::init(vec2 screen)
 		return false;
 	}
 
+	//int result = 0;
+	//int flags = MIX_INIT_MP3;
+
+	//if (flags != (result = Mix_Init(flags))) {
+	//	printf("Could not initialize mixer (result: %d).\n", result);
+	//	printf("Mix_Init: %s\n", Mix_GetError());
+	//	return false;
+	//}
+
 	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) == -1)
 	{
 		fprintf(stderr, "Failed to open audio device");
 		return false;
 	}
 
-	m_background_music = Mix_LoadMUS(audio_path("music.wav"));
+	// TODO jamesliu: load music in from filename field from beatmap
+	m_background_music = Mix_LoadMUS(song_path("598830 Shawn Wasabi - Marble Soda/Marble Soda.wav"));
+
+	if (!m_background_music) {
+		printf("Mix_LoadMUS(\"music.mp3\"): %s\n", Mix_GetError());
+		// this might be a critical error...
+	}
+
 	m_salmon_dead_sound = Mix_LoadWAV(audio_path("salmon_dead.wav"));
 	m_salmon_eat_sound = Mix_LoadWAV(audio_path("salmon_eat.wav"));
 
@@ -102,18 +124,12 @@ bool World::init(vec2 screen)
 		fprintf(stderr, "Failed to load sounds, make sure the data directory is present");
 		return false;
 	}
-
-	// Playing background music undefinitely
-	Mix_PlayMusic(m_background_music, -1);
 	
 	fprintf(stderr, "Loaded music");
 
 	m_current_speed = 1.f;
 
 	m_background.init();
-	
-	OsuParser* parser = new OsuParser(song_path("598830 Shawn Wasabi - Marble Soda/Shawn Wasabi - Marble Soda (Stingy) [Oni Zero].osu"));
-	parser->parse();
 
 	return m_salmon.init();
 }
@@ -146,9 +162,39 @@ void World::destroy()
 // Update our game world
 bool World::update(float elapsed_ms)
 {
+	if (!Mix_PlayingMusic()) {
+		Mix_PlayMusic(m_background_music, 1);
+	}
+	
+	float remaining_offset = elapsed_ms;
+
 	int w, h;
         glfwGetFramebufferSize(m_window, &w, &h);
 	vec2 screen = { (float)w, (float)h };
+
+	Beat* curBeat;
+	// In each update call, iterate through all beat objects and spawn all things
+	// needed up to that point.
+	while (beatPos < beatlist->beats.size()) {
+		curBeat = &beatlist->beats.at(beatPos);
+
+		// if the time elapsed is less than the delta for the next beat, iterate
+		// and subtract the beat offset amount from the remaining_offset.
+		if (curBeat->offset <= remaining_offset) {
+			remaining_offset -= curBeat->offset;
+			beatPos++;
+
+			// TODO jamesliu: replace this "pulsing" with actual desired features
+			// TODO jamesliu: try a max_scale or set_scale instead of compounding
+			// the scaling
+			m_salmon.scale_by(1.3);
+		}
+		else {
+			curBeat->offset -= remaining_offset;
+			break;
+		}
+	}
+
 
 	// Checking Salmon - Turtle collisions
 	for (const auto& turtle : m_turtles)

@@ -510,10 +510,12 @@
     <ClCompile Include="$(ProjectDir)..\src\turtle.cpp" />
     <ClCompile Include="$(ProjectDir)..\src\OsuParser.cpp" />
     <ClCompile Include="$(ProjectDir)..\src\utils\StringUtils.cpp" />
+    <ClCompile Include="..\src\BeatList.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(ProjectDir)..\src\OsuParser.hpp" />
     <ClInclude Include="$(ProjectDir)..\src\utils\StringUtils.hpp" />
+    <ClInclude Include="..\src\BeatList.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(ProjectDir)..\src\background.hpp" />
