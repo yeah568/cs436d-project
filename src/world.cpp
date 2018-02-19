@@ -203,7 +203,10 @@ bool World::update(float elapsed_ms)
 	float remaining_offset = elapsed_ms;
 
 	int w, h;
-        glfwGetFramebufferSize(m_window, &w, &h);
+    glfwGetFramebufferSize(m_window, &w, &h);
+	int screen_scale = getWindowRatio();
+	w = w / screen_scale;
+	h = h/screen_scale;
 	vec2 screen = { (float)w, (float)h };
 
 	Beat* curBeat;
@@ -382,6 +385,9 @@ void World::draw()
 	// Getting size of window
 	int w, h;
         glfwGetFramebufferSize(m_window, &w, &h);
+		int screen_scale = getWindowRatio();
+		w = w / screen_scale;
+		h = h / screen_scale;
 
 
 	// Updating window title with points
@@ -496,6 +502,9 @@ void World::on_key(GLFWwindow*, int key, int, int action, int mod)
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	int w, h;
 	glfwGetFramebufferSize(m_window, &w, &h);
+	int screen_scale = getWindowRatio();
+	w = w / screen_scale;
+	h = h / screen_scale;
 	vec2 screen = { (float)w, (float)h };
 
 
@@ -613,4 +622,14 @@ void World::on_mouse_move(GLFWwindow* window, double xpos, double ypos)
 
 	m_salmon.set_mouse((float)xpos, (float)ypos);
 
+}
+
+float World::getWindowRatio()
+{
+	int w, h;
+	glfwGetFramebufferSize(m_window, &w, &h);
+	int w2, h2;
+	glfwGetWindowSize(m_window, &w2, &h2);
+	float scale = ((float)w2 / (float)w + (float)h2 / (float)h) / 2.0;
+	return scale;
 }

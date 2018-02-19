@@ -104,6 +104,8 @@ float length(vec2 v) {
 	return sqrtf(v.x * v.x + v.y * v.y);
 }
 
+
+
 Texture::Texture()
 {
 
