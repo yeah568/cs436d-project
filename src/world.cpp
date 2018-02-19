@@ -30,6 +30,7 @@ World::World() :
 	m_points(0),
 	//m_next_turtle_spawn(0.f),
 	m_next_fish_spawn(0.f)
+
 {
 	// Seeding rng with random device
 	m_rng = std::default_random_engine(std::random_device()());
@@ -43,6 +44,7 @@ World::~World()
 // World initialization
 bool World::init(vec2 screen)
 {
+	printf("End of world");
 	//-------------------------------------------------------------------------
 	// GLFW / OGL Initialization
 	// Core Opengl 3.
@@ -81,7 +83,7 @@ bool World::init(vec2 screen)
 	glfwSetCursorPosCallback(m_window, cursor_pos_redirect);
 
 	//-------------------------------------------------------------------------
-	OsuParser* parser = new OsuParser(song_path("598830 Shawn Wasabi - Marble Soda/Shawn Wasabi - Marble Soda (Exa) [Insane].osu"));
+	OsuParser* parser = new OsuParser(song_path("598830 Shawn Wasabi - Marble Soda/Shawn Wasabi - Marble Soda (Exa) [Normal].osu"));
 	OsuBeatmap beatmap = parser->parse();
 
 	beatlist = new BeatList(beatmap);
@@ -138,8 +140,10 @@ bool World::init(vec2 screen)
 		blue_center_beat_circle.init(false);
 		orange_center_beat_circle.init(true);
 		CenterBeatCircle::player = &m_salmon;
+		printf("End of world");
 		return true;
 	}
+	printf("End of world");
 	return false;
 }
 
@@ -158,8 +162,6 @@ void World::destroy()
 	m_salmon.destroy();
 	for (auto& turtle : m_turtles)
 		turtle.destroy();
-	for (auto& fish : m_fish)
-		fish.destroy();
 	for (auto& bullet : m_bullets)
 		bullet.destroy();
 	for (auto& beatcircle : m_beatcircles)
@@ -167,8 +169,8 @@ void World::destroy()
 	orange_center_beat_circle.destroy();
 	blue_center_beat_circle.destroy();
 	m_turtles.clear();
-	m_fish.clear();
 	m_bullets.clear();
+	
 	m_beatcircles.clear();
 	glfwDestroyWindow(m_window);
 }
@@ -269,7 +271,7 @@ bool World::update(float elapsed_ms)
 	// Checking Salmon - Turtle collisions
 	// for (const auto& turtle : m_turtles)
 	// {
-	// 	if (m_salmon.collides_with(turtle))
+	// 	if (m_salmon.collid es_with(turtle))
 	// 	{
 	// 		if (m_salmon.is_alive())
 	// 			Mix_PlayChannel(-1, m_salmon_dead_sound, 0);
@@ -279,7 +281,7 @@ bool World::update(float elapsed_ms)
 	// }
 
 	// Checking Salmon - Fish collisions
-	auto fish_it = m_fish.begin();
+	//auto fish_it = m_fish.begin();
 	/*
 	while (fish_it != m_fish.end())
 	{
@@ -301,8 +303,6 @@ bool World::update(float elapsed_ms)
 	float elapsed_modified_ms = elapsed_ms * m_current_speed;
 	for (auto& turtle : m_turtles)
 		turtle.update(elapsed_modified_ms);
-	for (auto& fish : m_fish)
-		fish.update(elapsed_modified_ms);
 	for (auto& bullet : m_bullets)
 		bullet.update(elapsed_modified_ms);
 	for (auto& beatcircle : m_beatcircles)
@@ -418,10 +418,9 @@ void World::draw()
 
 	for (auto& turtle : m_turtles)
 		turtle.draw(projection_2D);
-	for (auto& fish : m_fish)
-		fish.draw(projection_2D);
 	for (auto& bullet : m_bullets)
 		bullet.draw(projection_2D);
+	
 	for (auto& beatcircle : m_beatcircles)
 		beatcircle.draw(projection_2D);
 	orange_center_beat_circle.draw(projection_2D);
@@ -452,18 +451,18 @@ bool World::spawn_turtle()
 }
 
 // Creates a new fish and if successfull adds it to the list of fish
-bool World::spawn_fish(vec2 position, float angle,bool bullet_type, bool on_beat)
+bool World::spawn_bullet(vec2 position, float angle,bool bullet_type, bool on_beat)
 {
-	Fish fish;
-	if (fish.init(bullet_type))
+	Bullet bullet;
+	if (bullet.init(bullet_type))
 	{
-		fish.set_position(position);
-		fish.set_rotation(angle);
+		bullet.set_position(position);
+		bullet.set_rotation(angle);
 		if (on_beat) {
-			fish.set_scale({2,2});
+			bullet.set_scale({2,2});
 		}
-		fish.m_movement_dir = { (float)cos(angle), (float)-sin(angle) };
-		m_fish.emplace_back(fish);
+		bullet.m_movement_dir = { (float)cos(angle), (float)-sin(angle) };
+		m_bullets.emplace_back(bullet);
 
 		return true;
 	}
@@ -486,17 +485,6 @@ bool World::spawn_beat_circle(int dir, float pos, float speed) {
 	return false;
 }
 
-bool World::spawn_bullet(float angle, vec2 position)
-{
-	Bullet bullet;
-	if (bullet.init(angle, position))
-	{
-		m_bullets.emplace_back(bullet);
-		return true;
-	}
-	fprintf(stderr, "Failed to spawn bullet");
-	return false;
-}
 
 // On key callback
 void World::on_key(GLFWwindow*, int key, int, int action, int mod)
@@ -532,7 +520,7 @@ void World::on_key(GLFWwindow*, int key, int, int action, int mod)
 		
 		float player_angle = m_salmon.get_rotation()+1.57;
 		vec2 salmon_pos = m_salmon.get_position();
-		spawn_fish(salmon_pos, player_angle, m_salmon.bullet_type, on_beat);
+		spawn_bullet(salmon_pos, player_angle, m_salmon.bullet_type, on_beat);
 		m_salmon.bullet_type = !m_salmon.bullet_type;
 		
 	}
@@ -602,7 +590,7 @@ void World::on_key(GLFWwindow*, int key, int, int action, int mod)
 		m_salmon.init();
 		m_background.init();
 		m_turtles.clear();
-		m_fish.clear();
+		m_bullets.clear();
 		m_current_speed = 1.f;
 	}
 
