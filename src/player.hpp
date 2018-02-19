@@ -57,9 +57,9 @@ public:
 
 	void add_movement_dir(vec2 dir);
 
-	float exploding_timer;
-
 	void scale_by(float scale);
+	
+	float exploding_timer;
 
 	bool bullet_type;
 

@@ -7,6 +7,7 @@
 #include "common.hpp"
 
 // stlib
+#include <math.h>
 #include <vector>
 #include <string>
 #include <algorithm>
