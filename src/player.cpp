@@ -3,7 +3,7 @@
 
 // internal
 #include "turtle.hpp"
-#include "fish.hpp"
+#include "bullet.hpp"
 #include "common.hpp"
 
 // stlib
@@ -259,7 +259,7 @@ bool Player::collides_with(const Turtle& turtle)
 	return false;
 }
 
-bool Player::collides_with(const Fish& fish)
+bool Player::collides_with(const Bullet& fish)
 {
 	float dx = m_position.x - fish.get_position().x;
 	float dy = m_position.y - fish.get_position().y;
