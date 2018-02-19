@@ -204,7 +204,7 @@ bool World::update(float elapsed_ms)
 
 	int w, h;
     glfwGetFramebufferSize(m_window, &w, &h);
-	int screen_scale = getWindowRatio();
+	float screen_scale = getWindowRatio();
 	w = w / screen_scale;
 	h = h/screen_scale;
 	vec2 screen = { (float)w, (float)h };
@@ -385,7 +385,7 @@ void World::draw()
 	// Getting size of window
 	int w, h;
         glfwGetFramebufferSize(m_window, &w, &h);
-		int screen_scale = getWindowRatio();
+		float screen_scale = getWindowRatio();
 		w = w / screen_scale;
 		h = h / screen_scale;
 
@@ -502,7 +502,7 @@ void World::on_key(GLFWwindow*, int key, int, int action, int mod)
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	int w, h;
 	glfwGetFramebufferSize(m_window, &w, &h);
-	int screen_scale = getWindowRatio();
+	float screen_scale = getWindowRatio();
 	w = w / screen_scale;
 	h = h / screen_scale;
 	vec2 screen = { (float)w, (float)h };
@@ -631,5 +631,5 @@ float World::getWindowRatio()
 	int w2, h2;
 	glfwGetWindowSize(m_window, &w2, &h2);
 	float scale = ((float)w2 / (float)w + (float)h2 / (float)h) / 2.0;
-	return scale;
+	return 1.0f/scale;
 }
