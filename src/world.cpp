@@ -623,13 +623,3 @@ void World::on_mouse_move(GLFWwindow* window, double xpos, double ypos)
 	m_salmon.set_mouse((float)xpos, (float)ypos);
 
 }
-
-float World::getWindowRatio()
-{
-	int w, h;
-	glfwGetFramebufferSize(m_window, &w, &h);
-	int w2, h2;
-	glfwGetWindowSize(m_window, &w2, &h2);
-	float scale = ((float)w2 / (float)w + (float)h2 / (float)h) / 2.0;
-	return 1.0f/scale;
-}
