@@ -30,7 +30,7 @@
 class Level
 {
 	static Texture background_texture;
-	static vec2 screen;
+	
 	static CenterBeatCircle blue_center_beat_circle;
 	static CenterBeatCircle orange_center_beat_circle;
 	static Player m_player;
@@ -40,7 +40,7 @@ class Level
 	static std::uniform_real_distribution<float> m_dist; // default 0..1
 
 public:
-	Level();
+	Level(int width, int height);
 	~Level();
 
 	// Creates a window, sets up events and begins the game
@@ -79,12 +79,11 @@ private:
 
 	BeatList* beatlist;
 	int beatPos = 0;
-
+	GLFWwindow* window;
 	// Game entities
-	std::vector<Turtle> m_turtles;
 	std::vector<Bullet> m_bullets;
 	Background m_background;
-
+	vec2 screen;
 	std::vector<BeatCircle> m_beatcircles;
 
 	float m_current_speed;
@@ -92,7 +91,9 @@ private:
 	Mix_Music* m_background_music;
 	Mix_Chunk* m_player_dead_sound;
 	Mix_Chunk* m_player_eat_sound;
-
+	
 	std::vector<Enemy> enemies;
 	Boss boss;
 };
+
+
