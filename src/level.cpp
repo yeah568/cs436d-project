@@ -335,7 +335,7 @@ bool Level::spawn_beat_circle(int dir, float pos, float speed) {
 
 
 // On key callback
-void Level::on_key(int key, int, int action, int mod)
+void Level::on_key(int key, int action, int mod)
 {
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	// HANDLE SALMON MOVEMENT HERE

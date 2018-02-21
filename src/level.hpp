@@ -60,6 +60,10 @@ public:
 	// Should the game be over ?
 	bool is_over()const;
 
+	// !!! INPUT CALLBACK FUNCTIONS
+	void on_key(int key, int action, int mod);
+	void on_mouse_move(double xpos, double ypos);
+
 private:
 	// Generates a new turtle
 	bool spawn_turtle();
@@ -68,10 +72,6 @@ private:
 	bool spawn_bullet(vec2 position, float angle, bool bullet_type, bool on_beat);
 
 	bool spawn_beat_circle(int dir, float pos, float speed);
-
-	// !!! INPUT CALLBACK FUNCTIONS
-	void on_key(int key, int, int action, int mod);
-	void on_mouse_move(double xpos, double ypos);
 	
 	void handle_beat(float remaining_offset, Beat* curBeat, vec2 screen);
 
