@@ -511,6 +511,8 @@
     <ClCompile Include="..\src\levelList.cpp" />
     <ClCompile Include="..\src\player.cpp" />
     <ClCompile Include="..\src\bullet.cpp" />
+    <ClCompile Include="..\src\enemy.cpp" />
+    <ClCompile Include="..\src\boss.cpp" />
     <ClCompile Include="$(ProjectDir)..\src\turtle.cpp" />
     <ClCompile Include="$(ProjectDir)..\src\OsuParser.cpp" />
     <ClCompile Include="$(ProjectDir)..\src\utils\StringUtils.cpp" />

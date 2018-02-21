@@ -12,10 +12,6 @@
 // Same as static in c, local to compilation unit
 namespace
 {
-	const size_t MAX_TURTLES = 15;
-	const size_t MAX_FISH = 5;
-	const size_t TURTLE_DELAY_MS = 2000;
-	const size_t FISH_DELAY_MS = 5000;
 
 	namespace
 	{
@@ -26,24 +22,17 @@ namespace
 	}
 }
 
-World::World() :
-	m_points(0),
-	//m_next_turtle_spawn(0.f),
-	m_next_fish_spawn(0.f)
+World::World()
 {
 	// Seeding rng with random device
 	m_rng = std::default_random_engine(std::random_device()());
 }
 
-World::~World()
-{
-
-}
+World::~World(){}
 
 // World initialization
 bool World::init(vec2 screen)
 {
-	printf("End of world");
 	//-------------------------------------------------------------------------
 	// GLFW / OGL Initialization
 	// Core Opengl 3.
@@ -62,7 +51,7 @@ bool World::init(vec2 screen)
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
 	glfwWindowHint(GLFW_RESIZABLE, 0);
-	m_window = glfwCreateWindow((int)screen.x, (int)screen.y, "A1 Assignment", nullptr, nullptr);
+	m_window = glfwCreateWindow((int)screen.x, (int)screen.y, "BeatCoin", nullptr, nullptr);
 	if (m_window == nullptr)
 		return false;
 	
@@ -93,14 +82,9 @@ void World::destroy()
 	glfwDestroyWindow(m_window);
 }
 
-
-
-
 // Update our game world
 bool World::update(float elapsed_ms)
-{
-
-	
+{	
 	return true;
 }
 
@@ -113,12 +97,14 @@ void World::draw()
 
 	// Getting size of window
 	int w, h;
-        glfwGetFramebufferSize(m_window, &w, &h);
+    glfwGetFramebufferSize(m_window, &w, &h);
 
 
 	// Updating window title with points
 	std::stringstream title_ss;
-	title_ss << "Points: " << m_points;
+	
+	// TODO: Fix
+	//title_ss << "Points: " << m_points;
 	glfwSetWindowTitle(m_window, title_ss.str().c_str());
 
 	// Clearing backbuffer
@@ -129,8 +115,21 @@ void World::draw()
 	glClearDepth(1.f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	
-	
+	// Fake projection matrix, scales with respect to window coordinates
+	// PS: 1.f / w in [1][1] is correct.. do you know why ? (:
+	float left = 0.f;// *-0.5;
+	float top = 0.f;// (float)h * -0.5;
+	float right = (float)w;// *0.5;
+	float bottom = (float)h;// *0.5;
+
+	float sx = 2.f / (right - left);
+	float sy = 2.f / (top - bottom);
+	float tx = -(right + left) / (right - left);
+	float ty = -(top + bottom) / (top - bottom);
+	mat3 projection_2D{ { sx, 0.f, 0.f },{ 0.f, sy, 0.f },{ tx, ty, 1.f } };
+
+	// Presenting
+	glfwSwapBuffers(m_window);
 }
 
 // Should the game be over ?
@@ -138,12 +137,6 @@ bool World::is_over()const
 {
 	return glfwWindowShouldClose(m_window);
 }
-
-
-
-
-
-
 
 // On key callback
 void World::on_key(GLFWwindow*, int key, int, int action, int mod)
@@ -156,9 +149,6 @@ void World::on_key(GLFWwindow*, int key, int, int action, int mod)
 	int w, h;
 	glfwGetFramebufferSize(m_window, &w, &h);
 	vec2 screen = { (float)w, (float)h };
-
-
-	
 }
 
 void World::on_mouse_move(GLFWwindow* window, double xpos, double ypos)
@@ -169,7 +159,7 @@ void World::on_mouse_move(GLFWwindow* window, double xpos, double ypos)
 	// default facing direction is (1, 0)
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-	m_salmon.set_mouse((float)xpos, (float)ypos);
+	//m_salmon.set_mouse((float)xpos, (float)ypos);
 
 }
 
