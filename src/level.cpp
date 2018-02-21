@@ -10,7 +10,7 @@
 #include <sstream>
 
 Texture Level::background_texture;
-vec2 Level::screen;
+
 CenterBeatCircle Level::blue_center_beat_circle;
 CenterBeatCircle Level::orange_center_beat_circle;
 Player Level::m_player;
@@ -32,8 +32,10 @@ namespace
 	}
 }
 
-Level::Level() {
-}
+Level::Level(int width, int height)  {
+	screen.x = width;
+	screen.y = height;
+	}
 
 Level::~Level()
 {
@@ -49,7 +51,6 @@ bool Level::init()
 	OsuBeatmap beatmap = parser->parse();
 
 	beatlist = new BeatList(beatmap);
-
 	//-------------------------------------------------------------------------
 	// Loading music and sounds
 	if (SDL_Init(SDL_INIT_AUDIO) < 0)
@@ -113,15 +114,14 @@ void Level::destroy()
 	Mix_CloseAudio();
 
 	m_player.destroy();
-	for (auto& turtle : m_turtles)
-		turtle.destroy();
+	
 	for (auto& bullet : m_bullets)
 		bullet.destroy();
 	for (auto& beatcircle : m_beatcircles)
 		beatcircle.destroy();
 	orange_center_beat_circle.destroy();
 	blue_center_beat_circle.destroy();
-	m_turtles.clear();
+	
 	m_bullets.clear();
 
 	m_beatcircles.clear();
@@ -219,26 +219,13 @@ bool Level::update(float elapsed_ms)
 	// faster based on current
 	m_player.update(elapsed_ms);
 	float elapsed_modified_ms = elapsed_ms * m_current_speed;
-	for (auto& turtle : m_turtles)
-		turtle.update(elapsed_modified_ms);
+	
 	for (auto& bullet : m_bullets)
 		bullet.update(elapsed_modified_ms);
 	for (auto& beatcircle : m_beatcircles)
 		beatcircle.update(elapsed_modified_ms);
 
 	// Removing out of screen turtles
-	auto turtle_it = m_turtles.begin();
-	while (turtle_it != m_turtles.end())
-	{
-		float w = turtle_it->get_bounding_box().x / 2;
-		if (turtle_it->get_position().x + w < 0.f)
-		{
-			turtle_it = m_turtles.erase(turtle_it);
-			continue;
-		}
-
-		++turtle_it;
-	}
 	return true;
 }
 
@@ -263,14 +250,11 @@ void Level::draw()
 	m_background.set_position({ (float)w / 2, (float)h / 2 });
 
 	m_background.draw(projection_2D);
-
+	printf("Drew Background");
 	// Drawing entities
 
-	for (auto& turtle : m_turtles)
-		turtle.draw(projection_2D);
 	for (auto& bullet : m_bullets)
 		bullet.draw(projection_2D);
-
 	for (auto& beatcircle : m_beatcircles)
 		beatcircle.draw(projection_2D);
 	orange_center_beat_circle.draw(projection_2D);
@@ -286,17 +270,7 @@ bool Level::is_over()const
 }
 
 // Creates a new turtle and if successfull adds it to the list of turtles
-bool Level::spawn_turtle()
-{
-	Turtle turtle;
-	if (turtle.init())
-	{
-		m_turtles.emplace_back(turtle);
-		return true;
-	}
-	fprintf(stderr, "Failed to spawn turtle");
-	return false;
-}
+
 
 // Creates a new fish and if successfull adds it to the list of fish
 bool Level::spawn_bullet(vec2 position, float angle, bool bullet_type, bool on_beat)
@@ -432,7 +406,7 @@ void Level::on_key(int key, int action, int mod)
 		m_player.destroy();
 		m_player.init();
 		m_background.init();
-		m_turtles.clear();
+		
 		m_bullets.clear();
 		m_current_speed = 1.f;
 	}

@@ -73,7 +73,7 @@ bool World::init(vec2 screen)
 	glfwSetCursorPosCallback(m_window, cursor_pos_redirect);
 
 	//return levelList[levelCounter].init
-	current_level = new Level();
+	current_level = new Level(screen.x, screen.y);
 	return current_level->init();
 }
 
