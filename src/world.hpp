@@ -9,6 +9,7 @@
 #include "BeatList.hpp"
 #include "BeatCircle.hpp"
 #include "CenterBeatCircle.hpp"
+#include "level.hpp"
 
 // stlib
 #include <vector>
@@ -29,7 +30,6 @@
 // deferred to the relative update() methods
 class World
 {
-	static Texture background_texture;
 
 public:
 	World();
@@ -59,7 +59,9 @@ private:
   void load_textures();
 
 private:
-	// Window handle
+	Level* current_level;
+
+	// Window hjandle
 	GLFWwindow* m_window;
   	std::unordered_map<std::string, Texture*> m_textures;
 
