@@ -12,8 +12,6 @@
 
 // stlib
 #include <vector>
-#include <string>
-#include <unordered_map>
 #include <random>
 
 #define SDL_MAIN_HANDLED
@@ -27,14 +25,14 @@
 
 // Container for all our entities and game logic. Individual rendering / update is 
 // deferred to the relative update() methods
-class World
+class Level
 {
 
 	static Texture background_texture;
 
 public:
-	World();
-	~World();
+	Level();
+	~Level();
 
 	// Creates a window, sets up events and begins the game
 	bool init(vec2 screen);
@@ -50,7 +48,7 @@ public:
 
 	void drawBackground();
 
-	
+
 
 	// Should the game be over ?
 	bool is_over()const;
@@ -66,20 +64,19 @@ private:
 	// Generates a new fish
 	bool spawn_bullet(vec2 position, float angle, bool bullet_type, bool on_beat);
 
-	
+
 
 	bool spawn_beat_circle(int dir, float pos, float speed);
-	
+
 	// !!! INPUT CALLBACK FUNCTIONS
 	void on_key(GLFWwindow*, int key, int, int action, int mod);
 	void on_mouse_move(GLFWwindow* window, double xpos, double ypos);
 
-  void load_textures();
+
 
 private:
-	// Window handle
-	GLFWwindow* m_window;
-  	std::unordered_map<std::string, Texture*> m_textures;
+	// Window hjandle
+	GLFWwindow * m_window;
 
 	// Number of fish eaten by the salmon, displayed in the window title
 	unsigned int m_points;
@@ -92,7 +89,7 @@ private:
 	std::vector<Turtle> m_turtles;
 	std::vector<Bullet> m_bullets;
 	Background m_background;
-	
+
 	std::vector<BeatCircle> m_beatcircles;
 
 	void handle_beat(float remaining_offset, Beat* curBeat, vec2 screen);
@@ -100,7 +97,7 @@ private:
 	float m_current_speed;
 	float m_next_turtle_spawn;
 	float m_next_fish_spawn;
-	
+
 	CenterBeatCircle blue_center_beat_circle;
 	CenterBeatCircle orange_center_beat_circle;
 

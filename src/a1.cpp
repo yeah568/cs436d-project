@@ -18,8 +18,8 @@ using Clock = std::chrono::high_resolution_clock;
 
 // Global 
 World world;
-const int width = 1200;
-const int height = 800;
+int width = 1200;
+int height = 800;
 const char* title = "Your Title Here";
 
 
@@ -28,7 +28,6 @@ const char* title = "Your Title Here";
 // Entry point
 int main(int argc, char* argv[])
 {
-	printf("Start of main");
 	// Initializing world (after renderer.init().. sorry)
 	if (!world.init({ (float)width, (float)height }))
 	{
