@@ -506,6 +506,8 @@
     <ClCompile Include="$(ProjectDir)..\src\common.cpp" />
     <ClCompile Include="$(ProjectDir)..\src\world.cpp" />
     <ClCompile Include="..\src\background.cpp" />
+    <ClCompile Include="..\src\level.cpp" />
+    <ClCompile Include="..\src\levelList.cpp" />
     <ClCompile Include="..\src\player.cpp" />
     <ClCompile Include="..\src\bullet.cpp" />
     <ClCompile Include="$(ProjectDir)..\src\turtle.cpp" />
@@ -517,6 +519,8 @@
     <ClInclude Include="$(ProjectDir)..\src\OsuParser.hpp" />
     <ClInclude Include="$(ProjectDir)..\src\utils\StringUtils.hpp" />
     <ClInclude Include="..\src\BeatList.hpp" />
+    <ClInclude Include="..\src\level.hpp" />
+    <ClInclude Include="..\src\levelList.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\background.hpp" />
