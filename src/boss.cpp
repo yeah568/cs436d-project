@@ -1,43 +1,36 @@
-// Header
-#include "CenterBeatCircle.hpp"
-#include <cmath>
+#include "boss.hpp"
 
-Player* CenterBeatCircle::player;
+#include "common.hpp"
+#include "bullet.hpp"
 
-bool CenterBeatCircle::init(bool type)
+#include <math.h>
+#include <vector>
+#include <string>
+#include <algorithm>
+
+Texture Boss::boss_texture;
+
+bool Boss::init(float health)
 {
 	// Load shared texture
-	if (!center_beat_circle_texture.is_valid())
-	{	if (type) {
-			if (!center_beat_circle_texture.load_from_file(textures_path("orange_moving_beat.png")))
-			{
-				fprintf(stderr, "Failed to load turtle texture!");
-				return false;
-			}
-		} else {
-			if (!center_beat_circle_texture.load_from_file(textures_path("blue_moving_beat.png")))
-			{
-				fprintf(stderr, "Failed to load turtle texture!");
-				return false;
-			}
+	if (!boss_texture.is_valid())
+	{
+		if (!boss_texture.load_from_file(textures_path("turtle.png")))
+		{
+			fprintf(stderr, "Failed to load boss texture!");
+			return false;
 		}
 	}
-	if (!type) {
-		m_scale.x = 4.0f;
-		m_scale.y = 2.0;
-	} else {
-		m_scale.x = 3.0f;
-		m_scale.y = 1.0f;
-	}
+
 	// The position corresponds to the center of the texture
-	float wr = center_beat_circle_texture.width * 0.5f;
-	float hr = center_beat_circle_texture.height * 0.5f;
+	float wr = boss_texture.width * 0.5f;
+	float hr = boss_texture.height * 0.5f;
 
 	TexturedVertex vertices[4];
 	vertices[0].position = { -wr, +hr, -0.01f };
 	vertices[0].texcoord = { 0.f, 1.f };
 	vertices[1].position = { +wr, +hr, -0.01f };
-	vertices[1].texcoord = { 1.f, 1.f,  };
+	vertices[1].texcoord = { 1.f, 1.f, };
 	vertices[2].position = { +wr, -hr, -0.01f };
 	vertices[2].texcoord = { 1.f, 0.f };
 	vertices[3].position = { -wr, -hr, -0.01f };
@@ -67,20 +60,18 @@ bool CenterBeatCircle::init(bool type)
 	// Loading shaders
 	if (!effect.load_from_file(shader_path("textured.vs.glsl"), shader_path("textured.fs.glsl")))
 		return false;
-
-	// Setting initial values,
-	// 1.0 would be as big as the original texture
-	m_position.x = -50;
-	m_position.y = 50;
-	beat_circle_type = type;
-
+	
+	// Setting initial values
+	m_scale.x = 2.f;
+	m_scale.y = 2.f;
+	m_position = { 600.f, 80.f };
+	m_rotation = 0.f;
+    m_health = health;
 
 	return true;
 }
 
-// Call if init() was successful
-// Releases all graphics resources
-void CenterBeatCircle::destroy()
+void Boss::destroy()
 {
 	glDeleteBuffers(1, &mesh.vbo);
 	glDeleteBuffers(1, &mesh.ibo);
@@ -91,34 +82,18 @@ void CenterBeatCircle::destroy()
 	glDeleteShader(effect.program);
 }
 
-void CenterBeatCircle::update(float ms)
+void Boss::update(float ms)
 {
-	// Move fish along -X based on how much time has passed, this is to (partially) avoid
-	// having entities move at different speed based on the machine.
-	// float step = SPEED * (ms / 1);
-	
-	// m_position.x += m_movement_dir.x*step;
-	// m_position.y += m_movement_dir.y*step;
-	// m_scale.x -= ms/1000;
-	// m_scale.y -= ms/1000;
+
 }
 
-void CenterBeatCircle::set_scale(vec2 scale) {
-	m_scale = scale;
-}
-
-void CenterBeatCircle::draw(const mat3& projection)
+void Boss::draw(const mat3& projection)
 {
-	// printf("Started Drawing\n");
-	// Transformation code, see Rendering and Transformation in the template specification for more info
-	// Incrementally updates transformation matrix, thus ORDER IS IMPORTANT
-	// vec2 rotated = rotate(m_position, -player->get_rotation());
-	// vec2 final_pos = rotated+player->get_position();
-	//printf("BC.x=%f,BC.y=%f\n", final_pos.x, final_pos.y);
 	transform_begin();
-	transform_translate(player->get_position());
-	transform_scale(m_scale+player->get_scale());
-	transform_end();
+	transform_translate({ m_position.x, m_position.y });
+	transform_scale(m_scale);
+    transform_rotate(m_rotation);
+    transform_end();
 
 	// Setting shaders
 	glUseProgram(effect.program);
@@ -147,7 +122,7 @@ void CenterBeatCircle::draw(const mat3& projection)
 
 	// Enabling and binding texture to slot 0
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, center_beat_circle_texture.id);
+	glBindTexture(GL_TEXTURE_2D, boss_texture.id);
 
 	// Setting uniform values to the currently bound program
 	glUniformMatrix3fv(transform_uloc, 1, GL_FALSE, (float*)&transform);
@@ -157,28 +132,57 @@ void CenterBeatCircle::draw(const mat3& projection)
 
 	// Drawing!
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, nullptr);
-	// printf("Finished Drawing\n");
 }
 
-vec2 CenterBeatCircle::get_position()const
+bool Boss::collides_with(const Bullet& bullet)
+{
+	float dx = m_position.x - bullet.get_position().x;
+	float dy = m_position.y - bullet.get_position().y;
+	float d_sq = dx * dx + dy * dy;
+	float other_r = std::max(bullet.get_bounding_box().x, bullet.get_bounding_box().y);
+	float my_r = std::max(m_scale.x, m_scale.y);
+	float r = std::max(other_r, my_r);
+	r *= 0.6f;
+	if (d_sq < r * r)
+		return true;
+	return false;
+}
+
+vec2 Boss::get_position()const
 {
 	return m_position;
 }
 
-void CenterBeatCircle::set_position(vec2 position)
+float Boss::get_rotation()const
 {
-	printf("BC.x=%f,BC.y=%f\n", position.x, position.y);
-	m_position = position;
+	return m_rotation;
 }
 
-void CenterBeatCircle::set_rotation(float angle)
+void Boss::move(vec2 off)
 {
-	m_rotation = angle;
+	m_position.x += off.x; m_position.y += off.y;
 }
 
-// Returns the local bounding coordinates scaled by the current size of the fish 
-vec2 CenterBeatCircle::get_bounding_box()const
+void Boss::set_rotation(float radians)
 {
-	// fabs is to avoid negative scale due to the facing direction
-	return { std::fabs(m_scale.x) * center_beat_circle_texture.width, std::fabs(m_scale.y) * center_beat_circle_texture.height };
+	m_rotation = radians;
+}
+
+void Boss::set_scale(vec2 scale)
+{
+	m_scale = scale;
+}
+
+vec2 Boss::get_scale() {
+	return m_scale;
+}
+
+float Boss::get_health()const
+{
+    return m_health;
+}
+
+void Boss::set_health(float delta)
+{
+    m_health += delta;
 }

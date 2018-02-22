@@ -25,7 +25,7 @@ public:
 
 	// Collision routines for turtles and fish
 	bool collides_with(const Turtle& turtle);
-	bool collides_with(const Bullet& fish);
+	bool collides_with(const Bullet& bullet);
 
 	// Returns the current salmon position
 	vec2 get_position()const;
