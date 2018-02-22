@@ -279,7 +279,7 @@ void Level::draw()
 bool Level::is_over()const
 {
 	// TODO: Implement Me
-	return true;
+	return finished;
 }
 
 // Creates a new turtle and if successfull adds it to the list of turtles
@@ -359,6 +359,9 @@ void Level::on_key(int key, int action, int mod)
 
 	if (action == GLFW_PRESS) {
 		switch (key) {
+		case GLFW_KEY_H:
+			finished = 1;
+			break;
 		case GLFW_KEY_RIGHT:
 		case GLFW_KEY_D:
 			m_player.add_movement_dir({ 1.f, 0.f });
