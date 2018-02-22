@@ -2,7 +2,6 @@
 
 // internal
 #include "common.hpp"
-#include "world.hpp"
 #include "player.hpp"
 #include "turtle.hpp"
 #include "bullet.hpp"
@@ -43,8 +42,6 @@ class Level
 public:
 	Level(int width, int height, int song);
 	~Level();
-
-	
 	// Creates a window, sets up events and begins the game
 	bool init();
 
@@ -79,6 +76,7 @@ private:
 
 private:
 
+	int finished = 0;
 	BeatList* beatlist;
 	int beatPos = 0;
 	int m_song;
