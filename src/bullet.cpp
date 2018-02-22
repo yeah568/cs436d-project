@@ -175,7 +175,7 @@ void Bullet::set_rotation(float angle)
 }
 
 void Bullet::set_scale(vec2 scale) {
-	printf("scale\n");
+	
 	m_scale = 5*scale;
 }
 

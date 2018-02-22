@@ -191,7 +191,7 @@ vec2 BeatCircle::get_position()const
 
 void BeatCircle::set_position(vec2 position)
 {
-	printf("BC.x=%f,BC.y=%f\n", position.x, position.y);
+	
 	m_position = position;
 }
 

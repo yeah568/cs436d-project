@@ -49,7 +49,7 @@ int main(int argc, char* argv[])
 		auto now = Clock::now();
 		float elapsed_sec = (float)(std::chrono::duration_cast<std::chrono::microseconds>(now - t)).count() / 1000;
 		t = now;
-		printf("Updating world");
+		
 		world.update(elapsed_sec);
 		world.draw();
 	}

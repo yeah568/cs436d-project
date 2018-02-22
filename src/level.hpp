@@ -2,6 +2,7 @@
 
 // internal
 #include "common.hpp"
+#include "world.hpp"
 #include "player.hpp"
 #include "turtle.hpp"
 #include "bullet.hpp"
@@ -40,9 +41,10 @@ class Level
 	static std::uniform_real_distribution<float> m_dist; // default 0..1
 
 public:
-	Level(int width, int height);
+	Level(int width, int height, int song);
 	~Level();
 
+	
 	// Creates a window, sets up events and begins the game
 	bool init();
 
@@ -79,6 +81,7 @@ private:
 
 	BeatList* beatlist;
 	int beatPos = 0;
+	int m_song;
 	GLFWwindow* window;
 	// Game entities
 	std::vector<Bullet> m_bullets;

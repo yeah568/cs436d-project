@@ -48,6 +48,7 @@ public:
 	// Should the game be over ?
 	bool is_over()const;
 
+	void incrementLevelCounter() { levelCounter++; };
 private:
 	
 	// !!! INPUT CALLBACK FUNCTIONS
@@ -55,7 +56,9 @@ private:
 	void on_mouse_move(GLFWwindow* window, double xpos, double ypos);
 
 private:
-	Level* current_level;
+	
+	int levelCounter;
+	std::vector<Level *> levelList;
 
 	// Window hjandle
 	GLFWwindow* m_window;

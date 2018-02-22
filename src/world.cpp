@@ -36,6 +36,7 @@ bool World::init(vec2 screen)
 	//-------------------------------------------------------------------------
 	// GLFW / OGL Initialization
 	// Core Opengl 3.
+	levelCounter = 0;
 	glfwSetErrorCallback(glfw_err_cb);
 	if (!glfwInit())
 	{
@@ -73,21 +74,25 @@ bool World::init(vec2 screen)
 	glfwSetCursorPosCallback(m_window, cursor_pos_redirect);
 
 	//return levelList[levelCounter].init
-	current_level = new Level(screen.x, screen.y);
-	return current_level->init();
+	levelList.emplace_back(new Level(screen.x, screen.y, 1));
+	levelList.emplace_back(new Level(screen.x, screen.y, 2));
+	levelList.emplace_back(new Level(screen.x, screen.y, 3));
+	
+	return levelList[levelCounter]->init();
 }
 
 // Releases all the associated resources
 void World::destroy()
 {	
-	current_level->destroy();
+	levelList[levelCounter]->destroy();
 	glfwDestroyWindow(m_window);
 }
 
 // Update our game world
 bool World::update(float elapsed_ms)
-{	
-	return current_level->update(elapsed_ms);
+{
+
+	return levelList[levelCounter]->update(elapsed_ms);
 }
 
 // Render our game world
@@ -130,7 +135,7 @@ void World::draw()
 	float ty = -(top + bottom) / (top - bottom);
 	mat3 projection_2D{ { sx, 0.f, 0.f },{ 0.f, sy, 0.f },{ tx, ty, 1.f } };
 
-	current_level->draw();
+	levelList[levelCounter]->draw();
 
 	// Presenting
 	glfwSwapBuffers(m_window);
@@ -150,7 +155,7 @@ void World::on_key(GLFWwindow*, int key, int, int action, int mod)
 	// key is of 'type' GLFW_KEY_
 	// action can be GLFW_PRESS GLFW_RELEASE GLFW_REPEAT
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	current_level->on_key(key, action, mod);
+	levelList[levelCounter]->on_key(key, action, mod);
 }
 
 void World::on_mouse_move(GLFWwindow* window, double xpos, double ypos)
@@ -161,6 +166,7 @@ void World::on_mouse_move(GLFWwindow* window, double xpos, double ypos)
 	// default facing direction is (1, 0)
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-	current_level->on_mouse_move(xpos, ypos);
-
+	levelList[levelCounter]->on_mouse_move(xpos, ypos);
 }
+
+

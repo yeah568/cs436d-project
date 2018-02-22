@@ -32,9 +32,10 @@ namespace
 	}
 }
 
-Level::Level(int width, int height)  {
+Level::Level(int width, int height, int song)  {
 	screen.x = width;
 	screen.y = height;
+	m_song = song;
 	}
 
 Level::~Level()
@@ -45,12 +46,9 @@ Level::~Level()
 // World initialization
 bool Level::init()
 {
-
+	OsuParser* parser;
 	//-------------------------------------------------------------------------
-	OsuParser* parser = new OsuParser(song_path("598830 Shawn Wasabi - Marble Soda/Shawn Wasabi - Marble Soda (Exa) [Normal].osu"));
-	OsuBeatmap beatmap = parser->parse();
-
-	beatlist = new BeatList(beatmap);
+	
 	//-------------------------------------------------------------------------
 	// Loading music and sounds
 	if (SDL_Init(SDL_INIT_AUDIO) < 0)
@@ -66,8 +64,23 @@ bool Level::init()
 	}
 
 	//m_background_music = Mix_LoadMUS(audio_path("music.wav"));
-	m_background_music = Mix_LoadMUS(song_path("598830 Shawn Wasabi - Marble Soda/Marble Soda.wav"));
+	switch (m_song) {
+	case(1):
+		m_background_music = Mix_LoadMUS(song_path("598830 Shawn Wasabi - Marble Soda/Marble Soda.wav"));
+		parser = new OsuParser(song_path("598830 Shawn Wasabi - Marble Soda/Shawn Wasabi - Marble Soda (Exa) [Insane].osu"));
+		break;
+	case(2):
+		m_background_music = Mix_LoadMUS(song_path("598830 Shawn Wasabi - Marble Soda/Marble Soda.wav"));
+		parser = new OsuParser(song_path("598830 Shawn Wasabi - Marble Soda/Shawn Wasabi - Marble Soda (Exa) [Normal].osu"));
+		break;
+	default:
+		m_background_music = Mix_LoadMUS(song_path("598830 Shawn Wasabi - Marble Soda/Marble Soda.wav"));
+		parser = new OsuParser(song_path("598830 Shawn Wasabi - Marble Soda/Shawn Wasabi - Marble Soda (Exa) [Normal].osu"));
+		break;
 
+	}
+	OsuBeatmap beatmap = parser->parse();
+	beatlist = new BeatList(beatmap);
 	if (!m_background_music) {
 		printf("Mix_LoadMUS(\"music.mp3\"): %s\n", Mix_GetError());
 		// this might be a critical error...
@@ -94,10 +107,10 @@ bool Level::init()
 		blue_center_beat_circle.init(false);
 		orange_center_beat_circle.init(true);
 		CenterBeatCircle::player = &m_player;
-		printf("End of world");
+		
 		return true;
 	}
-	printf("End of world");
+	
 	return false;
 }
 
@@ -134,7 +147,7 @@ void Level::handle_beat(float remaining_offset, Beat* curBeat, vec2 screen) {
 	// do beat things
 	// spawn thing
 
-	printf("spawn %f\n", curBeat->offset);
+	
 
 
 	// spawn a thing
@@ -250,7 +263,7 @@ void Level::draw()
 	m_background.set_position({ (float)w / 2, (float)h / 2 });
 
 	m_background.draw(projection_2D);
-	printf("Drew Background");
+	
 	// Drawing entities
 
 	for (auto& bullet : m_bullets)
