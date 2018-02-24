@@ -192,9 +192,12 @@ void World::handle_beat(float remaining_offset, Beat *curBeat, vec2 screen) {
     LittleEnemy &little_enemy = m_little_enemies.back();
     little_enemy.set_position(
             {((64.f + (float) curBeat->x) / 640.f) * screen.x, ((48.f + (float) curBeat->y) / 480.f) * screen.y});
-    for (auto& little_enemy: m_little_enemies) {
-        little_enemy.scale_by(1.3);
-    }
+
+//trying to make little enemies move to the beat
+//    for (auto &little_enemy: m_little_enemies) {
+//        little_enemy.scale_by(1.3);
+//    }
+
 
     m_salmon.scale_by(1.3);
 }
@@ -270,19 +273,34 @@ bool World::update(float elapsed_ms) {
         }
     }
 
-    for (const auto& little_enemy : m_little_enemies) {
-        for (const auto& bullet : m_bullets) {
-            if (little_enemy.collides_with(bullet)) {
 
+    auto little_enemy_it = m_little_enemies.begin();
+    while (little_enemy_it != m_little_enemies.end()) {
+        float w = little_enemy_it->get_bounding_box().x / 2;
 
-                Mix_PlayChannel(-1, m_salmon_dead_sound, 0);//or whatever sound
-                fish_it = m_fish.erase(fish_it);
-            }
+        if (little_enemy_it->get_position().x + w < 0.f) {
+            little_enemy_it = m_little_enemies.erase(little_enemy_it);
+            continue;
         }
+        ++little_enemy_it;
     }
 
+    auto bullet_it = m_bullets.begin();
+    little_enemy_it = m_little_enemies.begin();
+    while (bullet_it != m_bullets.end()) {
+        while (little_enemy_it != m_little_enemies.end()) {
 
+            if (little_enemy_it->collides_with(*bullet_it)) {
+                printf("YES DETECTED COLLISION\n");
+                Mix_PlayChannel(-1, m_salmon_dead_sound, 0);//or whatever sound
+                bullet_it = m_bullets.erase(bullet_it);
+                little_enemy_it = m_little_enemies.erase(little_enemy_it);
+            }
 
+            ++little_enemy_it;
+        }
+        ++bullet_it;
+    }
     // Checking Salmon - Turtle collisions
     // for (const auto& turtle : m_turtles)
     // {
@@ -337,16 +355,7 @@ bool World::update(float elapsed_ms) {
         ++turtle_it;
     }
 
-    auto little_enemy_it = m_little_enemies.begin();
-    while (little_enemy_it != m_little_enemies.end()) {
-        float w = little_enemy_it->get_bounding_box().x / 2;
-        if (little_enemy_it->get_position().x + w < 0.f) {
-            little_enemy_it = m_little_enemies.erase(little_enemy_it);
-            continue;
-        }
 
-        ++little_enemy_it;
-    }
 
     // Removing out of screen fish
     //fish_it = m_fish.begin();
@@ -433,9 +442,9 @@ void World::draw() {
     float sy = 2.f / (top - bottom);
     float tx = -(right + left) / (right - left);
     float ty = -(top + bottom) / (top - bottom);
-    mat3 projection_2D{{sx, 0.f, 0.f},
-                       {0.f, sy, 0.f},
-                       {tx, ty,  1.f}};
+    mat3 projection_2D{{sx,  0.f, 0.f},
+                       {0.f, sy,  0.f},
+                       {tx,  ty,  1.f}};
 
     m_background.set_position({(float) w / 2, (float) h / 2});
 

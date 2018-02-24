@@ -14,7 +14,7 @@ bool LittleEnemy::init()
     // Load shared texture
     if (!little_enemy_texture.is_valid())
     {
-        if (!little_enemy_texture.load_from_file(textures_path("explosion_1.png")))
+        if (!little_enemy_texture.load_from_file(textures_path("enemy0.png")))
         {
             fprintf(stderr, "Failed to load little enemy texture!");
             return false;
@@ -90,21 +90,21 @@ void LittleEnemy::update(float ms)
     //float step = -TURTLE_SPEED * (ms / 1000);
     //m_position.x += step;
 
-
-        vec2 normalized_movement = m_movement_dir;
-        if (m_movement_dir.x != 0 && m_movement_dir.y != 0) {
-            normalized_movement = normalize(normalized_movement);
-        }
-
-        move({ normalized_movement.x * 10, normalized_movement.y * 10 });
-
-        // Set player to face mouse
-    //TODO set the particles to move toward player
-        float delta_x = m_mouse.x - m_position.x;
-        float delta_y = m_position.y - m_mouse.y;
-        float angle = (float)atan2(delta_y, delta_x);
-        set_rotation(3.14/2);
-
+//
+//        vec2 normalized_movement = m_movement_dir;
+//        if (m_movement_dir.x != 0 && m_movement_dir.y != 0) {
+//            normalized_movement = normalize(normalized_movement);
+//        }
+//
+//        move({ normalized_movement.x * 10, normalized_movement.y * 10 });
+//
+//        // Set player to face mouse
+//    //TODO set the particles to move toward player
+//        float delta_x = m_mouse.x - m_position.x;
+//        float delta_y = m_position.y - m_mouse.y;
+//        float angle = (float)atan2(delta_y, delta_x);
+//        set_rotation(3.14/2);
+//
 
 }
 
@@ -182,6 +182,8 @@ bool LittleEnemy::collides_with(const Bullet& bullet)
     float my_r = std::max(m_scale.x, m_scale.y);
     float r = std::max(other_r, my_r);
     r *= 0.6f;
+    printf("r*r = %f\n",r * r);
+    printf("d_sq = %f\n",d_sq);
     if (d_sq < r * r)
         return true;
     return false;
