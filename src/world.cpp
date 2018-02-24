@@ -187,10 +187,14 @@ void World::handle_beat(float remaining_offset, Beat *curBeat, vec2 screen) {
     //Turtle& new_turtle = m_turtles.back();
     //new_turtle.set_position({ ((64.f + (float)curBeat->x) / 640.f)*screen.x, ((48.f + (float)curBeat->y) / 480.f)*screen.y });
 
+    //TODO: if boss says to, then spawn little enemies on beat
     spawn_little_enemy();
     LittleEnemy &little_enemy = m_little_enemies.back();
     little_enemy.set_position(
             {((64.f + (float) curBeat->x) / 640.f) * screen.x, ((48.f + (float) curBeat->y) / 480.f) * screen.y});
+    for (auto& little_enemy: m_little_enemies) {
+        little_enemy.scale_by(1.3);
+    }
 
     m_salmon.scale_by(1.3);
 }
@@ -263,6 +267,17 @@ bool World::update(float elapsed_ms) {
             beatcircle_it = m_beatcircles.erase(beatcircle_it);
         } else {
             ++beatcircle_it;
+        }
+    }
+
+    for (const auto& little_enemy : m_little_enemies) {
+        for (const auto& bullet : m_bullets) {
+            if (little_enemy.collides_with(bullet)) {
+
+
+                Mix_PlayChannel(-1, m_salmon_dead_sound, 0);//or whatever sound
+                fish_it = m_fish.erase(fish_it);
+            }
         }
     }
 

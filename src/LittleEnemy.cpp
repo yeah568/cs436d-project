@@ -89,6 +89,23 @@ void LittleEnemy::update(float ms)
     //const float TURTLE_SPEED = 200.f;
     //float step = -TURTLE_SPEED * (ms / 1000);
     //m_position.x += step;
+
+
+        vec2 normalized_movement = m_movement_dir;
+        if (m_movement_dir.x != 0 && m_movement_dir.y != 0) {
+            normalized_movement = normalize(normalized_movement);
+        }
+
+        move({ normalized_movement.x * 10, normalized_movement.y * 10 });
+
+        // Set player to face mouse
+    //TODO set the particles to move toward player
+        float delta_x = m_mouse.x - m_position.x;
+        float delta_y = m_position.y - m_mouse.y;
+        float angle = (float)atan2(delta_y, delta_x);
+        set_rotation(3.14/2);
+
+
 }
 
 void LittleEnemy::draw(const mat3& projection)
@@ -154,4 +171,23 @@ void LittleEnemy::set_position(vec2 position)
 vec2 LittleEnemy::get_bounding_box()const {
     // fabs is to avoid negative scale due to the facing direction
     return {std::fabs(m_scale.x) * little_enemy_texture.width, std::fabs(m_scale.y) * little_enemy_texture.height};
+}
+
+bool LittleEnemy::collides_with(const Bullet& bullet)
+{
+    float dx = m_position.x - bullet.get_position().x;
+    float dy = m_position.y - bullet.get_position().y;
+    float d_sq = dx * dx + dy * dy;
+    float other_r = std::max(bullet.get_bounding_box().x, bullet.get_bounding_box().y);
+    float my_r = std::max(m_scale.x, m_scale.y);
+    float r = std::max(other_r, my_r);
+    r *= 0.6f;
+    if (d_sq < r * r)
+        return true;
+    return false;
+}
+
+void LittleEnemy::scale_by(float scale) {
+    m_scale.x *= scale;
+    m_scale.y *= scale;
 }
