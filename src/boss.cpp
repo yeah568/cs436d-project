@@ -7,6 +7,7 @@
 #include <vector>
 #include <string>
 #include <algorithm>
+#include <stdlib.h>
 
 Texture Boss::boss_texture;
 
@@ -132,6 +133,22 @@ void Boss::draw(const mat3& projection)
 
 	// Drawing!
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, nullptr);
+}
+
+void Boss::on_beat() {
+	int action = rand() % 2;
+
+	switch (action) {
+	case 0:
+		move({ -20.f, 0.f });
+		break;
+	case 1:
+		move({ 20.f, 0.f });
+		break;
+	case 2:
+		printf("shoot");
+		break;
+	}
 }
 
 bool Boss::collides_with(const Bullet& bullet)

@@ -19,6 +19,8 @@ public:
 
 	void draw(const mat3& projection)override;
 
+	void on_beat();
+
 	bool collides_with(const Bullet& bullet);
 
 	vec2 get_position()const;

@@ -237,7 +237,11 @@ bool World::update(float elapsed_ms)
 		if (curBeat->offset - remaining_offset <= beat_spawn_time) {
 			float pos = some_fixed_spawn_distance;
 			spawn_beat_circle(dir, pos, speed);
+
+			// Trigger boss movement updates.
+			m_boss.on_beat();
 		}
+
 		// time_until_next_beat <= elapsed_ms
 		if (curBeat->offset <= remaining_offset) {
 			handle_beat(remaining_offset, curBeat, screen);
