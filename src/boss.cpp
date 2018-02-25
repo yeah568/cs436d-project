@@ -62,8 +62,8 @@ bool Boss::init(float health)
 		return false;
 	
 	// Setting initial values
-	m_scale.x = 2.f;
-	m_scale.y = 2.f;
+	m_scale.x = 0.75;
+	m_scale.y = 0.75;
 	m_position = { 600.f, 80.f };
 	m_rotation = 0.f;
     m_health = health;
