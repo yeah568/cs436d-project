@@ -26,8 +26,8 @@ namespace {
 
 World::World() :
         m_points(0),
-        m_next_little_enemies_spawn(0.f),
-        m_next_fish_spawn(0.f) {
+        m_next_fish_spawn(0.f),
+        m_next_little_enemies_spawn(0.f) {
     // Seeding rng with random device
     m_rng = std::default_random_engine(std::random_device()());
 }
@@ -179,7 +179,7 @@ void World::handle_beat(float remaining_offset, Beat *curBeat, vec2 screen) {
     // do beat things
     // spawn thing
 
-    printf("spawn %f\n", curBeat->offset);
+//    printf("spawn %f\n", curBeat->offset);
 
 
     // spawn a thing
@@ -187,11 +187,36 @@ void World::handle_beat(float remaining_offset, Beat *curBeat, vec2 screen) {
     //Turtle& new_turtle = m_turtles.back();
     //new_turtle.set_position({ ((64.f + (float)curBeat->x) / 640.f)*screen.x, ((48.f + (float)curBeat->y) / 480.f)*screen.y });
 
-    //TODO: if boss says to, then spawn little enemies on beat
     spawn_little_enemy();
     LittleEnemy &little_enemy = m_little_enemies.back();
     little_enemy.set_position(
             {((64.f + (float) curBeat->x) / 640.f) * screen.x, ((48.f + (float) curBeat->y) / 480.f) * screen.y});
+
+    //TODO: if boss says to, then spawn little enemies on beat
+    /*
+       spawn_little_enemy();
+       LittleEnemy &little_enemy = m_little_enemies.back();
+       little_enemy.set_position(
+               {((64.f + (float) curBeat->x) / 640.f) * screen.x, ((48.f + (float) curBeat->y) / 480.f) * screen.y});
+
+       m_next_little_enemies_spawn -= m_current_speed * (curBeat->offset * curBeat->duration);
+       if (m_little_enemies.size() <= MAX_LIL_ENEMIES && m_next_little_enemies_spawn < 0.f) {
+           if (!spawn_little_enemy()) {
+
+           } else {
+               LittleEnemy &new_little_enemy = m_little_enemies.back();
+               new_little_enemy.set_position(
+                       {((64.f + (float) curBeat->x) / 640.f) * screen.x,
+                        ((48.f + (float) curBeat->y) / 480.f) * screen.y});
+
+               m_next_little_enemies_spawn = (curBeat->duration / 2);
+               // Next spawn
+   //        m_next_little_enemies_spawn = (TURTLE_DELAY_MS / 2) + m_dist(m_rng) * (TURTLE_DELAY_MS / 2);
+
+           }
+
+       }
+   */
 
 //trying to make little enemies move to the beat
 //    for (auto &little_enemy: m_little_enemies) {
@@ -273,34 +298,49 @@ bool World::update(float elapsed_ms) {
         }
     }
 
+    if (m_bullets.size() > 0 && m_little_enemies.size() > 0) {
+        auto little_enemy_it = m_little_enemies.begin();
+        auto bullet_it = m_bullets.begin();
+        while (bullet_it != m_bullets.end()) {
 
-    auto little_enemy_it = m_little_enemies.begin();
-    while (little_enemy_it != m_little_enemies.end()) {
-        float w = little_enemy_it->get_bounding_box().x / 2;
+            if (m_little_enemies.size() > 0) {
+                while (little_enemy_it != m_little_enemies.end()) {
 
-        if (little_enemy_it->get_position().x + w < 0.f) {
-            little_enemy_it = m_little_enemies.erase(little_enemy_it);
-            continue;
-        }
-        ++little_enemy_it;
-    }
+                    if (little_enemy_it->collides_with(*bullet_it)) {
 
-    auto bullet_it = m_bullets.begin();
-    little_enemy_it = m_little_enemies.begin();
-    while (bullet_it != m_bullets.end()) {
-        while (little_enemy_it != m_little_enemies.end()) {
+                        printf("YES DETECTED COLLISION\n");
+                        Mix_PlayChannel(-1, m_salmon_dead_sound, 0);//or whatever sound
+                        printf("played sound\n");
+                        bullet_it = m_bullets.erase(bullet_it);
+                        printf("erased bullet\n");
+                        little_enemy_it = m_little_enemies.erase(little_enemy_it);
+                        printf("erased little enemy\n");
 
-            if (little_enemy_it->collides_with(*bullet_it)) {
-                printf("YES DETECTED COLLISION\n");
-                Mix_PlayChannel(-1, m_salmon_dead_sound, 0);//or whatever sound
-                bullet_it = m_bullets.erase(bullet_it);
-                little_enemy_it = m_little_enemies.erase(little_enemy_it);
+                    } else {
+                        ++little_enemy_it;
+                    }
+                }
+                ++bullet_it;
             }
-
-            ++little_enemy_it;
         }
-        ++bullet_it;
     }
+
+
+//    auto fish_it = m_fish.begin();
+//
+//    while (fish_it != m_fish.end())
+//    {
+//        if (m_salmon.collides_with(*fish_it))
+//        {
+//            fish_it = m_fish.erase(fish_it);
+//            m_salmon.light_up();
+//            Mix_PlayChannel(-1, m_salmon_eat_sound, 0);
+//            ++m_points;
+//        }
+//        else
+//            ++fish_it;
+//    }
+
     // Checking Salmon - Turtle collisions
     // for (const auto& turtle : m_turtles)
     // {
@@ -343,7 +383,8 @@ bool World::update(float elapsed_ms) {
     for (auto &little_enemy : m_little_enemies)
         little_enemy.update(elapsed_modified_ms);
 
-    // Removing out of screen turtles
+// Removing out of screen turtles
+    /*
     auto turtle_it = m_turtles.begin();
     while (turtle_it != m_turtles.end()) {
         float w = turtle_it->get_bounding_box().x / 2;
@@ -354,57 +395,57 @@ bool World::update(float elapsed_ms) {
 
         ++turtle_it;
     }
+*/
 
 
+// Removing out of screen fish
+//fish_it = m_fish.begin();
+//while (fish_it != m_fish.end())
+//{
+//	float w = fish_it->get_bounding_box().x / 2;
+//	if (fish_it->get_position().x + w < 0.f)
+//	{
+//		fish_it = m_fish.erase(fish_it);
+//		continue;
+//	}
 
-    // Removing out of screen fish
-    //fish_it = m_fish.begin();
-    //while (fish_it != m_fish.end())
-    //{
-    //	float w = fish_it->get_bounding_box().x / 2;
-    //	if (fish_it->get_position().x + w < 0.f)
-    //	{
-    //		fish_it = m_fish.erase(fish_it);
-    //		continue;
-    //	}
+//	++fish_it;
+//}
 
-    //	++fish_it;
-    //}
+// TODO: remove out of screen bullets
 
-    // TODO: remove out of screen bullets
+// Spawning new turtles
+/*
+m_next_turtle_spawn -= elapsed_ms * m_current_speed;
+if (m_turtles.size() <= MAX_TURTLES && m_next_turtle_spawn < 0.f)
+{
+    if (!spawn_turtle())
+        return false;
 
-    // Spawning new turtles
-    /*
-    m_next_turtle_spawn -= elapsed_ms * m_current_speed;
-    if (m_turtles.size() <= MAX_TURTLES && m_next_turtle_spawn < 0.f)
-    {
-        if (!spawn_turtle())
-            return false;
+    Turtle& new_turtle = m_turtles.back();
 
-        Turtle& new_turtle = m_turtles.back();
+    // Setting random initial position
+    new_turtle.set_position({ screen.x + 150, 50 + m_dist(m_rng) * (screen.y - 100) });
 
-        // Setting random initial position
-        new_turtle.set_position({ screen.x + 150, 50 + m_dist(m_rng) * (screen.y - 100) });
+    // Next spawn
+    m_next_turtle_spawn = (TURTLE_DELAY_MS / 2) + m_dist(m_rng) * (TURTLE_DELAY_MS/2);
+}
+*/
 
-        // Next spawn
-        m_next_turtle_spawn = (TURTLE_DELAY_MS / 2) + m_dist(m_rng) * (TURTLE_DELAY_MS/2);
-    }
-    */
+// Spawning new fish
+/*
+m_next_fish_spawn -= elapsed_ms * m_current_speed;
+if (m_fish.size() <= MAX_FISH && m_next_fish_spawn < 0.f)
+{
+    if (!spawn_fish())
+        return false;
+    Fish& new_fish = m_fish.back();
 
-    // Spawning new fish
-    /*
-    m_next_fish_spawn -= elapsed_ms * m_current_speed;
-    if (m_fish.size() <= MAX_FISH && m_next_fish_spawn < 0.f)
-    {
-        if (!spawn_fish())
-            return false;
-        Fish& new_fish = m_fish.back();
+    new_fish.set_position({ screen.x + 150, 50 + m_dist(m_rng) *  (screen.y - 100) });
 
-        new_fish.set_position({ screen.x + 150, 50 + m_dist(m_rng) *  (screen.y - 100) });
-
-        m_next_fish_spawn = (FISH_DELAY_MS / 2) + m_dist(m_rng) * (FISH_DELAY_MS / 2);
-    }
-    */
+    m_next_fish_spawn = (FISH_DELAY_MS / 2) + m_dist(m_rng) * (FISH_DELAY_MS / 2);
+}
+*/
     return true;
 }
 
