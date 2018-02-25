@@ -298,32 +298,6 @@ bool World::update(float elapsed_ms) {
         }
     }
 
-    if (m_bullets.size() > 0 && m_little_enemies.size() > 0) {
-        auto little_enemy_it = m_little_enemies.begin();
-        auto bullet_it = m_bullets.begin();
-        while (bullet_it != m_bullets.end()) {
-
-            if (m_little_enemies.size() > 0) {
-                while (little_enemy_it != m_little_enemies.end()) {
-
-                    if (little_enemy_it->collides_with(*bullet_it)) {
-
-                        printf("YES DETECTED COLLISION\n");
-                        Mix_PlayChannel(-1, m_salmon_dead_sound, 0);//or whatever sound
-                        printf("played sound\n");
-                        bullet_it = m_bullets.erase(bullet_it);
-                        printf("erased bullet\n");
-                        little_enemy_it = m_little_enemies.erase(little_enemy_it);
-                        printf("erased little enemy\n");
-
-                    } else {
-                        ++little_enemy_it;
-                    }
-                }
-                ++bullet_it;
-            }
-        }
-    }
 
 
 //    auto fish_it = m_fish.begin();
@@ -382,6 +356,37 @@ bool World::update(float elapsed_ms) {
         beatcircle.update(elapsed_modified_ms);
     for (auto &little_enemy : m_little_enemies)
         little_enemy.update(elapsed_modified_ms);
+
+    if (m_bullets.size() > 0 && m_little_enemies.size() > 0) {
+
+        auto little_enemy_it = m_little_enemies.begin();
+        auto bullet_it = m_bullets.begin();
+
+//        while (bullet_it != m_bullets.end()) {
+
+        while (little_enemy_it != m_little_enemies.end()) {
+
+            if (little_enemy_it->collides_with(*bullet_it)) {
+
+                printf("YES DETECTED COLLISION\n");
+//                        Mix_PlayChannel(-1, m_salmon_dead_sound, 0);//or whatever sound
+                little_enemy_it = m_little_enemies.erase(little_enemy_it);
+                bullet_it = m_bullets.erase(bullet_it);
+                ++little_enemy_it;
+                ++bullet_it;
+
+            } else {
+                ++bullet_it;
+                ++little_enemy_it;
+                continue;
+            }
+
+        }
+
+//        ++bullet_it;
+//        }
+    }
+
 
 // Removing out of screen turtles
     /*
