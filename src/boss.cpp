@@ -15,7 +15,7 @@ bool Boss::init(float health)
 	// Load shared texture
 	if (!boss_texture.is_valid())
 	{
-		if (!boss_texture.load_from_file(textures_path("turtle.png")))
+		if (!boss_texture.load_from_file(textures_path("boss0.png")))
 		{
 			fprintf(stderr, "Failed to load boss texture!");
 			return false;
