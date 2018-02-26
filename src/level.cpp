@@ -170,6 +170,8 @@ void Level::destroy()
 		bullet.destroy();
 	for (auto& beatcircle : m_beatcircles)
 		beatcircle.destroy();
+	for (auto& enemy : m_enemies)
+		enemy.destroy();
 	orange_center_beat_circle.destroy();
 	blue_center_beat_circle.destroy();
 	
@@ -240,6 +242,7 @@ bool Level::update(float elapsed_ms)
 		// time_until_next_beat <= elapsed_ms
 		if (curBeat->offset <= remaining_offset) {
 			handle_beat(remaining_offset, curBeat, screen);
+			spawn_enemy({ (float)curBeat->x*2.2f, 0.f });
 		}
 		else {
 			curBeat->offset -= remaining_offset;
@@ -268,14 +271,39 @@ bool Level::update(float elapsed_ms)
 
 	// Updating all entities, making the turtle and fish
 	// faster based on current
+	std::vector<Enemy*> dead_enemies;
+	auto enemy_it = m_enemies.begin();
+	bool dead_enemy = false;
+	while(enemy_it != m_enemies.end()){
+	//for (auto& enemy : m_enemies) {
+		auto bullet_it = m_bullets.begin();
+		while (bullet_it != m_bullets.end())
+		{
+			if (enemy_it->collides_with(*bullet_it))
+			{
+				printf("Boss hit by bullet\n");
+				m_bullets.erase(bullet_it);
+				enemy_it = m_enemies.erase(enemy_it);
+				dead_enemy = true;
+				break;
+			}
+			++bullet_it;
+		}
+		if (!dead_enemy) {
+			++enemy_it;
+		}
+		dead_enemy = false;
+	}
 	m_player.update(elapsed_ms);
+	Enemy::update_player_position(m_player.get_position());
 	float elapsed_modified_ms = elapsed_ms * m_current_speed;
 	
 	for (auto& bullet : m_bullets)
 		bullet.update(elapsed_modified_ms);
 	for (auto& beatcircle : m_beatcircles)
 		beatcircle.update(elapsed_modified_ms);
-
+	for (auto& enemy : m_enemies)
+		enemy.update(elapsed_modified_ms);
 	// Removing out of screen turtles
 	return true;
 }
@@ -308,6 +336,9 @@ void Level::draw()
 		bullet.draw(projection_2D);
 	for (auto& beatcircle : m_beatcircles)
 		beatcircle.draw(projection_2D);
+	for (auto& enemy : m_enemies)
+		enemy.draw(projection_2D);
+
 	orange_center_beat_circle.draw(projection_2D);
 	blue_center_beat_circle.draw(projection_2D);
 	m_player.draw(projection_2D);
@@ -340,6 +371,22 @@ bool Level::spawn_bullet(vec2 position, float angle, bool bullet_type, bool on_b
 		return true;
 	}
 	fprintf(stderr, "Failed to spawn fish");
+	return false;
+}
+
+bool Level::spawn_enemy(vec2 position)
+{
+	Enemy enemy;
+	if (enemy.init())
+	{
+		enemy.set_position(position);
+	
+		
+		m_enemies.emplace_back(enemy);
+
+		return true;
+	}
+	fprintf(stderr, "Failed to spawn enemy");
 	return false;
 }
 

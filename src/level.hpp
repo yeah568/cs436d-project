@@ -64,6 +64,8 @@ private:
 	
 	void handle_beat(float remaining_offset, Beat* curBeat, vec2 screen);
 
+	bool spawn_enemy(vec2 position);
+
 protected:
 	static Texture background_texture;
 	
@@ -93,7 +95,7 @@ protected:
 	Mix_Chunk* m_player_dead_sound;
 	Mix_Chunk* m_player_eat_sound;
 	
-	std::vector<Enemy> enemies;
+	std::vector<Enemy> m_enemies;
 	Boss boss;
 };
 

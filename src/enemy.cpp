@@ -2,15 +2,18 @@
 #include "enemy.hpp"
 
 #include <cmath>
+#include <algorithm>
 
 Texture Enemy::enemy_texture;
+
+vec2 Enemy::player_position;
 
 bool Enemy::init()
 {
 	// Load shared texture
 	if (!enemy_texture.is_valid())
 	{
-		if (!enemy_texture.load_from_file(textures_path("enemy.png")))
+		if (!enemy_texture.load_from_file(textures_path("enemy0.png")))
 		{
 			fprintf(stderr, "Failed to load enemy texture!");
 			return false;
@@ -61,6 +64,7 @@ bool Enemy::init()
 	m_scale.x = -0.4f;
 	m_scale.y = 0.4f;
 	m_rotation = 0.f;
+	alive = true;
 
 	return true;
 }
@@ -82,15 +86,24 @@ void Enemy::update(float ms)
 {
 	// Move fish along -X based on how much time has passed, this is to (partially) avoid
 	// having entities move at different speed based on the machine.
-	//const float TURTLE_SPEED = 200.f;
-	//float step = -TURTLE_SPEED * (ms / 1000);
+	const float ENEMY_SPEED = 2.f;
+	vec2 movement_dir = { player_position.x - m_position.x, player_position.y - m_position.y };
+	vec2 normalized_movement = movement_dir;
+	if (movement_dir.x != 0 && movement_dir.y != 0) {
+		normalized_movement = normalize(normalized_movement);
+	}
 	//m_position.x += step;
+	m_position.y += normalized_movement.y * ENEMY_SPEED;
+	m_position.x += normalized_movement.x * ENEMY_SPEED;
 }
 
 void Enemy::draw(const mat3& projection)
 {
 	// Transformation code, see Rendering and Transformation in the template specification for more info
 	// Incrementally updates transformation matrix, thus ORDER IS IMPORTANT
+	if (!alive) {
+		return;
+	}
 	transform_begin();
 	transform_translate(m_position);
 	transform_rotate(m_rotation);
@@ -152,3 +165,24 @@ vec2 Enemy::get_bounding_box()const
 	// fabs is to avoid negative scale due to the facing direction
 	return { std::fabs(m_scale.x) * enemy_texture.width, std::fabs(m_scale.y) * enemy_texture.height };
 }
+
+
+bool Enemy::collides_with(const Bullet& bullet)
+
+{
+	float dx = m_position.x - bullet.get_position().x;
+	float dy = m_position.y - bullet.get_position().y;
+	float d_sq = dx * dx + dy * dy;
+	float other_r = std::max(bullet.get_bounding_box().x, bullet.get_bounding_box().y);
+	float my_r = std::max(m_scale.x, m_scale.y);
+	float r = std::max(other_r, my_r);
+	r *= 0.6f;
+	if (d_sq < r * r) {
+		alive = false;
+		return true;
+	}
+		
+	return false;
+
+}
+
