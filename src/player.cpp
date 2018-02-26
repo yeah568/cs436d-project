@@ -12,7 +12,6 @@
 #include <string>
 #include <algorithm>
 #include <math.h>
-
 Texture Player::player_texture;
 
 bool Player::init()
@@ -252,6 +251,20 @@ bool Player::collides_with(const Turtle& turtle)
 	float dy = m_position.y - turtle.get_position().y;
 	float d_sq = dx * dx + dy * dy;
 	float other_r = std::max(turtle.get_bounding_box().x, turtle.get_bounding_box().y);
+	float my_r = std::max(m_scale.x, m_scale.y);
+	float r = std::max(other_r, my_r);
+	r *= 0.6f;
+	if (d_sq < r * r)
+		return true;
+	return false;
+}
+
+bool Player::collides_with(const LittleEnemy& little_enemy)
+{
+	float dx = m_position.x - little_enemy.get_position().x;
+	float dy = m_position.y - little_enemy.get_position().y;
+	float d_sq = dx * dx + dy * dy;
+	float other_r = std::max(little_enemy.get_bounding_box().x, little_enemy.get_bounding_box().y);
 	float my_r = std::max(m_scale.x, m_scale.y);
 	float r = std::max(other_r, my_r);
 	r *= 0.6f;

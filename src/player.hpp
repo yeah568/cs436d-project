@@ -1,6 +1,7 @@
 #pragma once
 
 #include "common.hpp"
+#include "LittleEnemy.hpp"
 
 class Turtle;
 class Bullet;
@@ -26,6 +27,7 @@ public:
 	// Collision routines for turtles and fish
 	bool collides_with(const Turtle& turtle);
 	bool collides_with(const Bullet& bullet);
+	bool collides_with(const LittleEnemy& little_enemy);
 
 	// Returns the current salmon position
 	vec2 get_position()const;

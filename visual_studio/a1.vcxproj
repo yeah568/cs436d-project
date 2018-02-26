@@ -505,14 +505,15 @@
     <ClCompile Include="$(ProjectDir)..\src\CenterBeatCircle.cpp" />
     <ClCompile Include="$(ProjectDir)..\src\common.cpp" />
     <ClCompile Include="$(ProjectDir)..\src\world.cpp" />
-    <ClCompile Include="..\src\background.cpp" />
-    <ClCompile Include="..\src\boss.cpp" />
-    <ClCompile Include="..\src\player.cpp" />
-    <ClCompile Include="..\src\bullet.cpp" />
+    <ClCompile Include="$(ProjectDir)..\src\background.cpp" />
+    <ClCompile Include="$(ProjectDir)..\src\boss.cpp" />
+    <ClCompile Include="$(ProjectDir)..\src\LittleEnemy.cpp" />
+    <ClCompile Include="$(ProjectDir)..\src\player.cpp" />
+    <ClCompile Include="$(ProjectDir)..\src\bullet.cpp" />
     <ClCompile Include="$(ProjectDir)..\src\turtle.cpp" />
     <ClCompile Include="$(ProjectDir)..\src\OsuParser.cpp" />
     <ClCompile Include="$(ProjectDir)..\src\utils\StringUtils.cpp" />
-    <ClCompile Include="..\src\BeatList.cpp" />
+    <ClCompile Include="$(ProjectDir)..\src\BeatList.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(ProjectDir)..\src\OsuParser.hpp" />
@@ -522,6 +523,7 @@
   <ItemGroup>
     <ClInclude Include="..\src\background.hpp" />
     <ClInclude Include="..\src\boss.hpp" />
+    <ClInclude Include="..\src\LittleEnemy.hpp" />
     <ClInclude Include="..\src\bullet.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
