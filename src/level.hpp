@@ -30,7 +30,7 @@
 class Level {
 
 public:
-	Level(int width, int height, int song);
+	Level(int width, int height);
 	~Level();
 	// Creates a window, sets up events and begins the game
 	virtual bool init() = 0;
@@ -99,9 +99,14 @@ protected:
 
 class Level1 : public Level {
 	public:
-		Level1(int width, int height, int song) : Level(width, height, song) {};
+		Level1(int width, int height) : Level(width, height) {};
 		~Level1();
 		bool init();
 };
 
-
+class Level2 : public Level {
+	public:
+		Level2(int width, int height) : Level(width, height) {};
+		~Level2();
+		bool init();
+};

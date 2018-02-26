@@ -32,17 +32,70 @@ namespace
 	}
 }
 
-Level::Level(int width, int height, int song)  {
+Level::Level(int width, int height)  {
 	screen.x = width;
 	screen.y = height;
-	m_song = song;
 	}
 
 Level::~Level()
 {
 
 }
+bool Level2::init() {
+	OsuParser* parser;
+	//-------------------------------------------------------------------------
+	
+	//-------------------------------------------------------------------------
+	// Loading music and sounds
+	if (SDL_Init(SDL_INIT_AUDIO) < 0)
+	{
+		fprintf(stderr, "Failed to initialize SDL Audio");
+		return false;
+	}
 
+	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) == -1)
+	{
+		fprintf(stderr, "Failed to open audio device");
+		return false;
+	}
+
+	m_background_music = Mix_LoadMUS(song_path("598830 Shawn Wasabi - Marble Soda/Marble Soda.wav"));
+	parser = new OsuParser(song_path("598830 Shawn Wasabi - Marble Soda/Shawn Wasabi - Marble Soda (Exa) [Insane].osu"));
+
+	OsuBeatmap beatmap = parser->parse();
+	beatlist = new BeatList(beatmap);
+	if (!m_background_music) {
+		printf("Mix_LoadMUS(\"music.mp3\"): %s\n", Mix_GetError());
+		// this might be a critical error...
+	}
+
+	m_player_dead_sound = Mix_LoadWAV(audio_path("salmon_dead.wav"));
+	m_player_eat_sound = Mix_LoadWAV(audio_path("salmon_eat.wav"));
+
+	if (m_background_music == nullptr || m_player_dead_sound == nullptr || m_player_eat_sound == nullptr)
+	{
+		fprintf(stderr, "Failed to load sounds, make sure the data directory is present");
+		return false;
+	}
+
+	fprintf(stderr, "Loaded music");
+
+	m_current_speed = 1.f;
+
+	m_background.init();
+
+	BeatCircle::player = &m_player;
+
+	if (m_player.init()) {
+		blue_center_beat_circle.init(false);
+		orange_center_beat_circle.init(true);
+		CenterBeatCircle::player = &m_player;
+		
+		return true;
+	}
+	
+	return false;
+}
 // World initialization
 bool Level1::init() {
 	OsuParser* parser;
@@ -61,23 +114,9 @@ bool Level1::init() {
 		fprintf(stderr, "Failed to open audio device");
 		return false;
 	}
+	m_background_music = Mix_LoadMUS(song_path("BlendS/BlendS.wav"));
+	parser = new OsuParser(song_path("BlendS/Blend A - Bon Appetit S (Meg) [Easy].osu"));
 
-	//m_background_music = Mix_LoadMUS(audio_path("music.wav"));
-	switch (m_song) {
-	case(1):
-		m_background_music = Mix_LoadMUS(song_path("BlendS/BlendS.wav"));
-		parser = new OsuParser(song_path("BlendS/Blend A - Bon Appetit S (Meg) [Easy].osu"));
-		break;
-	case(2):
-		m_background_music = Mix_LoadMUS(song_path("598830 Shawn Wasabi - Marble Soda/Marble Soda.wav"));
-		parser = new OsuParser(song_path("598830 Shawn Wasabi - Marble Soda/Shawn Wasabi - Marble Soda (Exa) [Normal].osu"));
-		break;
-	default:
-		m_background_music = Mix_LoadMUS(song_path("598830 Shawn Wasabi - Marble Soda/Marble Soda.wav"));
-		parser = new OsuParser(song_path("598830 Shawn Wasabi - Marble Soda/Shawn Wasabi - Marble Soda (Exa) [Normal].osu"));
-		break;
-
-	}
 	OsuBeatmap beatmap = parser->parse();
 	beatlist = new BeatList(beatmap);
 	if (!m_background_music) {
