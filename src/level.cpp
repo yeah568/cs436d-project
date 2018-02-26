@@ -65,8 +65,8 @@ bool Level1::init() {
 	//m_background_music = Mix_LoadMUS(audio_path("music.wav"));
 	switch (m_song) {
 	case(1):
-		m_background_music = Mix_LoadMUS(song_path("598830 Shawn Wasabi - Marble Soda/Marble Soda.wav"));
-		parser = new OsuParser(song_path("598830 Shawn Wasabi - Marble Soda/Shawn Wasabi - Marble Soda (Exa) [Insane].osu"));
+		m_background_music = Mix_LoadMUS(song_path("BlendS/BlendS.wav"));
+		parser = new OsuParser(song_path("BlendS/Blend A - Bon Appetit S (Meg) [Easy].osu"));
 		break;
 	case(2):
 		m_background_music = Mix_LoadMUS(song_path("598830 Shawn Wasabi - Marble Soda/Marble Soda.wav"));
