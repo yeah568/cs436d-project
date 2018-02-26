@@ -131,7 +131,7 @@ bool World::init(vec2 screen) {
 
 	BeatCircle::player = &m_salmon;
 	
-	if (m_salmon.init() && m_boss.init(500.f)) {
+	if (m_salmon.init() && m_boss.init(500.f, &m_little_enemies)) {
 		blue_center_beat_circle.init(false);
 		orange_center_beat_circle.init(true);
 		CenterBeatCircle::player = &m_salmon;
@@ -177,11 +177,11 @@ void World::handle_beat(float remaining_offset, Beat *curBeat, vec2 screen) {
     remaining_offset -= curBeat->offset;
     beatPos++;
 
-	if (spawn_little_enemy()) {
-		LittleEnemy &little_enemy = m_little_enemies.back();
-		little_enemy.set_position(
-			{ ((64.f + (float)curBeat->x) / 640.f) * screen.x, ((48.f + (float)curBeat->y) / 480.f) * screen.y });
-	}
+	//if (spawn_little_enemy()) {
+	//	LittleEnemy &little_enemy = m_little_enemies.back();
+	//	little_enemy.set_position(
+	//		{ ((64.f + (float)curBeat->x) / 640.f) * screen.x, ((48.f + (float)curBeat->y) / 480.f) * screen.y });
+	//}
 
     //TODO: if boss says to, then spawn little enemies on beat
     /*
@@ -218,7 +218,7 @@ void World::handle_beat(float remaining_offset, Beat *curBeat, vec2 screen) {
     m_salmon.scale_by(1.3);
 
 	// Trigger boss movement updates.
-	m_boss.on_beat();
+	m_boss.on_beat(curBeat, screen);
 }
 
 // Update our game world

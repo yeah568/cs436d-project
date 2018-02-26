@@ -1,6 +1,7 @@
 #include "boss.hpp"
 
 #include "common.hpp"
+#include "BeatList.hpp"
 #include "bullet.hpp"
 
 #include <math.h>
@@ -11,7 +12,7 @@
 
 Texture Boss::boss_texture;
 
-bool Boss::init(float health)
+bool Boss::init(float health, std::vector<LittleEnemy>* little_enemies)
 {
 	// Load shared texture
 	if (!boss_texture.is_valid())
@@ -68,6 +69,7 @@ bool Boss::init(float health)
 	m_position = { 600.f, 80.f };
 	m_rotation = 0.f;
     m_health = health;
+	m_little_enemies = little_enemies;
 
 	return true;
 }
@@ -135,8 +137,8 @@ void Boss::draw(const mat3& projection)
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, nullptr);
 }
 
-void Boss::on_beat() {
-	int action = rand() % 2;
+void Boss::on_beat(Beat* beat, vec2 screen) {
+	int action = rand() % 3;
 
 	switch (action) {
 	case 0:
@@ -146,7 +148,13 @@ void Boss::on_beat() {
 		move({ 20.f, 0.f });
 		break;
 	case 2:
-		printf("shoot");
+		LittleEnemy little_enemy;
+		if (little_enemy.init()) {
+
+			little_enemy.set_position(
+				{ ((64.f + (float)beat->x) / 640.f) * screen.x, ((48.f + (float)beat->y) / 480.f) * screen.y });
+			m_little_enemies->emplace_back(little_enemy);
+		}
 		break;
 	}
 }
