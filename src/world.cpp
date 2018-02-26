@@ -75,30 +75,30 @@ bool World::init(vec2 screen)
 	glfwSetCursorPosCallback(m_window, cursor_pos_redirect);
 
 	//return levelList[levelCounter].init
-	levelList.emplace_back(Level(screen.x, screen.y, 1));
-	levelList.emplace_back(Level(screen.x, screen.y, 2));
-	levelList.emplace_back(Level(screen.x, screen.y, 3));
+	levelList.emplace_back(new Level1(screen.x, screen.y, 1));
+	levelList.emplace_back(new Level1(screen.x, screen.y, 2));
+	levelList.emplace_back(new Level1(screen.x, screen.y, 3));
 	
-	return levelList[levelCounter].init();
+	return levelList[levelCounter]->init();
 }
 
 // Releases all the associated resources
 void World::destroy()
 {	
-	levelList[levelCounter].destroy();
+	levelList[levelCounter]->destroy();
 	glfwDestroyWindow(m_window);
 }
 
 // Update our game world
 bool World::update(float elapsed_ms)
 {
-	if (levelList[levelCounter].is_over()) 
+	if (levelList[levelCounter]->is_over()) 
 	{	
-		levelList[levelCounter].destroy();
+		levelList[levelCounter]->destroy();
 		levelCounter++; 
-		levelList[levelCounter].init();
+		levelList[levelCounter]->init();
 	};
-	return levelList[levelCounter].update(elapsed_ms);
+	return levelList[levelCounter]->update(elapsed_ms);
 }
 
 // Render our game world
@@ -141,7 +141,7 @@ void World::draw()
 	float ty = -(top + bottom) / (top - bottom);
 	mat3 projection_2D{ { sx, 0.f, 0.f },{ 0.f, sy, 0.f },{ tx, ty, 1.f } };
 
-	levelList[levelCounter].draw();
+	levelList[levelCounter]->draw();
 
 	// Presenting
 	glfwSwapBuffers(m_window);
@@ -161,7 +161,7 @@ void World::on_key(GLFWwindow*, int key, int, int action, int mod)
 	// key is of 'type' GLFW_KEY_
 	// action can be GLFW_PRESS GLFW_RELEASE GLFW_REPEAT
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	levelList[levelCounter].on_key(key, action, mod);
+	levelList[levelCounter]->on_key(key, action, mod);
 }
 
 void World::on_mouse_move(GLFWwindow* window, double xpos, double ypos)
@@ -172,7 +172,7 @@ void World::on_mouse_move(GLFWwindow* window, double xpos, double ypos)
 	// default facing direction is (1, 0)
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-	levelList[levelCounter].on_mouse_move(xpos, ypos);
+	levelList[levelCounter]->on_mouse_move(xpos, ypos);
 }
 
 

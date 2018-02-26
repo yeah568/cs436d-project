@@ -44,8 +44,7 @@ Level::~Level()
 }
 
 // World initialization
-bool Level::init()
-{
+bool Level1::init() {
 	OsuParser* parser;
 	//-------------------------------------------------------------------------
 	
