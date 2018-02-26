@@ -62,7 +62,7 @@ private:
 private:
 	
 	int levelCounter;
-	std::vector<Level> levelList;
+	std::vector<Level*> levelList;
 
 	// Window hjandle
 	GLFWwindow* m_window;

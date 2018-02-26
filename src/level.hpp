@@ -27,23 +27,13 @@
 
 // Container for all our entities and game logic. Individual rendering / update is 
 // deferred to the relative update() methods
-class Level
-{
-	static Texture background_texture;
-	
-	static CenterBeatCircle blue_center_beat_circle;
-	static CenterBeatCircle orange_center_beat_circle;
-	static Player m_player;
-	static unsigned int m_points;
-	// C++ rng
-	static std::default_random_engine m_rng;
-	static std::uniform_real_distribution<float> m_dist; // default 0..1
+class Level {
 
 public:
 	Level(int width, int height, int song);
 	~Level();
 	// Creates a window, sets up events and begins the game
-	bool init();
+	virtual bool init() = 0;
 
 	// Releases all associated resources
 	void destroy();
@@ -74,7 +64,17 @@ private:
 	
 	void handle_beat(float remaining_offset, Beat* curBeat, vec2 screen);
 
-private:
+protected:
+	static Texture background_texture;
+	
+	static CenterBeatCircle blue_center_beat_circle;
+	static CenterBeatCircle orange_center_beat_circle;
+	static Player m_player;
+	static unsigned int m_points;
+	// C++ rng
+	static std::default_random_engine m_rng;
+	static std::uniform_real_distribution<float> m_dist; // default 0..1
+
 
 	int finished = 0;
 	BeatList* beatlist;
@@ -95,6 +95,13 @@ private:
 	
 	std::vector<Enemy> enemies;
 	Boss boss;
+};
+
+class Level1 : public Level {
+	public:
+		Level1(int width, int height, int song) : Level(width, height, song) {};
+		~Level1();
+		bool init();
 };
 
 
