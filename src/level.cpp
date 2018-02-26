@@ -271,6 +271,7 @@ bool Level::update(float elapsed_ms)
 
 	// Updating all entities, making the turtle and fish
 	// faster based on current
+	
 	std::vector<Enemy*> dead_enemies;
 	auto enemy_it = m_enemies.begin();
 	bool dead_enemy = false;
@@ -288,6 +289,10 @@ bool Level::update(float elapsed_ms)
 				break;
 			}
 			++bullet_it;
+		}
+		if (m_player.collides_with(*enemy_it)) {
+			enemy_it = m_enemies.erase(enemy_it);
+			dead_enemy = true;
 		}
 		if (!dead_enemy) {
 			++enemy_it;
