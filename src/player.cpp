@@ -338,6 +338,11 @@ void Player::add_movement_dir(vec2 dir) {
 	m_movement_dir.y += dir.y;
 }
 
+void Player::set_scale(float scale) {
+	m_scale.x = -scale;
+	m_scale.y = scale;
+}
+
 void Player::scale_by(float scale) {
 	m_scale.x *= scale;
 	m_scale.y *= scale;

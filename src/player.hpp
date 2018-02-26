@@ -57,6 +57,8 @@ public:
 
 	void add_movement_dir(vec2 dir);
 
+	void set_scale(float scale);
+
 	void scale_by(float scale);
 	
 	float exploding_timer;

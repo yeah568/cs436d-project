@@ -190,7 +190,10 @@ void World::handle_beat(float remaining_offset, Beat* curBeat, vec2 screen) {
 	//Turtle& new_turtle = m_turtles.back();
 	//new_turtle.set_position({ ((64.f + (float)curBeat->x) / 640.f)*screen.x, ((48.f + (float)curBeat->y) / 480.f)*screen.y });
 
-	m_salmon.scale_by(1.3);
+	m_salmon.set_scale(1.3);
+
+	// Trigger boss movement updates.
+	m_boss.on_beat();
 }
 
 // Update our game world
@@ -237,9 +240,6 @@ bool World::update(float elapsed_ms)
 		if (curBeat->offset - remaining_offset <= beat_spawn_time) {
 			float pos = some_fixed_spawn_distance;
 			spawn_beat_circle(dir, pos, speed);
-
-			// Trigger boss movement updates.
-			m_boss.on_beat();
 		}
 
 		// time_until_next_beat <= elapsed_ms
