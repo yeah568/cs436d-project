@@ -4,6 +4,7 @@
 
 class Turtle;
 class Bullet;
+class Enemy;
 
 class Player : public Renderable
 {
@@ -24,7 +25,7 @@ public:
 	void draw(const mat3& projection)override;
 
 	// Collision routines for turtles and fish
-	bool collides_with(const Turtle& turtle);
+	bool collides_with(const Enemy& turtle);
 	bool collides_with(const Bullet& fish);
 
 	// Returns the current salmon position

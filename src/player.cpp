@@ -3,6 +3,7 @@
 
 // internal
 #include "turtle.hpp"
+#include "enemy.hpp"
 #include "bullet.hpp"
 #include "common.hpp"
 
@@ -246,7 +247,7 @@ void Player::draw(const mat3& projection)
 }
 
 // Simple bounding box collision check, 
-bool Player::collides_with(const Turtle& turtle)
+bool Player::collides_with(const Enemy& turtle)
 {
 	float dx = m_position.x - turtle.get_position().x;
 	float dy = m_position.y - turtle.get_position().y;
