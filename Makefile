@@ -3,10 +3,10 @@ OS:=$(shell uname)
 CXX = g++
 
 ifeq ($(OS), Darwin)
-    CXXFLAGS = -Iext/gl3w -std=c++11 -Wall -pedantic -DENABLE_SOUND
+    CXXFLAGS = -Iext/gl3w -std=c++11 -Wall -pedantic -DENABLE_SOUND -g
     LIB = -ldl -framework OpenGL -framework Cocoa -framework CoreFoundation -lglfw -lSDL -lSDL_mixer -lpthread -lSDLmain
 else ifeq ($(OS), Linux)
-    CXXFLAGS = -Iext/gl3w -std=c++11 -Wall -pedantic -DENABLE_SOUND -D LINUX
+    CXXFLAGS = -Iext/gl3w -std=c++11 -Wall -pedantic -DENABLE_SOUND -D LINUX -g
     LIB = -lglfw -lGL -lm -lXrandr -lXi -lX11 -lXxf86vm -lpthread -ldl -lSDL2 -lSDL2_mixer
 else
     $(error Your OS $(OS) is not supported.) 
@@ -14,7 +14,7 @@ else
 endif
 
 BIN=a1
-OBJ=$(BIN).o common.o player.o turtle.o world.o bullet.o background.o BeatCircle.o BeatList.o OsuParser.o CenterBeatCircle.o
+OBJ=$(BIN).o common.o player.o turtle.o world.o bullet.o background.o BeatCircle.o BeatList.o OsuParser.o CenterBeatCircle.o Sprite.o
 
 SUBDIRS = src/utils
 
