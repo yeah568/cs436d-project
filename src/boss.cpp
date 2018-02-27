@@ -148,7 +148,7 @@ void Boss::on_beat(Beat* beat, vec2 screen) {
 		move({ 20.f, 0.f });
 		break;
 	case 2:
-		/*
+		
 		LittleEnemy little_enemy;
 		if (little_enemy.init()) {
 
@@ -156,7 +156,7 @@ void Boss::on_beat(Beat* beat, vec2 screen) {
 				{ ((64.f + (float)beat->x) / 640.f) * screen.x, ((48.f + (float)beat->y) / 480.f) * screen.y });
 			m_little_enemies->emplace_back(little_enemy);
 		}
-		*/
+		
 		break;
 		
 	}

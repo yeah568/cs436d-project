@@ -91,17 +91,17 @@ void Player::update(float ms)
 	}
 
 	if (abs(m_scale.x * 0.95) < 1.f) {
-		m_scale.x = -1.f;
+		m_scale.x = -0.5f;
 	}
 	else {
-		m_scale.x *= 0.95;
+		m_scale.x *= 0.5;
 	}
 
 	if (abs(m_scale.y * 0.95) < 1.f) {
-		m_scale.y = 1.f;
+		m_scale.y = 0.5f;
 	}
 	else {
-		m_scale.y *= 0.95;
+		m_scale.y *= 0.5;
 	}
 
 	if (m_light_up_countdown_ms > 0.f)
