@@ -185,15 +185,15 @@ bool LittleEnemy::collides_with(const Bullet &bullet) {
     return false;
      */
 
-    printf("%f <= %f\n &&\n",get_position().x, bullet.get_position().x + get_bounding_box().x);
-    printf("%f <= %f\n &&\n",bullet.get_position().x, get_position().x + get_bounding_box().x);
-    printf("%f <= %f\n &&\n",get_position().y, bullet.get_position().y + get_bounding_box().y);
-    printf("%f <= %f\n &&\n",bullet.get_position().y, get_position().y + get_bounding_box().y);
+    //printf("%f <= %f\n &&\n",get_position().x, bullet.get_position().x + get_bounding_box().x);
+    //printf("%f <= %f\n &&\n",bullet.get_position().x, get_position().x + get_bounding_box().x);
+    //printf("%f <= %f\n &&\n",get_position().y, bullet.get_position().y + get_bounding_box().y);
+    //printf("%f <= %f\n &&\n",bullet.get_position().y, get_position().y + get_bounding_box().y);
 
-    printf("COLLISION RESULT: %i\n", (get_position().x <= bullet.get_position().x + get_bounding_box().x &&
-                                      bullet.get_position().x <= get_position().x + get_bounding_box().x &&
-                                      get_position().y <= bullet.get_position().y + get_bounding_box().y &&
-                                      bullet.get_position().y <= get_position().y + get_bounding_box().y));
+    //printf("COLLISION RESULT: %i\n", (get_position().x <= bullet.get_position().x + get_bounding_box().x &&
+    //                                  bullet.get_position().x <= get_position().x + get_bounding_box().x &&
+    //                                  get_position().y <= bullet.get_position().y + get_bounding_box().y &&
+    //                                  bullet.get_position().y <= get_position().y + get_bounding_box().y));
 
     return (get_position().x <= bullet.get_position().x + get_bounding_box().x &&
             bullet.get_position().x <= get_position().x + get_bounding_box().x &&

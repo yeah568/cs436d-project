@@ -344,32 +344,24 @@ bool World::update(float elapsed_ms) {
 
     if (m_bullets.size() > 0 && m_little_enemies.size() > 0) {
 
-        auto little_enemy_it = m_little_enemies.begin();
-        auto bullet_it = m_bullets.begin();
-
-//        while (bullet_it != m_bullets.end()) {
-
-        while (little_enemy_it != m_little_enemies.end()) {
-
-            if (little_enemy_it->collides_with(*bullet_it)) {
-
-                printf("YES DETECTED COLLISION\n");
-//                        Mix_PlayChannel(-1, m_salmon_dead_sound, 0);//or whatever sound
-                little_enemy_it = m_little_enemies.erase(little_enemy_it);
-                bullet_it = m_bullets.erase(bullet_it);
-                ++little_enemy_it;
-                ++bullet_it;
-
-            } else {
-                ++bullet_it;
-                ++little_enemy_it;
-                continue;
-            }
-
-        }
-
-//        ++bullet_it;
-//        }
+		for (auto little_enemy_it = m_little_enemies.begin(); little_enemy_it != m_little_enemies.end();) {
+			for (auto bullet_it = m_bullets.begin(); bullet_it != m_bullets.end();) {
+				if (little_enemy_it->collides_with(*bullet_it)) {
+					printf("YES DETECTED COLLISION\n");
+					little_enemy_it = m_little_enemies.erase(little_enemy_it);
+					bullet_it = m_bullets.erase(bullet_it);
+				}
+				else {
+					++bullet_it;
+				}
+			}
+			if (little_enemy_it == m_little_enemies.end()) {
+				break;
+			}
+			else {
+				++little_enemy_it;
+			}
+		}
     }
 
 
