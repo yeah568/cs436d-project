@@ -75,12 +75,12 @@ bool World::init(vec2 screen)
 	glfwSetCursorPosCallback(m_window, cursor_pos_redirect);
 
 	//return levelList[levelCounter].init
-	Level1* level = new Level1(screen.x, screen.y);
-	//levelList.emplace_back(new Level1(screen.x, screen.y));
+	//Level1* level = new Level1(screen.x, screen.y);
+	levelList.emplace_back(new Level1(screen.x, screen.y));
 	//levelList.emplace_back(new Level2(screen.x, screen.y));
 	//levelList.emplace_back(new Level1(screen.x, screen.y, 3));
 	
-	return level->init();
+	return levelList[levelCounter]->init();
 }
 
 // Releases all the associated resources
