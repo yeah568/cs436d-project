@@ -149,11 +149,11 @@ bool Level1::init() {
 
 	BeatCircle::player = &m_player;
 
-	if (m_player.init()) {
+	if (m_player.init() && m_boss.init(500.f, &m_little_enemies)) {
 		blue_center_beat_circle.init(false);
 		orange_center_beat_circle.init(true);
 		CenterBeatCircle::player = &m_player;
-		
+
 		return true;
 	}
 	
@@ -304,10 +304,10 @@ bool Level::update(float elapsed_ms)
 		bullet.update(elapsed_modified_ms);
 	for (auto& beatcircle : m_beatcircles)
 		beatcircle.update(elapsed_modified_ms);
-	//for (auto& enemy : m_little_enemies)
-	//	enemy.update(elapsed_modified_ms);
-	// Removing out of screen turtles
-	/*
+	for (auto& enemy : m_little_enemies)
+	  enemy.update(elapsed_modified_ms);
+	
+	
 	if (m_bullets.size() > 0 && m_little_enemies.size() > 0) {
 
 		for (auto little_enemy_it = m_little_enemies.begin(); little_enemy_it != m_little_enemies.end();) {
@@ -329,7 +329,7 @@ bool Level::update(float elapsed_ms)
 			}
 		}
 	}
-	*/
+	
 	return true;
 }
 
@@ -362,8 +362,8 @@ void Level::draw()
 	for (auto& beatcircle : m_beatcircles)
 		beatcircle.draw(projection_2D);
 	
-	/*for (auto& enemy : m_little_enemies)
-		enemy.draw(projection_2D); */
+	for (auto& enemy : m_little_enemies)
+		enemy.draw(projection_2D); 
 	m_boss.draw(projection_2D);
 
 	orange_center_beat_circle.draw(projection_2D);
@@ -390,7 +390,7 @@ bool Level::spawn_bullet(vec2 position, float angle, bool bullet_type, bool on_b
 		bullet.set_position(position);
 		bullet.set_rotation(angle);
 		if (on_beat) {
-			bullet.set_scale({ 2,2 });
+			bullet.set_scale({ 0.5,0.5 });
 		}
 		bullet.m_movement_dir = { (float)cos(angle), (float)-sin(angle) };
 		m_bullets.emplace_back(bullet);
@@ -512,7 +512,7 @@ void Level::on_key(int key, int action, int mod)
 		case GLFW_KEY_I:
 			m_player.player_texture.load_from_file(textures_path("character.png"));
 			m_player.exploding_timer = 0;
-			m_player.set_scale({ -0.2f, 0.2f });
+			m_player.set_scale({ -0.1f, 0.1f });
 			break;
 		}
 	}

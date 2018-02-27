@@ -68,8 +68,8 @@ bool Player::init()
 		return false;
 	
 	// Setting initial values
-	m_scale.x = -1.f;
-	m_scale.y = 1.f;
+	m_scale.x = -0.4f;
+	m_scale.y = 0.4f;
 	m_is_alive = true;
 	//m_num_indices = indices.size();
 	m_position = { 600.f, 700.f };
@@ -161,17 +161,17 @@ void Player::update(float ms)
 	}
 
 	if (abs(m_scale.x * 0.95) < 1.f) {
-		m_scale.x = -1.f;
+		m_scale.x = -0.5f;
 	}
 	else {
-		m_scale.x *= 0.95;
+		m_scale.x *= 0.5;
 	}
 
 	if (abs(m_scale.y * 0.95) < 1.f) {
-		m_scale.y = 1.f;
+		m_scale.y = 0.5f;
 	}
 	else {
-		m_scale.y *= 0.95;
+		m_scale.y *= 0.5;
 	}
 
 	if (m_light_up_countdown_ms > 0.f)

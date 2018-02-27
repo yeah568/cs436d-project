@@ -67,8 +67,8 @@ bool Bullet::init(bool type)
 
 	// Setting initial values, scale is negative to make it face the opposite way
 	// 1.0 would be as big as the original texture
-	m_scale.x = -1.1f;
-	m_scale.y = 1.1f;
+	m_scale.x = -0.7f;
+	m_scale.y = 0.7f;
 	m_position.x = -50;
 	m_position.y = 50;
 	bullet_type = type;

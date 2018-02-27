@@ -12,30 +12,30 @@ LetterboxInBreaks: 0
 WidescreenStoryboard: 0
 
 [Editor]
-Bookmarks: 183942,190258
+Bookmarks: 7100,19732,32363,48153,89206,101837,114469,130258,155521,168153,183942,193416,202890,246311
 DistanceSpacing: 1
 BeatDivisor: 4
 GridSize: 4
-TimelineZoom: 0.8
+TimelineZoom: 1
 
 [Metadata]
 Title:Bon Appetit S
-TitleUnicode:ぼなぺてぃーと♡S
+TitleUnicode:
 Artist:Blend A
-ArtistUnicode:ブレンド・A
+ArtistUnicode:
 Creator:Meg
-Version:Akitoshi's Normal
-Source:ブレンド・S
-Tags:ぶれんど・えーす opening blend s 桜ノ宮苺香 Sakuranomiya Maika 和氣あず未 Waki Azumi日向夏帆 Hinata Kaho 鬼頭明里 Kitou Akari 星川麻冬 Hoshikawa Mafuyu 春野杏 Haruno Anzu iMage-- Silky fuyuyu- Kanau Akitoshi Shirasaka Koume
-BeatmapID:1486579
+Version:Easy
+Source:
+Tags:
+BeatmapID:1486580
 BeatmapSetID:699427
 
 [Difficulty]
-HPDrainRate:4
-CircleSize:3.5
-OverallDifficulty:4
-ApproachRate:5
-SliderMultiplier:1.3
+HPDrainRate:2
+CircleSize:3
+OverallDifficulty:2
+ApproachRate:3
+SliderMultiplier:0.999999999999998
 SliderTickRate:1
 
 [Events]
