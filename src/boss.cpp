@@ -12,7 +12,7 @@
 
 Texture Boss::boss_texture;
 
-bool Boss::init(float health, std::vector<LittleEnemy>* little_enemies, OsuBeatmap* beatmap)
+bool Boss::init(float health, std::vector<LittleEnemy>* little_enemies)
 {
 	// Load shared texture
 	if (!boss_texture.is_valid())
@@ -70,7 +70,6 @@ bool Boss::init(float health, std::vector<LittleEnemy>* little_enemies, OsuBeatm
 	m_rotation = 0.f;
     m_health = health;
 	m_little_enemies = little_enemies;
-	m_beatmap = beatmap;
 
 	return true;
 }
@@ -139,15 +138,6 @@ void Boss::draw(const mat3& projection)
 }
 
 void Boss::on_beat(Beat* beat, vec2 screen) {
-	if (beat->hitObject.type & 0b10) {
-		// slider type, spawn little guys
-		Slider& slider = (Slider&)(beat->hitObject);
-		// slider duration = pixelLength / (100.0 * SliderMultiplier) * BeatDuration
-		float sliderDuration = slider.pixelLength / (100.0 * m_beatmap->difficulty.sliderMultiplier) * m_beatmap->timingPoints.front().millisecondsPerBeat;
-		std::cout << sliderDuration << "\n";
-
-	}
-
 	int action = rand() % 3;
 
 	switch (action) {
@@ -160,6 +150,7 @@ void Boss::on_beat(Beat* beat, vec2 screen) {
 	case 2:
 		LittleEnemy little_enemy;
 		if (little_enemy.init()) {
+
 			little_enemy.set_position(
 				{ ((64.f + (float)beat->x) / 640.f) * screen.x, ((48.f + (float)beat->y) / 480.f) * screen.y });
 			m_little_enemies->emplace_back(little_enemy);

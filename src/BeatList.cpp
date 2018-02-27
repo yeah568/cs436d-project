@@ -2,15 +2,15 @@
 
 
 
-BeatList::BeatList(OsuBeatmap* beatmap)
+BeatList::BeatList(OsuBeatmap beatmap)
 {
 	int prevOffset = 0;
-	auto tps = beatmap->timingPoints;
+	auto tps = beatmap.timingPoints;
 	int tps_index = 0;
 	float last_duration = tps[0].millisecondsPerBeat;
 	float duration = 0;
 	auto tp_range = tps[tps_index+1].offset - tps[tps_index].offset;
-	for (auto& hitObject : beatmap->hitObjects) {
+	for (auto const& hitObject : beatmap.hitObjects) {
 		float delta = hitObject.time - prevOffset;
 		prevOffset = hitObject.time;
 
@@ -28,7 +28,7 @@ BeatList::BeatList(OsuBeatmap* beatmap)
 			duration = tps[tps_index].millisecondsPerBeat;
 			last_duration = duration;
 		}
-		beats.push_back(Beat(delta, hitObject.x, hitObject.y, duration, hitObject));
+		beats.push_back(Beat(delta, hitObject.x, hitObject.y, duration));
 	}
 }
 

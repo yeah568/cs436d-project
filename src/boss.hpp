@@ -12,7 +12,7 @@ class Boss : public Renderable
 
 public:
 	// Creates all the associated render resources and default transform
-	bool init(float health, std::vector<LittleEnemy>* little_enemies, OsuBeatmap* beatmap);
+	bool init(float health, std::vector<LittleEnemy>* little_enemies);
 	static Texture boss_texture;
 
 	// Releases all associated resources
@@ -50,5 +50,4 @@ private:
 	size_t m_num_indices; // passed to glDrawElements
 	float m_health;
 	std::vector<LittleEnemy>* m_little_enemies;
-	OsuBeatmap* m_beatmap;
 };
