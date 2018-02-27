@@ -1,10 +1,11 @@
 #pragma once
 
 #include "common.hpp"
+#include "enemy.hpp"
 
 class Turtle;
 class Bullet;
-class Enemy;
+//class Enemy;
 
 class Player : public Renderable
 {
@@ -25,7 +26,8 @@ public:
 	void draw(const mat3& projection)override;
 
 	// Collision routines for turtles and fish
-	bool collides_with(const Enemy& turtle);
+	bool collides_with(const LittleEnemy& little_enemy);
+	
 	bool collides_with(const Bullet& fish);
 
 	// Returns the current salmon position
@@ -57,6 +59,8 @@ public:
 	void set_movement_dir(vec2 dir);
 
 	void add_movement_dir(vec2 dir);
+
+	void set_scale(float scale);
 
 	void scale_by(float scale);
 	

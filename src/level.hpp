@@ -64,7 +64,9 @@ private:
 	
 	void handle_beat(float remaining_offset, Beat* curBeat, vec2 screen);
 
-	bool spawn_enemy(vec2 position);
+	//bool spawn_enemy(vec2 position);
+
+	bool spawn_little_enemy();
 
 protected:
 	static Texture background_texture;
@@ -72,7 +74,7 @@ protected:
 	static CenterBeatCircle blue_center_beat_circle;
 	static CenterBeatCircle orange_center_beat_circle;
 	static Player m_player;
-	static unsigned int m_points;
+	unsigned int m_points;
 	// C++ rng
 	static std::default_random_engine m_rng;
 	static std::uniform_real_distribution<float> m_dist; // default 0..1
@@ -90,13 +92,15 @@ protected:
 	std::vector<BeatCircle> m_beatcircles;
 
 	float m_current_speed;
+	float m_next_little_enemies_spawn;
 
 	Mix_Music* m_background_music;
 	Mix_Chunk* m_player_dead_sound;
 	Mix_Chunk* m_player_eat_sound;
 	
-	std::vector<Enemy> m_enemies;
-	Boss boss;
+	std::vector <LittleEnemy> m_little_enemies;
+	
+	Boss m_boss;
 };
 
 class Level1 : public Level {
