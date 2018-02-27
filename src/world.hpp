@@ -73,7 +73,7 @@ private:
 private:
 	// Window handle
 	GLFWwindow* m_window;
-  std::unordered_map<std::string, Texture*> m_textures;
+  	std::unordered_map<std::string, Texture*> m_textures;
 
 	// Number of fish eaten by the salmon, displayed in the window title
 	unsigned int m_points;

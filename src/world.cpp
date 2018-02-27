@@ -257,9 +257,11 @@ bool World::update(float elapsed_ms)
 	vec2 mov_dir;
 	vec2 bc_player;
 	while (beatcircle_it != m_beatcircles.end()) {
-		bad = length(beatcircle_it->get_local_position()) <= 10;
+		printf("Distance away: %f\n", length(beatcircle_it->get_local_position()));
+		bad = length(beatcircle_it->get_local_position()) <= 10.0f;
 		if (bad) {
 			beatcircle_it = m_beatcircles.erase(beatcircle_it);
+			printf("Erased bc\n");
 		} else {
 			++beatcircle_it;
 		}
@@ -477,7 +479,7 @@ bool World::spawn_beat_circle(int dir, float pos, float speed) {
 
 	bool type = ((dir % 2) == 1);
 
-  beat_circle.set_texture(m_textures[type ? "orange_moving_beat" : "blue_moving_beat"]);
+  	beat_circle.set_texture(m_textures[type ? "orange_moving_beat" : "blue_moving_beat"]);
 
 	if (beat_circle.init()) {
 		beat_circle.set_dir(dir);
@@ -486,6 +488,7 @@ bool World::spawn_beat_circle(int dir, float pos, float speed) {
 		beat_circle.set_position(spawn_pos);
 		beat_circle.set_scale({1.5,1.5});
 		m_beatcircles.emplace_back(beat_circle);
+		printf("Spawned beat circle\n");
 		return true;
 	}
 	fprintf(stderr, "Failed to spawn beat circle");
@@ -511,17 +514,18 @@ void World::on_key(GLFWwindow*, int key, int, int action, int mod)
 		if (m_beatcircles.size() > 0) {
 			BeatCircle closest = m_beatcircles[0];
 			float on_beat_radius = 20;
+			// TODO: Remove these magic numbers
 			switch (closest.get_dir()) {
 				case 1:
 				case 3:
-					on_beat_radius = 50;
+					on_beat_radius = 200;
 					break;
 				case 2:
 				case 4:
-					on_beat_radius = 40;
+					on_beat_radius = 160;
 					break;
 			}
-			on_beat = length(m_beatcircles[0].get_position()) <= on_beat_radius;
+			on_beat = length(m_beatcircles[0].get_local_position()) <= on_beat_radius;
 			m_beatcircles.erase(m_beatcircles.begin());
 		}
 		

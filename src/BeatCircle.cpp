@@ -10,24 +10,31 @@ BeatCircle::BeatCircle(Player* player, float speed)
 {
 	m_scale.x = 1.1f;
 	m_scale.y = 1.1f;
-	m_position.x = -50;
-	m_position.y = 50;
 }
 
 void BeatCircle::set_dir(int direction) {
 	m_dir = direction;
+	float distance_away = 400.0f;
 	switch (m_dir) {
 		case 1:
 			m_movement_dir = {1.0f, 0.0f};
+			m_local_position.x = -distance_away;
+			m_local_position.y = 0.0f;
 			break;
 		case 2:
 			m_movement_dir = {0.0f, -1.0f};
+			m_local_position.x = 0.0f;
+			m_local_position.y = distance_away;
 			break;
 		case 3:
 			m_movement_dir = {-1.0f, 0.0f};
+			m_local_position.x = distance_away;
+			m_local_position.y = 0.0f;
 			break;
 		case 4:
 			m_movement_dir = {0.0f, 1.0f};
+			m_local_position.x = 0.0f;
+			m_local_position.y = -distance_away;
 			break;
 	}
 }
@@ -41,8 +48,8 @@ void BeatCircle::update(float ms)
 	m_local_position.x += m_movement_dir.x*step;
 	m_local_position.y += m_movement_dir.y*step;
   m_position = m_player->get_position() + m_local_position;
-	m_scale.x -= ms/1000;
-	m_scale.y -= ms/1000;
+	m_scale.x -= ms/1250;
+	m_scale.y -= ms/1250;
 }
 
 const vec2& BeatCircle::get_local_position() const
