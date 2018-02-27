@@ -1,40 +1,36 @@
-// Header
+#include "boss.hpp"
+
+#include "common.hpp"
 #include "bullet.hpp"
 
-#include <cmath>
+#include <math.h>
+#include <vector>
+#include <string>
+#include <algorithm>
 
-Texture Bullet::bullet_texture;
-Texture Bullet::bullet_texture2;
+Texture Boss::boss_texture;
 
-bool Bullet::init(bool type)
+bool Boss::init(float health)
 {
 	// Load shared texture
-	if (!bullet_texture.is_valid())
+	if (!boss_texture.is_valid())
 	{
-		if (!bullet_texture.load_from_file(textures_path("bullet_1.png")))
+		if (!boss_texture.load_from_file(textures_path("boss0.png")))
 		{
-			fprintf(stderr, "Failed to load turtle texture!");
-			return false;
-		}
-	}
-	if (!bullet_texture2.is_valid())
-	{
-		if (!bullet_texture2.load_from_file(textures_path("bullet_2.png")))
-		{
-			fprintf(stderr, "Failed to load turtle texture!");
+			fprintf(stderr, "Failed to load boss texture!");
 			return false;
 		}
 	}
 
 	// The position corresponds to the center of the texture
-	float wr = bullet_texture.width * 0.5f;
-	float hr = bullet_texture.height * 0.5f;
+	float wr = boss_texture.width * 0.5f;
+	float hr = boss_texture.height * 0.5f;
 
 	TexturedVertex vertices[4];
 	vertices[0].position = { -wr, +hr, -0.01f };
 	vertices[0].texcoord = { 0.f, 1.f };
 	vertices[1].position = { +wr, +hr, -0.01f };
-	vertices[1].texcoord = { 1.f, 1.f,  };
+	vertices[1].texcoord = { 1.f, 1.f, };
 	vertices[2].position = { +wr, -hr, -0.01f };
 	vertices[2].texcoord = { 1.f, 0.f };
 	vertices[3].position = { -wr, -hr, -0.01f };
@@ -64,22 +60,18 @@ bool Bullet::init(bool type)
 	// Loading shaders
 	if (!effect.load_from_file(shader_path("textured.vs.glsl"), shader_path("textured.fs.glsl")))
 		return false;
-
-	// Setting initial values, scale is negative to make it face the opposite way
-	// 1.0 would be as big as the original texture
-	m_scale.x = -1.1f;
-	m_scale.y = 1.1f;
-	m_position.x = -50;
-	m_position.y = 50;
-	bullet_type = type;
-
+	
+	// Setting initial values
+	m_scale.x = 0.75;
+	m_scale.y = 0.75;
+	m_position = { 600.f, 80.f };
+	m_rotation = 0.f;
+    m_health = health;
 
 	return true;
 }
 
-// Call if init() was successful
-// Releases all graphics resources
-void Bullet::destroy()
+void Boss::destroy()
 {
 	glDeleteBuffers(1, &mesh.vbo);
 	glDeleteBuffers(1, &mesh.ibo);
@@ -90,30 +82,18 @@ void Bullet::destroy()
 	glDeleteShader(effect.program);
 }
 
-void Bullet::update(float ms)
+void Boss::update(float ms)
 {
-	// Move fish along -X based on how much time has passed, this is to (partially) avoid
-	// having entities move at different speed based on the machine.
-	float BULLET_SPEED;
-	if (m_scale.x > 1.1)
-		BULLET_SPEED = 1600.f;
-	else
-		BULLET_SPEED = 400.f;
-	float step = BULLET_SPEED * (ms / 1000);
-	
-	m_position.x += m_movement_dir.x*step;
-	m_position.y += m_movement_dir.y*step;
+
 }
 
-void Bullet::draw(const mat3& projection)
+void Boss::draw(const mat3& projection)
 {
-	// Transformation code, see Rendering and Transformation in the template specification for more info
-	// Incrementally updates transformation matrix, thus ORDER IS IMPORTANT
 	transform_begin();
-	transform_translate(m_position);
-	transform_rotate(-m_rotation);
+	transform_translate({ m_position.x, m_position.y });
 	transform_scale(m_scale);
-	transform_end();
+    transform_rotate(m_rotation);
+    transform_end();
 
 	// Setting shaders
 	glUseProgram(effect.program);
@@ -142,12 +122,7 @@ void Bullet::draw(const mat3& projection)
 
 	// Enabling and binding texture to slot 0
 	glActiveTexture(GL_TEXTURE0);
-	if (bullet_type) {
-		glBindTexture(GL_TEXTURE_2D, bullet_texture.id);
-	}
-	else {
-		glBindTexture(GL_TEXTURE_2D, bullet_texture2.id);
-	}
+	glBindTexture(GL_TEXTURE_2D, boss_texture.id);
 
 	// Setting uniform values to the currently bound program
 	glUniformMatrix3fv(transform_uloc, 1, GL_FALSE, (float*)&transform);
@@ -159,32 +134,58 @@ void Bullet::draw(const mat3& projection)
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, nullptr);
 }
 
-vec2 Bullet::get_position()const
+bool Boss::collides_with(const Bullet& bullet)
+{
+	bbox boss_bbox = get_bounding_box();
+	bbox bullet_bbox = bullet.get_bounding_box();
+	return bullet_bbox.min_x <= boss_bbox.max_x && bullet_bbox.max_x >= boss_bbox.min_x &&
+		bullet_bbox.min_y <= boss_bbox.max_y && bullet_bbox.max_y >= boss_bbox.min_y;
+}
+
+vec2 Boss::get_position()const
 {
 	return m_position;
 }
 
-void Bullet::set_position(vec2 position)
+float Boss::get_rotation()const
 {
-	m_position = position;
+	return m_rotation;
 }
 
-void Bullet::set_rotation(float angle)
+void Boss::move(vec2 off)
 {
-	m_rotation = angle;
+	m_position.x += off.x; m_position.y += off.y;
 }
 
-void Bullet::set_scale(vec2 scale) {
-	printf("scale\n");
-	m_scale = 5*scale;
+void Boss::set_rotation(float radians)
+{
+	m_rotation = radians;
 }
 
-// Returns the local bounding coordinates scaled by the current size of the fish 
-bbox Bullet::get_bounding_box()const
+void Boss::set_scale(vec2 scale)
+{
+	m_scale = scale;
+}
+
+vec2 Boss::get_scale() {
+	return m_scale;
+}
+
+float Boss::get_health()const
+{
+    return m_health;
+}
+
+void Boss::set_health(float delta)
+{
+    m_health += delta;
+}
+
+bbox Boss::get_bounding_box()const
 {
 	// fabs is to avoid negative scale due to the facing direction
-	float width = std::fabs(m_scale.x) * bullet_texture.width;
-	float height = std::fabs(m_scale.y) * bullet_texture.height;
+	float width = std::fabs(m_scale.x) * boss_texture.width;
+	float height = std::fabs(m_scale.y) * boss_texture.height;
 	float wr = width * 0.5f;
 	float hr = height * 0.5f;
 	vec2 points[4];
@@ -202,4 +203,4 @@ bbox Bullet::get_bounding_box()const
 		max_y = point.y > max_y ? point.y : max_y;
 	}
 	return { min_x, min_y, max_x, max_y };
-}
+};

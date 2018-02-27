@@ -136,7 +136,7 @@ bool World::init(vec2 screen)
 
 	BeatCircle::player = &m_salmon;
 	
-	if (m_salmon.init()) {
+	if (m_salmon.init() && m_boss.init(500.f)) {
 		blue_center_beat_circle.init(false);
 		orange_center_beat_circle.init(true);
 		CenterBeatCircle::player = &m_salmon;
@@ -269,16 +269,19 @@ bool World::update(float elapsed_ms)
 
 
 	// Checking Salmon - Turtle collisions
-	// for (const auto& turtle : m_turtles)
-	// {
-	// 	if (m_salmon.collid es_with(turtle))
-	// 	{
-	// 		if (m_salmon.is_alive())
-	// 			Mix_PlayChannel(-1, m_salmon_dead_sound, 0);
-	// 		m_salmon.kill();
-	// 		break;
-	// 	}
-	// }
+	 auto bullet_it = m_bullets.begin();
+	 while (bullet_it != m_bullets.end())
+	 {
+		 if (m_boss.collides_with(*bullet_it))
+		 {
+			 Mix_PlayChannel(-1, m_salmon_dead_sound, 0);
+			 printf("Boss hit by bullet\n");
+			 m_boss.set_health(-1.f);
+			 m_bullets.erase(bullet_it);
+			 break;
+		 }
+		 ++bullet_it;
+	 }
 
 	// Checking Salmon - Fish collisions
 	//auto fish_it = m_fish.begin();
@@ -300,6 +303,7 @@ bool World::update(float elapsed_ms)
 	// Updating all entities, making the turtle and fish
 	// faster based on current
 	m_salmon.update(elapsed_ms);
+	m_boss.update(elapsed_ms);
 	float elapsed_modified_ms = elapsed_ms * m_current_speed;
 	for (auto& turtle : m_turtles)
 		turtle.update(elapsed_modified_ms);
@@ -426,6 +430,7 @@ void World::draw()
 	orange_center_beat_circle.draw(projection_2D);
 	blue_center_beat_circle.draw(projection_2D);
 	m_salmon.draw(projection_2D);
+	m_boss.draw(projection_2D);
 
 	// Presenting
 	glfwSwapBuffers(m_window);

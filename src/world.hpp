@@ -9,6 +9,7 @@
 #include "BeatList.hpp"
 #include "BeatCircle.hpp"
 #include "CenterBeatCircle.hpp"
+#include "boss.hpp"
 
 // stlib
 #include <vector>
@@ -81,6 +82,7 @@ private:
 	std::vector<Turtle> m_turtles;
 	std::vector<Bullet> m_bullets;
 	Background m_background;
+	Boss m_boss;
 	
 	std::vector<BeatCircle> m_beatcircles;
 
