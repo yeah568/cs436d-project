@@ -1,16 +1,23 @@
-// Header
 #include "boss.hpp"
 
-#include <cmath>
+#include "common.hpp"
+#include "BeatList.hpp"
+#include "bullet.hpp"
+
+#include <math.h>
+#include <vector>
+#include <string>
+#include <algorithm>
+#include <stdlib.h>
 
 Texture Boss::boss_texture;
 
-bool Boss::init()
+bool Boss::init(float health, std::vector<LittleEnemy>* little_enemies)
 {
 	// Load shared texture
 	if (!boss_texture.is_valid())
 	{
-		if (!boss_texture.load_from_file(textures_path("boss.png")))
+		if (!boss_texture.load_from_file(textures_path("boss0.png")))
 		{
 			fprintf(stderr, "Failed to load boss texture!");
 			return false;
@@ -22,13 +29,13 @@ bool Boss::init()
 	float hr = boss_texture.height * 0.5f;
 
 	TexturedVertex vertices[4];
-	vertices[0].position = { -wr, +hr, -0.02f };
+	vertices[0].position = { -wr, +hr, -0.01f };
 	vertices[0].texcoord = { 0.f, 1.f };
-	vertices[1].position = { +wr, +hr, -0.02f };
-	vertices[1].texcoord = { 1.f, 1.f };
-	vertices[2].position = { +wr, -hr, -0.02f };
+	vertices[1].position = { +wr, +hr, -0.01f };
+	vertices[1].texcoord = { 1.f, 1.f, };
+	vertices[2].position = { +wr, -hr, -0.01f };
 	vertices[2].texcoord = { 1.f, 0.f };
-	vertices[3].position = { -wr, -hr, -0.02f };
+	vertices[3].position = { -wr, -hr, -0.01f };
 	vertices[3].texcoord = { 0.f, 0.f };
 
 	// counterclockwise as it's the default opengl front winding direction
@@ -36,7 +43,7 @@ bool Boss::init()
 
 	// Clearing errors
 	gl_flush_errors();
-	
+
 	// Vertex Buffer creation
 	glGenBuffers(1, &mesh.vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, mesh.vbo);
@@ -56,17 +63,17 @@ bool Boss::init()
 	if (!effect.load_from_file(shader_path("textured.vs.glsl"), shader_path("textured.fs.glsl")))
 		return false;
 
-	// Setting initial values, scale is negative to make it face the opposite way
-	// 1.0 would be as big as the original texture
-	m_scale.x = -0.4f;
-	m_scale.y = 0.4f;
+	// Setting initial values
+	m_scale.x = 0.75;
+	m_scale.y = 0.75;
+	m_position = { 600.f, 80.f };
 	m_rotation = 0.f;
+	m_health = health;
+	m_little_enemies = little_enemies;
 
 	return true;
 }
 
-// Call if init() was successful
-// Releases all graphics resources
 void Boss::destroy()
 {
 	glDeleteBuffers(1, &mesh.vbo);
@@ -80,21 +87,15 @@ void Boss::destroy()
 
 void Boss::update(float ms)
 {
-	// Move fish along -X based on how much time has passed, this is to (partially) avoid
-	// having entities move at different speed based on the machine.
-	//const float TURTLE_SPEED = 200.f;
-	//float step = -TURTLE_SPEED * (ms / 1000);
-	//m_position.x += step;
+
 }
 
 void Boss::draw(const mat3& projection)
 {
-	// Transformation code, see Rendering and Transformation in the template specification for more info
-	// Incrementally updates transformation matrix, thus ORDER IS IMPORTANT
 	transform_begin();
-	transform_translate(m_position);
-	transform_rotate(m_rotation);
+	transform_translate({ m_position.x, m_position.y });
 	transform_scale(m_scale);
+	transform_rotate(m_rotation);
 	transform_end();
 
 	// Setting shaders
@@ -136,19 +137,77 @@ void Boss::draw(const mat3& projection)
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, nullptr);
 }
 
+void Boss::on_beat(Beat* beat, vec2 screen) {
+	int action = rand() % 3;
+
+	switch (action) {
+	case 0:
+		move({ -20.f, 0.f });
+		break;
+	case 1:
+		move({ 20.f, 0.f });
+		break;
+	case 2:
+		LittleEnemy little_enemy;
+		if (little_enemy.init()) {
+
+			little_enemy.set_position(
+				{ ((64.f + (float)beat->x) / 640.f) * screen.x, ((48.f + (float)beat->y) / 480.f) * screen.y });
+			m_little_enemies->emplace_back(little_enemy);
+		}
+		break;
+	}
+}
+
+bool Boss::collides_with(const Bullet& bullet)
+{
+	float dx = m_position.x - bullet.get_position().x;
+	float dy = m_position.y - bullet.get_position().y;
+	float d_sq = dx * dx + dy * dy;
+	float other_r = std::max(bullet.get_bounding_box().x, bullet.get_bounding_box().y);
+	float my_r = std::max(m_scale.x, m_scale.y);
+	float r = std::max(other_r, my_r);
+	r *= 0.6f;
+	if (d_sq < r * r)
+		return true;
+	return false;
+}
+
 vec2 Boss::get_position()const
 {
 	return m_position;
 }
 
-void Boss::set_position(vec2 position)
+float Boss::get_rotation()const
 {
-	m_position = position;
+	return m_rotation;
 }
 
-// Returns the local bounding coordinates scaled by the current size of the boss 
-vec2 Boss::get_bounding_box()const
+void Boss::move(vec2 off)
 {
-	// fabs is to avoid negative scale due to the facing direction
-	return { std::fabs(m_scale.x) * boss_texture.width, std::fabs(m_scale.y) * boss_texture.height };
+	m_position.x += off.x; m_position.y += off.y;
+}
+
+void Boss::set_rotation(float radians)
+{
+	m_rotation = radians;
+}
+
+void Boss::set_scale(vec2 scale)
+{
+	m_scale = scale;
+}
+
+vec2 Boss::get_scale() {
+	return m_scale;
+}
+
+float Boss::get_health()const
+{
+	return m_health;
+}
+
+void Boss::set_health(float delta)
+{
+	m_health += delta;
 }

@@ -14,7 +14,7 @@ Texture Level::background_texture;
 CenterBeatCircle Level::blue_center_beat_circle;
 CenterBeatCircle Level::orange_center_beat_circle;
 Player Level::m_player;
-unsigned int Level::m_points;
+
 //C++_rng
 std::default_random_engine Level::m_rng;
 std::uniform_real_distribution<float> Level::m_dist;//default:0..1
@@ -23,6 +23,11 @@ std::uniform_real_distribution<float> Level::m_dist;//default:0..1
 // Same as static in c, local to compilation unit
 namespace
 {
+	const size_t MAX_TURTLES = 15;
+	const size_t MAX_LIL_ENEMIES = 15;
+	const size_t MAX_FISH = 5;
+	const size_t TURTLE_DELAY_MS = 2000;
+	const size_t FISH_DELAY_MS = 5000;
 	namespace
 	{
 		void glfw_err_cb(int error, const char* desc)
@@ -32,9 +37,10 @@ namespace
 	}
 }
 
-Level::Level(int width, int height)  {
+Level::Level(int width, int height)  : m_points(0), m_next_little_enemies_spawn(0.f) {
 	screen.x = width;
 	screen.y = height;
+	m_rng = std::default_random_engine(std::random_device()());
 	}
 
 Level::~Level()
@@ -42,6 +48,7 @@ Level::~Level()
 
 }
 bool Level2::init() {
+	
 	OsuParser* parser;
 	//-------------------------------------------------------------------------
 	
@@ -86,7 +93,7 @@ bool Level2::init() {
 
 	BeatCircle::player = &m_player;
 
-	if (m_player.init()) {
+	if (m_player.init() && m_boss.init(500.f, &m_little_enemies)) {
 		blue_center_beat_circle.init(false);
 		orange_center_beat_circle.init(true);
 		CenterBeatCircle::player = &m_player;
@@ -98,6 +105,7 @@ bool Level2::init() {
 }
 // World initialization
 bool Level1::init() {
+	printf("in level init");
 	OsuParser* parser;
 	//-------------------------------------------------------------------------
 	
@@ -108,7 +116,7 @@ bool Level1::init() {
 		fprintf(stderr, "Failed to initialize SDL Audio");
 		return false;
 	}
-
+	
 	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) == -1)
 	{
 		fprintf(stderr, "Failed to open audio device");
@@ -170,13 +178,13 @@ void Level::destroy()
 		bullet.destroy();
 	for (auto& beatcircle : m_beatcircles)
 		beatcircle.destroy();
-	for (auto& enemy : m_enemies)
+	for (auto& enemy : m_little_enemies)
 		enemy.destroy();
 	orange_center_beat_circle.destroy();
 	blue_center_beat_circle.destroy();
 	
 	m_bullets.clear();
-
+	m_little_enemies.clear();
 	m_beatcircles.clear();
 }
 
@@ -196,6 +204,7 @@ void Level::handle_beat(float remaining_offset, Beat* curBeat, vec2 screen) {
 	//new_turtle.set_position({ ((64.f + (float)curBeat->x) / 640.f)*screen.x, ((48.f + (float)curBeat->y) / 480.f)*screen.y });
 
 	m_player.scale_by(1.3);
+	m_boss.on_beat(curBeat, screen);
 }
 
 // Update our game world
@@ -242,7 +251,7 @@ bool Level::update(float elapsed_ms)
 		// time_until_next_beat <= elapsed_ms
 		if (curBeat->offset <= remaining_offset) {
 			handle_beat(remaining_offset, curBeat, screen);
-			spawn_enemy({ (float)curBeat->x*2.2f, 0.f });
+			//spawn_enemy({ (float)curBeat->x*2.2f, 0.f });
 		}
 		else {
 			curBeat->offset -= remaining_offset;
@@ -272,44 +281,55 @@ bool Level::update(float elapsed_ms)
 	// Updating all entities, making the turtle and fish
 	// faster based on current
 	
-	std::vector<Enemy*> dead_enemies;
-	auto enemy_it = m_enemies.begin();
-	bool dead_enemy = false;
-	while(enemy_it != m_enemies.end()){
-	//for (auto& enemy : m_enemies) {
-		auto bullet_it = m_bullets.begin();
-		while (bullet_it != m_bullets.end())
+	auto bullet_it = m_bullets.begin();
+	while (bullet_it != m_bullets.end())
+	{
+		if (m_boss.collides_with(*bullet_it))
 		{
-			if (enemy_it->collides_with(*bullet_it))
-			{
-				printf("Boss hit by bullet\n");
-				m_bullets.erase(bullet_it);
-				enemy_it = m_enemies.erase(enemy_it);
-				dead_enemy = true;
-				break;
-			}
-			++bullet_it;
+			Mix_PlayChannel(-1, m_player_dead_sound, 0);
+			printf("Boss hit by bullet\n");
+			m_boss.set_health(-1.f);
+			m_bullets.erase(bullet_it);
+			break;
 		}
-		if (m_player.collides_with(*enemy_it)) {
-			enemy_it = m_enemies.erase(enemy_it);
-			dead_enemy = true;
-		}
-		if (!dead_enemy) {
-			++enemy_it;
-		}
-		dead_enemy = false;
+		++bullet_it;
 	}
+
 	m_player.update(elapsed_ms);
-	Enemy::update_player_position(m_player.get_position());
+	m_boss.update(elapsed_ms);
+	//Enemy::update_player_position(m_player.get_position());
 	float elapsed_modified_ms = elapsed_ms * m_current_speed;
 	
 	for (auto& bullet : m_bullets)
 		bullet.update(elapsed_modified_ms);
 	for (auto& beatcircle : m_beatcircles)
 		beatcircle.update(elapsed_modified_ms);
-	for (auto& enemy : m_enemies)
-		enemy.update(elapsed_modified_ms);
+	//for (auto& enemy : m_little_enemies)
+	//	enemy.update(elapsed_modified_ms);
 	// Removing out of screen turtles
+
+	if (m_bullets.size() > 0 && m_little_enemies.size() > 0) {
+
+		for (auto little_enemy_it = m_little_enemies.begin(); little_enemy_it != m_little_enemies.end();) {
+			for (auto bullet_it = m_bullets.begin(); bullet_it != m_bullets.end();) {
+				if (little_enemy_it->collides_with(*bullet_it)) {
+					printf("YES DETECTED COLLISION\n");
+					little_enemy_it = m_little_enemies.erase(little_enemy_it);
+					bullet_it = m_bullets.erase(bullet_it);
+				}
+				else {
+					++bullet_it;
+				}
+			}
+			if (little_enemy_it == m_little_enemies.end()) {
+				break;
+			}
+			else {
+				++little_enemy_it;
+			}
+		}
+	}
+
 	return true;
 }
 
@@ -341,8 +361,9 @@ void Level::draw()
 		bullet.draw(projection_2D);
 	for (auto& beatcircle : m_beatcircles)
 		beatcircle.draw(projection_2D);
-	for (auto& enemy : m_enemies)
+	for (auto& enemy : m_little_enemies)
 		enemy.draw(projection_2D);
+	m_boss.draw(projection_2D);
 
 	orange_center_beat_circle.draw(projection_2D);
 	blue_center_beat_circle.draw(projection_2D);
@@ -378,7 +399,7 @@ bool Level::spawn_bullet(vec2 position, float angle, bool bullet_type, bool on_b
 	fprintf(stderr, "Failed to spawn fish");
 	return false;
 }
-
+/*
 bool Level::spawn_enemy(vec2 position)
 {
 	Enemy enemy;
@@ -392,6 +413,17 @@ bool Level::spawn_enemy(vec2 position)
 		return true;
 	}
 	fprintf(stderr, "Failed to spawn enemy");
+	return false;
+}
+*/
+
+bool Level::spawn_little_enemy() {
+	LittleEnemy littleEnemy;
+	if (littleEnemy.init()) {
+		m_little_enemies.emplace_back(littleEnemy);
+		return true;
+	}
+	fprintf(stderr, "Failed to spawn little enemy");
 	return false;
 }
 
