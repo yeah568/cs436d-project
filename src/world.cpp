@@ -1,7 +1,6 @@
 // Header
 #include "world.hpp"
 #include "common.hpp"
-#include "OsuParser.hpp"
 #include "BeatCircle.hpp"
 
 // stlib
@@ -23,6 +22,8 @@ namespace {
         }
     }
 }
+
+OsuBeatmap World::beatmap;
 
 World::World() :
         m_points(0),
@@ -82,9 +83,8 @@ bool World::init(vec2 screen) {
     //-------------------------------------------------------------------------
     OsuParser *parser = new OsuParser(
             song_path("598830 Shawn Wasabi - Marble Soda/Shawn Wasabi - Marble Soda (Exa) [Normal].osu"));
-    OsuBeatmap beatmap = parser->parse();
-
-    beatlist = new BeatList(beatmap);
+    beatmap = parser->parse();
+    beatlist = new BeatList(&beatmap);
 
     //-------------------------------------------------------------------------
     // Loading music and sounds
@@ -131,7 +131,7 @@ bool World::init(vec2 screen) {
 
 	BeatCircle::player = &m_salmon;
 	
-	if (m_salmon.init() && m_boss.init(500.f, &m_little_enemies)) {
+	if (m_salmon.init() && m_boss.init(500.f, &m_little_enemies, &beatmap)) {
 		blue_center_beat_circle.init(false);
 		orange_center_beat_circle.init(true);
 		CenterBeatCircle::player = &m_salmon;

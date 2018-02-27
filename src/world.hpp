@@ -10,6 +10,7 @@
 #include "BeatCircle.hpp"
 #include "CenterBeatCircle.hpp"
 #include "boss.hpp"
+#include "OsuParser.hpp"
 
 #include "LittleEnemy.hpp"
 // stlib
@@ -32,6 +33,7 @@
 class World {
 
     static Texture background_texture;
+	static OsuBeatmap beatmap;
 
 public:
     World();
