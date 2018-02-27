@@ -307,7 +307,7 @@ bool Level::update(float elapsed_ms)
 	//for (auto& enemy : m_little_enemies)
 	//	enemy.update(elapsed_modified_ms);
 	// Removing out of screen turtles
-
+	/*
 	if (m_bullets.size() > 0 && m_little_enemies.size() > 0) {
 
 		for (auto little_enemy_it = m_little_enemies.begin(); little_enemy_it != m_little_enemies.end();) {
@@ -329,7 +329,7 @@ bool Level::update(float elapsed_ms)
 			}
 		}
 	}
-
+	*/
 	return true;
 }
 
@@ -361,8 +361,9 @@ void Level::draw()
 		bullet.draw(projection_2D);
 	for (auto& beatcircle : m_beatcircles)
 		beatcircle.draw(projection_2D);
-	for (auto& enemy : m_little_enemies)
-		enemy.draw(projection_2D);
+	
+	/*for (auto& enemy : m_little_enemies)
+		enemy.draw(projection_2D); */
 	m_boss.draw(projection_2D);
 
 	orange_center_beat_circle.draw(projection_2D);
