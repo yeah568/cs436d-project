@@ -105,31 +105,6 @@ void Player::update(float ms)
 		m_light_up_countdown_ms -= ms;
 }
 
-// Simple bounding box collision check, 
-
-
-bool Player::collides_with(const LittleEnemy& little_enemy)
-{
-	bbox player_bbox = get_bounding_box();
-	bbox enemy_bbox = little_enemy.get_bounding_box();
-	return enemy_bbox.min_x <= player_bbox.max_x && enemy_bbox.max_x >= player_bbox.min_x &&
-		enemy_bbox.min_y <= player_bbox.max_y && enemy_bbox.max_y >= player_bbox.min_y;
-}
-
-bool Player::collides_with(const Bullet& bullet)
-{
-	/*float dx = m_position.x - bullet.get_position().x;
-	float dy = m_position.y - bullet.get_position().y;
-	float d_sq = dx * dx + dy * dy;
-	float other_r = std::max(bullet.get_bounding_box().x, bullet.get_bounding_box().y);
-	float my_r = std::max(m_scale.x, m_scale.y);
-	float r = std::max(other_r, my_r);
-	r *= 0.6f;
-	if (d_sq < r * r)
-		return true;*/
-	return false;
-}
-
 void Player::move(vec2 off)
 {
 	m_position.x += off.x; m_position.y += off.y;

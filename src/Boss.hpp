@@ -20,8 +20,6 @@ public:
 
 	void on_beat(Beat* beat, vec2 screen, Texture* enemy_texture);
 
-	bool collides_with(const Bullet& bullet);
-
 	void move(vec2 off);
 
 	float get_health()const;

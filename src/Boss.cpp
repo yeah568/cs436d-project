@@ -76,14 +76,6 @@ void Boss::on_beat(Beat* beat, vec2 screen, Texture* enemy_texture) {
 	}
 }
 
-bool Boss::collides_with(const Bullet& bullet)
-{
-	bbox boss_bbox = get_bounding_box();
-	bbox bullet_bbox = bullet.get_bounding_box();
-	return bullet_bbox.min_x <= boss_bbox.max_x && bullet_bbox.max_x >= boss_bbox.min_x &&
-		bullet_bbox.min_y <= boss_bbox.max_y && bullet_bbox.max_y >= boss_bbox.min_y;
-}
-
 void Boss::move(vec2 off)
 {
 	m_position.x += off.x; m_position.y += off.y;

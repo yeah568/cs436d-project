@@ -177,3 +177,12 @@ void Sprite::set_texture(Texture* texture)
 {
   m_texture = texture;
 }
+
+// Basic axis-aligned bounding box collisions
+bool Sprite::collides_with(const Sprite& other)
+{
+	bbox bbox1 = get_bounding_box();
+	bbox bbox2 = other.get_bounding_box();
+	return bbox2.min_x <= bbox1.max_x && bbox2.max_x >= bbox1.min_x &&
+		bbox2.min_y <= bbox1.max_y && bbox2.max_y >= bbox1.min_y;
+}

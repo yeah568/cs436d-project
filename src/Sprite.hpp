@@ -27,6 +27,8 @@ public:
 
   void set_color(float r, float g, float b) {m_color[0]=r;m_color[1]=g;m_color[2]=b;};
 
+  bool collides_with(const Sprite& other);
+
 protected:
   vec2 m_position;
   vec2 m_scale;
