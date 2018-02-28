@@ -9,6 +9,7 @@
 #include <string>
 #include <algorithm>
 #include <stdlib.h>
+#include <cfloat>
 
 Texture Boss::boss_texture;
 
