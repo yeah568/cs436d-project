@@ -531,7 +531,7 @@
   <ItemGroup>
     <ClInclude Include="..\src\background.hpp" />
     <ClInclude Include="..\src\boss.hpp" />
-    <ClInclude Include="..\src\LittleEnemy.hpp" />
+    <ClInclude Include="..\src\enemy.hpp" />
     <ClInclude Include="..\src\bullet.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

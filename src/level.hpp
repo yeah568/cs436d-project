@@ -59,6 +59,8 @@ public:
 
 	int new_points;
 
+	std::unordered_map<std::string, Texture*> m_textures;
+
 private:
 	// Generates a new turtle
 	bool spawn_turtle();
@@ -76,7 +78,6 @@ private:
 	bool spawn_little_enemy();
 
 protected:
-	std::unordered_map<std::string, Texture*> m_textures;
 	static Texture background_texture;
 	
 	static CenterBeatCircle blue_center_beat_circle;

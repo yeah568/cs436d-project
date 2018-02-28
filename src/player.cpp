@@ -113,16 +113,10 @@ void Player::update(float ms)
 
 bool Player::collides_with(const LittleEnemy& little_enemy)
 {
-	float dx = m_position.x - little_enemy.get_position().x;
-	float dy = m_position.y - little_enemy.get_position().y;
-	float d_sq = dx * dx + dy * dy;
-	float other_r = std::max(little_enemy.get_bounding_box().x, little_enemy.get_bounding_box().y);
-	float my_r = std::max(m_scale.x, m_scale.y);
-	float r = std::max(other_r, my_r);
-	r *= 0.6f;
-	if (d_sq < r * r)
-		return true;
-	return false;
+	bbox player_bbox = get_bounding_box();
+	bbox enemy_bbox = little_enemy.get_bounding_box();
+	return enemy_bbox.min_x <= player_bbox.max_x && enemy_bbox.max_x >= player_bbox.min_x &&
+		enemy_bbox.min_y <= player_bbox.max_y && enemy_bbox.max_y >= player_bbox.min_y;
 }
 
 bool Player::collides_with(const Bullet& bullet)

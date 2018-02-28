@@ -58,7 +58,7 @@ void Boss::update(float ms, vec2 screen, std::vector<Bullet>* bullets)
 
 }
 
-void Boss::on_beat(Beat* beat, vec2 screen) {
+void Boss::on_beat(Beat* beat, vec2 screen, Texture* enemy_texture) {
 	int action = rand() % 3;
 
 	switch (action) {
@@ -70,8 +70,8 @@ void Boss::on_beat(Beat* beat, vec2 screen) {
 		break;
 	case 2:
 		LittleEnemy little_enemy;
+		little_enemy.set_texture(enemy_texture);
 		if (little_enemy.init()) {
-
 			little_enemy.set_position(
 				{ ((64.f + (float)beat->x) / 640.f) * screen.x, ((48.f + (float)beat->y) / 480.f) * screen.y * 0.67f });
 			m_little_enemies->emplace_back(little_enemy);

@@ -223,7 +223,7 @@ void Level::handle_beat(float remaining_offset, Beat* curBeat, vec2 screen) {
 	//new_turtle.set_position({ ((64.f + (float)curBeat->x) / 640.f)*screen.x, ((48.f + (float)curBeat->y) / 480.f)*screen.y });
 
 	m_player.scale_by(1.3);
-	m_boss.on_beat(curBeat, screen);
+	m_boss.on_beat(curBeat, screen, m_textures["enemy0"]);
 }
 
 // Update our game world
@@ -471,6 +471,7 @@ bool Level::spawn_enemy(vec2 position)
 
 bool Level::spawn_little_enemy() {
 	LittleEnemy littleEnemy;
+	littleEnemy.set_texture(m_textures["enemy0"]);
 	if (littleEnemy.init()) {
 		m_little_enemies.emplace_back(littleEnemy);
 		return true;
@@ -625,7 +626,8 @@ void Level::load_textures() {
     "bullet_2",
     "orange_moving_beat",
     "blue_moving_beat",
-	"healthbar"
+	"healthbar",
+	"enemy0"
   };
 
   for (const auto& texture_name : texture_names)

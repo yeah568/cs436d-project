@@ -18,7 +18,7 @@ public:
 	// ms represents the number of milliseconds elapsed from the previous update() call
 	void update(float ms, vec2 screen, std::vector<Bullet>* bullets);
 
-	void on_beat(Beat* beat, vec2 screen);
+	void on_beat(Beat* beat, vec2 screen, Texture* enemy_texture);
 
 	bool collides_with(const Bullet& bullet);
 
