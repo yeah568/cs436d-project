@@ -4,11 +4,12 @@
 #include "BeatList.hpp"
 #include "bullet.hpp"
 
-#include <math.h>
+#include <cmath>
 #include <vector>
 #include <string>
 #include <algorithm>
 #include <stdlib.h>
+#include <cfloat>
 
 Texture Boss::boss_texture;
 
