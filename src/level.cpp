@@ -44,6 +44,7 @@ Level::Level(int width, int height)  : m_points(0), m_next_little_enemies_spawn(
 	m_rng = std::default_random_engine(std::random_device()());
 	load_textures();
 	m_player.set_texture(m_textures["character"]);
+	m_boss.set_texture(m_textures["boss0"]);
 	m_points = 0;
 	}
 
@@ -619,6 +620,7 @@ void Level::on_mouse_move(double xpos, double ypos)
 void Level::load_textures() {
   std::vector<std::string> texture_names{
     "character",
+	"boss0",
     "bullet_1",
     "bullet_2",
     "orange_moving_beat",
