@@ -15,7 +15,7 @@ else
 endif
 
 BIN=beatcoin
-OBJ=$(BIN).o common.o Sprite.o ResourceManager.o Player.o Turtle.o World.o Bullet.o Background.o BeatCircle.o BeatList.o OsuParser.o CenterBeatCircle.o Level.o HealthBar.o LevelList.o Boss.o Enemy.o
+OBJ=$(BIN).o common.o Sprite.o Player.o Turtle.o World.o Bullet.o Background.o BeatCircle.o BeatList.o OsuParser.o CenterBeatCircle.o Level.o HealthBar.o LevelList.o Boss.o Enemy.o
 
 
 SUBDIRS = src/utils
