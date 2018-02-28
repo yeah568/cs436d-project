@@ -1,9 +1,9 @@
 // Header
-#include "level.hpp"
 #include "common.hpp"
+#include "Level.hpp"
 #include "OsuParser.hpp"
 #include "BeatCircle.hpp"
-#include "bullet.hpp"
+#include "Bullet.hpp"
 
 // stlib
 #include <string.h>

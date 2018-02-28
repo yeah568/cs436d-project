@@ -2,9 +2,9 @@
 
 // internal
 #include "common.hpp"
-#include "level.hpp"
+#include "Level.hpp"
 
-#include "enemy.hpp"
+#include "Enemy.hpp"
 // stlib
 #include <vector>
 #include <string>

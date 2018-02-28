@@ -1,5 +1,5 @@
 // Header
-#include "healthbar.hpp"
+#include "HealthBar.hpp"
 
 #include <cmath>
 #include <cfloat>

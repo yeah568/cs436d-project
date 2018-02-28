@@ -1,9 +1,7 @@
-// Header
-#include "world.hpp"
+#include "World.hpp"
 #include "common.hpp"
-#include "level.hpp"
+#include "Level.hpp"
 
-// stlib
 #include <string.h>
 #include <cassert>
 #include <sstream>

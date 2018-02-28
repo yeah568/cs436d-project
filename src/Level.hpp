@@ -2,16 +2,16 @@
 
 // internal
 #include "common.hpp"
-#include "player.hpp"
-#include "turtle.hpp"
-#include "bullet.hpp"
-#include "background.hpp"
+#include "Player.hpp"
+#include "Turtle.hpp"
+#include "Bullet.hpp"
+#include "Background.hpp"
 #include "BeatList.hpp"
 #include "BeatCircle.hpp"
 #include "CenterBeatCircle.hpp"
-#include "boss.hpp"
-#include "healthbar.hpp"
-#include "enemy.hpp"
+#include "Boss.hpp"
+#include "HealthBar.hpp"
+#include "Enemy.hpp"
 
 // stlib
 #include <vector>

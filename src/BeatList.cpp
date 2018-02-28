@@ -1,7 +1,5 @@
 #include "BeatList.hpp"
 
-
-
 BeatList::BeatList(OsuBeatmap beatmap)
 {
 	int prevOffset = 0;
@@ -31,7 +29,6 @@ BeatList::BeatList(OsuBeatmap beatmap)
 		beats.push_back(Beat(delta, hitObject.x, hitObject.y, duration));
 	}
 }
-
 
 BeatList::~BeatList()
 {

@@ -1,6 +1,4 @@
-// Header
-#include "enemy.hpp"
-
+#include "Enemy.hpp"
 
 #include <cmath>
 

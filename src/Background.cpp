@@ -1,5 +1,5 @@
 // Header
-#include "background.hpp"
+#include "Background.hpp"
 
 #include <cmath>
 
