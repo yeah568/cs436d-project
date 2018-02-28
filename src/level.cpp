@@ -293,6 +293,10 @@ bool Level::update(float elapsed_ms)
 			m_bullets.erase(bullet_it);
 			break;
 		}
+		if (bullet_it->get_bounding_box().max_y < 0) {
+			m_bullets.erase(bullet_it);
+			break;
+		}
 		++bullet_it;
 	}
 
