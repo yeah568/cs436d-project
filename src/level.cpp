@@ -42,6 +42,8 @@ Level::Level(int width, int height)  : m_points(0), m_next_little_enemies_spawn(
 	screen.x = width;
 	screen.y = height;
 	m_rng = std::default_random_engine(std::random_device()());
+	load_textures();
+	m_player.set_texture(m_textures["character"]);
 	}
 
 Level::~Level()
@@ -91,8 +93,6 @@ bool Level2::init() {
 	m_current_speed = 1.f;
 
 	m_background.init();
-
-	load_textures();
 
 	if (m_player.init() && m_boss.init(500.f, &m_little_enemies)) {
 		blue_center_beat_circle.init(false);
@@ -148,13 +148,15 @@ bool Level1::init() {
 
 	m_background.init();
 
-	load_textures();
+	if (!m_player.init()){
+		return false;
+	}
 
-	if (m_player.init() && m_boss.init(500.f, &m_little_enemies)) {
+	if (m_boss.init(500.f, &m_little_enemies)) {
 		blue_center_beat_circle.init(false);
 		orange_center_beat_circle.init(true);
 		CenterBeatCircle::player = &m_player;
-
+		
 		return true;
 	}
 	
@@ -268,7 +270,7 @@ bool Level::update(float elapsed_ms)
 	vec2 mov_dir;
 	vec2 bc_player;
 	while (beatcircle_it != m_beatcircles.end()) {
-		bad = length(beatcircle_it->get_position()) <= 10;
+		bad = length(beatcircle_it->get_local_position()) <= 10;
 		if (bad) {
 			beatcircle_it = m_beatcircles.erase(beatcircle_it);
 		}
@@ -574,7 +576,7 @@ void Level::load_textures() {
     "bullet_1",
     "bullet_2",
     "orange_moving_beat",
-    "blue_moving_beat",
+    "blue_moving_beat"
   };
 
   for (const auto& texture_name : texture_names)
