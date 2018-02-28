@@ -44,6 +44,7 @@ Level::Level(int width, int height)  : m_points(0), m_next_little_enemies_spawn(
 	m_rng = std::default_random_engine(std::random_device()());
 	load_textures();
 	m_player.set_texture(m_textures["character"]);
+	m_points = 0;
 	}
 
 Level::~Level()
@@ -93,8 +94,9 @@ bool Level2::init() {
 	m_current_speed = 1.f;
 	healthbar.set_texture(m_textures["healthbar"]);
 	healthbar.init();
-	healthbar.set_position({ 200,200 });
-	healthbar.set_scale({ 1.5,1.5 });
+	bbox hp_bbox = healthbar.get_bounding_box();
+	healthbar.set_scale({ 1.0,1.5 });
+	healthbar.set_position({ (hp_bbox.max_x - hp_bbox.min_x)/2.0f,200 });
 	healthbar.set_rotation(0);
 	m_background.init();
 
@@ -155,8 +157,9 @@ bool Level1::init() {
 	m_background.init();
 	healthbar.set_texture(m_textures["healthbar"]);
 	healthbar.init();
-	healthbar.set_position({ 200,200 });
-	healthbar.set_scale({ 1.5,1.5 });
+	bbox hp_bbox = healthbar.get_bounding_box();
+	healthbar.set_scale({ 1.0,1.5 });
+	healthbar.set_position({ (hp_bbox.max_x - hp_bbox.min_x)/2.0f,200 });
 	healthbar.set_rotation(0);
 
 	if (!m_player.init()){
@@ -305,6 +308,7 @@ bool Level::update(float elapsed_ms)
 			m_bullets.erase(bullet_it);
 			if (m_boss.get_health() <= 0) {
 				finished = 1;
+				new_points += 100;
 				return true;
 			}
 			break;
@@ -333,6 +337,15 @@ bool Level::update(float elapsed_ms)
 		if (m_player.collides_with(*little_enemy_it)) {
 			little_enemy_it = m_little_enemies.erase(little_enemy_it);
 			m_player.set_health(-1);
+			printf("%f\n", m_player.get_health());
+			float percent_health = m_player.get_health()/5.0f;
+			healthbar.set_scale({percent_health, 1.5f});
+			bbox hp_bb = healthbar.get_bounding_box();
+			healthbar.set_position({(hp_bb.max_x-hp_bb.min_x)/2.0f,200.0f});
+			float r = 1.0f;
+			//std::min(0.5f+(1.0f-(percent_health))/2.0f, 1.0f);
+			float g = std::max(percent_health,0.0f);
+			healthbar.set_color(r*2.0f,g,g);
 			if (m_player.get_health() <= 0) {
 				m_player.kill();
 			}
@@ -349,9 +362,11 @@ bool Level::update(float elapsed_ms)
 
 			for (auto little_enemy_it = m_little_enemies.begin(); little_enemy_it != m_little_enemies.end();) {
 				if (little_enemy_it->collides_with(*bullet_it)) {
+					new_points += (bullet_it->get_damage() == 100 ? 15 : 10);
 					little_enemy_it = m_little_enemies.erase(little_enemy_it);
 					bullet_it = m_bullets.erase(bullet_it);
 					removed_enemy = true;
+					
 					break;
 				}
 				else {
@@ -474,7 +489,6 @@ bool Level::spawn_beat_circle(int dir, float pos, float speed) {
         beat_circle.set_position(spawn_pos);
         beat_circle.set_scale({1.5,1.5});
         m_beatcircles.emplace_back(beat_circle);
-        printf("Spawned beat circle\n");
         return true;
     }
     fprintf(stderr, "Failed to spawn beat circle");

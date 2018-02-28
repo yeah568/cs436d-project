@@ -1,5 +1,6 @@
 OS:=$(shell uname)
-
+CPUS ?= $(shell getconf _NPROCESSORS_ONLN)
+MAKEFLAGS += --jobs=$(CPUS)
 CXX = g++
 
 ifeq ($(OS), Darwin)
@@ -19,8 +20,10 @@ OBJ=$(BIN).o common.o player.o turtle.o world.o bullet.o background.o BeatCircle
 
 SUBDIRS = src/utils
 
-default: build
-	
+default:; @$(MAKE) _all $(MAKEFLAGS)
+
+_all: build
+
 build: $(BIN)
 	
 .PHONY: subdirs $(SUBDIRS)

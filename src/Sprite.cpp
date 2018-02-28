@@ -15,6 +15,9 @@ Sprite::Sprite(const vec2& position, const vec2& scale, float rotation, Texture*
 
 bool Sprite::init()
 {
+  m_color[0] = 1.0f;
+  m_color[1] = 1.0f;
+  m_color[2] = 1.0f;
   // The position corresponds to the center of the texture
   float wr = m_texture->width * 0.5f;
   float hr = m_texture->height * 0.5f;
@@ -110,14 +113,12 @@ void Sprite::draw(const mat3& projection)
 
   // Setting uniform values to the currently bound program
   glUniformMatrix3fv(transform_uloc, 1, GL_FALSE, (float*)&transform);
-  float color[] = { 1.f, 1.f, 1.f };
-  glUniform3fv(color_uloc, 1, color);
+  glUniform3fv(color_uloc, 1, m_color);
   glUniformMatrix3fv(projection_uloc, 1, GL_FALSE, (float*)&projection);
 
   // Drawing!
   glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, nullptr);
 }
-
 const vec2& Sprite::get_position() const
 {
   return m_position;

@@ -57,6 +57,8 @@ public:
 
 	void load_textures();
 
+	int new_points;
+
 private:
 	// Generates a new turtle
 	bool spawn_turtle();

@@ -57,7 +57,8 @@ private:
   void load_textures();
 
 private:
-	
+	int m_points;
+
 	int levelCounter;
 	std::vector<Level*> levelList;
 

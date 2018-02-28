@@ -21,7 +21,8 @@ namespace
 }
 
 World::World()
-{
+{	
+	m_points = 0;
 	// Seeding rng with random device
 	m_rng = std::default_random_engine(std::random_device()());
 }
@@ -94,6 +95,10 @@ void World::destroy()
 // Update our game world
 bool World::update(float elapsed_ms)
 {
+	if (levelList[levelCounter]->new_points > 0) {
+		m_points += levelList[levelCounter]->new_points;
+		levelList[levelCounter]->new_points = 0;
+	}
 	if (levelList[levelCounter]->is_over()) 
 	{	
 		if (levelCounter == levelList.size()-1) {
@@ -121,7 +126,7 @@ void World::draw()
 
 	// Updating window title with points
 	std::stringstream title_ss;
-	title_ss << "Boss Health: " << levelList[levelCounter]->getBossHealth();
+	title_ss << "Boss Health: " << levelList[levelCounter]->getBossHealth() << " | Points: " << m_points;
 	glfwSetWindowTitle(m_window, title_ss.str().c_str());
 
 	// Clearing backbuffer
