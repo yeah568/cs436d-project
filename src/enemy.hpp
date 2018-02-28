@@ -2,6 +2,7 @@
 
 #include "common.hpp"
 #include "bullet.hpp"
+#include "player.hpp"
 
 // TODO:
 // WANT THE LITTLE ENEMIES TO SPAWN ON THE BEAT OR WHENEVER THEY ARE CALLED BY BIG BOSS (not implemented)
@@ -14,11 +15,15 @@
 // WANT THE LITTLE ENEMIES TO ABSORB/COLLIDE WITH BULLET
 
 // Little enemy
+
+class Player;
+
 class LittleEnemy : public Renderable {
 	// Shared between all little enemies, no need to load one for each instance
 	static Texture little_enemy_texture;
 
 public:
+	static Player* player;
 	// Creates all the associated render resources and default transform
 	bool init();
 

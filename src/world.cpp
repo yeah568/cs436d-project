@@ -7,6 +7,7 @@
 #include <string.h>
 #include <cassert>
 #include <sstream>
+#include <stdlib.h>
 
 // Same as static in c, local to compilation unit
 namespace
@@ -95,8 +96,12 @@ bool World::update(float elapsed_ms)
 {
 	if (levelList[levelCounter]->is_over()) 
 	{	
-		levelList[levelCounter]->destroy();
-		levelCounter++; 
+		if (levelCounter == levelList.size()-1) {
+			exit(0);
+		} else {
+			levelList[levelCounter]->destroy();
+		}
+		levelCounter++;
 		levelList[levelCounter]->init();
 	};
 	return levelList[levelCounter]->update(elapsed_ms);

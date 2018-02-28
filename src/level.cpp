@@ -94,13 +94,15 @@ bool Level2::init() {
 
 	m_background.init();
 
-	if (m_player.init() && m_boss.init(500.f, &m_little_enemies)) {
+	if (m_player.init() && m_boss.init(375.f, &m_little_enemies)) {
+		m_player.set_health(2);
 		blue_center_beat_circle.init(false);
 		orange_center_beat_circle.init(true);
 		CenterBeatCircle::player = &m_player;
-		
+		LittleEnemy::player = &m_player;
 		return true;
 	}
+	
 	
 	return false;
 }
@@ -151,11 +153,12 @@ bool Level1::init() {
 	if (!m_player.init()){
 		return false;
 	}
-
-	if (m_boss.init(500.f, &m_little_enemies)) {
+	m_player.set_health(5);
+	if (m_boss.init(250.f, &m_little_enemies)) {
 		blue_center_beat_circle.init(false);
 		orange_center_beat_circle.init(true);
 		CenterBeatCircle::player = &m_player;
+		LittleEnemy::player = &m_player;
 		
 		return true;
 	}
@@ -289,8 +292,12 @@ bool Level::update(float elapsed_ms)
 		{
 			Mix_PlayChannel(-1, m_player_dead_sound, 0);
 			printf("Boss hit by bullet\n");
-			m_boss.set_health(-1.f);
+			m_boss.set_health(-bullet_it->get_damage());
 			m_bullets.erase(bullet_it);
+			if (m_boss.get_health() <= 0) {
+				finished = 1;
+				return true;
+			}
 			break;
 		}
 		if (bullet_it->get_bounding_box().max_y < 0) {
@@ -301,7 +308,9 @@ bool Level::update(float elapsed_ms)
 	}
 
 	m_player.update(elapsed_ms);
-	m_boss.update(elapsed_ms, screen, m_bullets);
+	if (m_player.get_position().y > screen.y)
+		exit(0);
+	m_boss.update(elapsed_ms, screen, &m_bullets);
 	//Enemy::update_player_position(m_player.get_position());
 	float elapsed_modified_ms = elapsed_ms * m_current_speed;
 	
@@ -311,7 +320,20 @@ bool Level::update(float elapsed_ms)
 		beatcircle.update(elapsed_modified_ms);
 	for (auto& enemy : m_little_enemies)
 		enemy.update(elapsed_modified_ms);
-	
+	for (auto little_enemy_it = m_little_enemies.begin(); little_enemy_it != m_little_enemies.end();) {
+		if (m_player.collides_with(*little_enemy_it)) {
+			little_enemy_it = m_little_enemies.erase(little_enemy_it);
+			m_player.set_health(-1);
+			if (m_player.get_health() <= 0) {
+				m_player.kill();
+			}
+			break;
+		} else {
+			++little_enemy_it;
+		}
+	}
+
+
 	if (m_bullets.size() > 0 && m_little_enemies.size() > 0) {
 		for (auto bullet_it = m_bullets.begin(); bullet_it != m_bullets.end();) {
 			bool removed_enemy = false;
@@ -395,6 +417,7 @@ bool Level::spawn_bullet(vec2 position, float angle, bool bullet_type, bool on_b
 		if (on_beat) {
 			bullet.set_scale({ 0.5,0.5 });
 		}
+		bullet.set_on_beat(on_beat);
 		bullet.m_movement_dir = { (float)cos(angle), (float)-sin(angle) };
 		m_bullets.emplace_back(bullet);
 

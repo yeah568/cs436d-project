@@ -5,6 +5,7 @@
 #include <cmath>
 
 Texture LittleEnemy::little_enemy_texture;
+Player* LittleEnemy::player;
 
 bool LittleEnemy::init() {
 	// Load shared texture
@@ -78,8 +79,11 @@ void LittleEnemy::destroy() {
 void LittleEnemy::update(float ms) {
 	// Move fish along -X based on how much time has passed, this is to (partially) avoid
 	// having entities move at different speed based on the machine.
-	//const float TURTLE_SPEED = 200.f;
-	//float step = -TURTLE_SPEED * (ms / 1000);
+	const float enemy_speed = 200.f;
+	float step = enemy_speed * (ms / 1000);
+	vec2 to_player = normalize(player->get_position() - get_position());
+	m_position.y += to_player.y*step;
+	m_position.x += to_player.x*step;
 	//m_position.x += step;
 
 	//

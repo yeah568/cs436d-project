@@ -24,6 +24,7 @@ Player::Player()
 	m_light_up_countdown_ms = -1.f;
 	m_movement_dir = { 0.f, 0.f };
 	bullet_type = false;
+	m_health = 0;
 }
 
 // Called on each frame by World::update()

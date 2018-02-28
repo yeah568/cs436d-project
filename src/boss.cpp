@@ -86,24 +86,29 @@ void Boss::destroy()
 	glDeleteShader(effect.program);
 }
 
-void Boss::update(float ms, vec2 screen, std::vector<Bullet>& bullets)
+void Boss::update(float ms, vec2 screen, std::vector<Bullet>* bullets)
 {
 	// Very naive bullet avoidance algorithm.
 	// On each update, get the highest up bullet (oldest on bullet array)
-	// and go the other direction.
-
-	if (bullets.size() > 0) {
-		auto top_bullet = bullets.at(0);
+	// and go the other direction only if the bullet will hit it.
+	float boss_speed = 500.0f;
+	float step = ms / 1000.0f;
+	if (bullets->size() > 0) {
+		auto top_bullet = bullets->at(0);
+		auto top_bullet_bb = top_bullet.get_bounding_box();
 		auto dist_left = top_bullet.get_position().x;
 		auto dist_right = screen.x - dist_left;
 		bbox bb = get_bounding_box();
+		if (top_bullet_bb.min_x >= bb.max_x || top_bullet_bb.max_x <= bb.min_x) {
+			return;
+		}
 
 		if (dist_left > dist_right) {
-			move({ -5.f, 0.f });
+			move({ -boss_speed*step, 0.f });
 			if (bb.min_x < 0) { m_position.x = (bb.max_x - bb.min_x) / 2; }
 		}
 		else {
-			move({ 5.f, 0.f });
+			move({ boss_speed*step, 0.f });
 			if (bb.max_x > screen.x) { m_position.x = screen.x - (bb.max_x - bb.min_x) / 2; }
 		}
 	}
@@ -172,7 +177,7 @@ void Boss::on_beat(Beat* beat, vec2 screen) {
 		if (little_enemy.init()) {
 
 			little_enemy.set_position(
-				{ ((64.f + (float)beat->x) / 640.f) * screen.x, ((48.f + (float)beat->y) / 480.f) * screen.y });
+				{ ((64.f + (float)beat->x) / 640.f) * screen.x, ((48.f + (float)beat->y) / 480.f) * screen.y * 0.67f });
 			m_little_enemies->emplace_back(little_enemy);
 		}
 		break;
