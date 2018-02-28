@@ -31,7 +31,7 @@ public:
 	void set_position(vec2 position);
 
 	// Returns the fish' bounding box for collision detection, called by collides_with()
-	vec2 get_bounding_box()const;
+	bbox get_bounding_box()const;
 
 	void set_rotation(float angle);
 	vec2 m_movement_dir;
