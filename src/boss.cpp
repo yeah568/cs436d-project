@@ -20,9 +20,6 @@ Boss::Boss()
 	m_scale.y = 0.75;
 	m_position = { 600.f, 80.f };
 	m_rotation = 0.f;
-	m_health = 0.f;
-
-	m_little_enemies = &(std::vector<LittleEnemy>());
 }
 
 bool Boss::init(float health, std::vector<LittleEnemy>* little_enemies)
