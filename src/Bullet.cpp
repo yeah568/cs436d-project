@@ -1,5 +1,5 @@
 // Header
-#include "bullet.hpp"
+#include "Bullet.hpp"
 
 #include <cmath>
 #include <cfloat>

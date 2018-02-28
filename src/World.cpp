@@ -1,12 +1,11 @@
-// Header
-#include "world.hpp"
+#include "World.hpp"
 #include "common.hpp"
-#include "level.hpp"
+#include "Level.hpp"
 
-// stlib
 #include <string.h>
 #include <cassert>
 #include <sstream>
+#include <stdlib.h>
 
 // Same as static in c, local to compilation unit
 namespace
@@ -20,7 +19,8 @@ namespace
 }
 
 World::World()
-{
+{	
+	m_points = 0;
 	// Seeding rng with random device
 	m_rng = std::default_random_engine(std::random_device()());
 }
@@ -93,10 +93,18 @@ void World::destroy()
 // Update our game world
 bool World::update(float elapsed_ms)
 {
+	if (levelList[levelCounter]->new_points > 0) {
+		m_points += levelList[levelCounter]->new_points;
+		levelList[levelCounter]->new_points = 0;
+	}
 	if (levelList[levelCounter]->is_over()) 
 	{	
-		levelList[levelCounter]->destroy();
-		levelCounter++; 
+		if (levelCounter == levelList.size()-1) {
+			exit(0);
+		} else {
+			levelList[levelCounter]->destroy();
+		}
+		levelCounter++;
 		levelList[levelCounter]->init();
 	};
 	return levelList[levelCounter]->update(elapsed_ms);
@@ -116,9 +124,7 @@ void World::draw()
 
 	// Updating window title with points
 	std::stringstream title_ss;
-	
-	// TODO: Fix
-	//title_ss << "Points: " << m_points;
+	title_ss << "Boss Health: " << levelList[levelCounter]->getBossHealth() << " | Points: " << m_points;
 	glfwSetWindowTitle(m_window, title_ss.str().c_str());
 
 	// Clearing backbuffer
@@ -141,6 +147,7 @@ void World::draw()
 	float tx = -(right + left) / (right - left);
 	float ty = -(top + bottom) / (top - bottom);
 	mat3 projection_2D{ { sx, 0.f, 0.f },{ 0.f, sy, 0.f },{ tx, ty, 1.f } };
+	
 
 	levelList[levelCounter]->draw();
 

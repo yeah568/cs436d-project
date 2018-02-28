@@ -4,14 +4,21 @@
 #include "Sprite.hpp"
 
 // Salmon food
-class Bullet : public Sprite
+class HealthBar : public Sprite
 {
 public:
-  Bullet();
-
+	
+	
+	HealthBar();
 	// Update fish due to current
 	// ms represents the number of milliseconds elapsed from the previous update() call
-	void update(float ms);
+	void update();
 
 	vec2 m_movement_dir;
+
+	
+
+private:
+	
+	
 };

@@ -1,5 +1,6 @@
 OS:=$(shell uname)
-
+CPUS ?= $(shell getconf _NPROCESSORS_ONLN)
+MAKEFLAGS += --jobs=$(CPUS)
 CXX = g++
 
 ifeq ($(OS), Darwin)
@@ -14,13 +15,15 @@ else
 endif
 
 BIN=beatcoin
-OBJ=$(BIN).o common.o player.o turtle.o world.o bullet.o background.o BeatCircle.o BeatList.o OsuParser.o CenterBeatCircle.o level.o levelList.o boss.o enemy.o Sprite.o
+OBJ=$(BIN).o common.o Sprite.o Player.o Turtle.o World.o Bullet.o Background.o BeatCircle.o BeatList.o OsuParser.o CenterBeatCircle.o Level.o HealthBar.o LevelList.o Boss.o Enemy.o
 
 
 SUBDIRS = src/utils
 
-default: build
-	
+default:; @$(MAKE) _all $(MAKEFLAGS)
+
+_all: build
+
 build: $(BIN)
 	
 .PHONY: subdirs $(SUBDIRS)

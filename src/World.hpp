@@ -2,9 +2,9 @@
 
 // internal
 #include "common.hpp"
-#include "level.hpp"
+#include "Level.hpp"
 
-#include "enemy.hpp"
+#include "Enemy.hpp"
 // stlib
 #include <vector>
 #include <string>
@@ -57,7 +57,8 @@ private:
   void load_textures();
 
 private:
-	
+	int m_points;
+
 	int levelCounter;
 	std::vector<Level*> levelList;
 

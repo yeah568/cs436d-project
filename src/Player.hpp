@@ -1,12 +1,12 @@
 #pragma once
 
 #include "common.hpp"
-#include "enemy.hpp"
+#include "Enemy.hpp"
 #include "Sprite.hpp"
 
 class Turtle;
 class Bullet;
-//class Enemy;
+class LittleEnemy;
 
 class Player : public Sprite
 {
@@ -51,10 +51,15 @@ public:
 
 	bool bullet_type;
 
+	void set_health(float delta) {m_health += delta;};
+
+	float get_health() {return m_health;};
+
 private:
 	float m_light_up_countdown_ms; // Used to keep track for how long the salmon should be lit up
 	bool m_is_alive; // True if the salmon is alive
 	size_t m_num_indices; // passed to glDrawElements
 	vec2 m_movement_dir;
 	vec2 m_mouse;
+	float m_health;
 };
