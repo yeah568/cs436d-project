@@ -19,7 +19,7 @@ public:
 	void destroy();
 
 	// ms represents the number of milliseconds elapsed from the previous update() call
-	void update(float ms);
+	void update(float ms, vec2 screen, std::vector<Bullet>& bullets);
 
 	void draw(const mat3& projection)override;
 

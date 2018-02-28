@@ -86,8 +86,27 @@ void Boss::destroy()
 	glDeleteShader(effect.program);
 }
 
-void Boss::update(float ms)
+void Boss::update(float ms, vec2 screen, std::vector<Bullet>& bullets)
 {
+	// Very naive bullet avoidance algorithm.
+	// On each update, get the highest up bullet (oldest on bullet array)
+	// and go the other direction.
+
+	if (bullets.size() > 0) {
+		auto top_bullet = bullets.at(0);
+		auto dist_left = top_bullet.get_position().x;
+		auto dist_right = screen.x - dist_left;
+		bbox bb = get_bounding_box();
+
+		if (dist_left > dist_right) {
+			move({ -5.f, 0.f });
+			if (bb.min_x < 0) { m_position.x = (bb.max_x - bb.min_x) / 2; }
+		}
+		else {
+			move({ 5.f, 0.f });
+			if (bb.max_x > screen.x) { m_position.x = screen.x - (bb.max_x - bb.min_x) / 2; }
+		}
+	}
 
 }
 

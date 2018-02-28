@@ -301,7 +301,7 @@ bool Level::update(float elapsed_ms)
 	}
 
 	m_player.update(elapsed_ms);
-	m_boss.update(elapsed_ms);
+	m_boss.update(elapsed_ms, screen, m_bullets);
 	//Enemy::update_player_position(m_player.get_position());
 	float elapsed_modified_ms = elapsed_ms * m_current_speed;
 	
