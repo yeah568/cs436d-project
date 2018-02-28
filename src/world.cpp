@@ -343,25 +343,24 @@ bool World::update(float elapsed_ms) {
 		little_enemy.update(elapsed_modified_ms);
 
     if (m_bullets.size() > 0 && m_little_enemies.size() > 0) {
-
-		for (auto little_enemy_it = m_little_enemies.begin(); little_enemy_it != m_little_enemies.end();) {
-			for (auto bullet_it = m_bullets.begin(); bullet_it != m_bullets.end();) {
+		for (auto bullet_it = m_bullets.begin(); bullet_it != m_bullets.end();) {
+			bool removed_enemy = false;
+			
+			for (auto little_enemy_it = m_little_enemies.begin(); little_enemy_it != m_little_enemies.end();) {
 				if (little_enemy_it->collides_with(*bullet_it)) {
-					printf("YES DETECTED COLLISION\n");
 					little_enemy_it = m_little_enemies.erase(little_enemy_it);
 					bullet_it = m_bullets.erase(bullet_it);
+					removed_enemy = true;
+					break;
 				}
 				else {
-					++bullet_it;
+					++little_enemy_it;
 				}
 			}
-			if (little_enemy_it == m_little_enemies.end()) {
-				break;
-			}
-			else {
-				++little_enemy_it;
-			}
+
+			if (!removed_enemy) { ++bullet_it; };
 		}
+		
     }
 
 
