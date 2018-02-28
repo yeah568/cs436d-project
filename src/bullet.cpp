@@ -2,6 +2,7 @@
 #include "bullet.hpp"
 
 #include <cmath>
+#include <cfloat>
 
 Texture Bullet::bullet_texture;
 Texture Bullet::bullet_texture2;
