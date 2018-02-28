@@ -84,6 +84,11 @@ void LittleEnemy::update(float ms) {
 	vec2 to_player = normalize(player->get_position() - get_position());
 	m_position.y += to_player.y*step;
 	m_position.x += to_player.x*step;
+	vec2 player_pos = player->get_position();
+	float delta_x = player_pos.x - m_position.x;
+	float delta_y = m_position.y - player_pos.y;
+	float angle = (float)atan2(delta_y, delta_x);
+	m_rotation = -angle + 3.14/2;
 	//m_position.x += step;
 
 	//

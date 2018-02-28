@@ -91,7 +91,11 @@ bool Level2::init() {
 	fprintf(stderr, "Loaded music");
 
 	m_current_speed = 1.f;
-
+	healthbar.set_texture(m_textures["healthbar"]);
+	healthbar.init();
+	healthbar.set_position({ 200,200 });
+	healthbar.set_scale({ 1.5,1.5 });
+	healthbar.set_rotation(0);
 	m_background.init();
 
 	if (m_player.init() && m_boss.init(375.f, &m_little_enemies)) {
@@ -149,6 +153,11 @@ bool Level1::init() {
 	m_current_speed = 1.f;
 
 	m_background.init();
+	healthbar.set_texture(m_textures["healthbar"]);
+	healthbar.init();
+	healthbar.set_position({ 200,200 });
+	healthbar.set_scale({ 1.5,1.5 });
+	healthbar.set_rotation(0);
 
 	if (!m_player.init()){
 		return false;
@@ -375,7 +384,7 @@ void Level::draw()
 	mat3 projection_2D{ { sx, 0.f, 0.f },{ 0.f, sy, 0.f },{ tx, ty, 1.f } };
 
 	m_background.set_position({ (float)w / 2, (float)h / 2 });
-
+	
 	m_background.draw(projection_2D);
 	
 	// Drawing entities
@@ -388,7 +397,7 @@ void Level::draw()
 	for (auto& enemy : m_little_enemies)
 		enemy.draw(projection_2D); 
 	m_boss.draw(projection_2D);
-
+	healthbar.draw(projection_2D);
 	orange_center_beat_circle.draw(projection_2D);
 	blue_center_beat_circle.draw(projection_2D);
 	m_player.draw(projection_2D);
@@ -599,7 +608,8 @@ void Level::load_textures() {
     "bullet_1",
     "bullet_2",
     "orange_moving_beat",
-    "blue_moving_beat"
+    "blue_moving_beat",
+	"healthbar"
   };
 
   for (const auto& texture_name : texture_names)
@@ -614,4 +624,8 @@ void Level::load_textures() {
     }
     m_textures[texture_name] = texture;
   }
+}
+
+int Level::getBossHealth() {
+	return m_boss.get_health();
 }

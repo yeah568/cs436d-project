@@ -10,6 +10,7 @@
 #include "BeatCircle.hpp"
 #include "CenterBeatCircle.hpp"
 #include "boss.hpp"
+#include "healthbar.hpp"
 #include "enemy.hpp"
 
 // stlib
@@ -44,7 +45,7 @@ public:
 
 	// Renders our scene
 	void draw();
-
+	int getBossHealth();
 	void drawBackground();
 
 	// Should the game be over ?
@@ -60,7 +61,7 @@ private:
 	// Generates a new turtle
 	bool spawn_turtle();
 
-	std::unordered_map<std::string, Texture*> m_textures;
+	
 	// Generates a new fish
 	bool spawn_bullet(vec2 position, float angle, bool bullet_type, bool on_beat);
 
@@ -73,17 +74,19 @@ private:
 	bool spawn_little_enemy();
 
 protected:
+	std::unordered_map<std::string, Texture*> m_textures;
 	static Texture background_texture;
 	
 	static CenterBeatCircle blue_center_beat_circle;
 	static CenterBeatCircle orange_center_beat_circle;
 	static Player m_player;
 	unsigned int m_points;
+
 	// C++ rng
 	static std::default_random_engine m_rng;
 	static std::uniform_real_distribution<float> m_dist; // default 0..1
 
-
+	HealthBar healthbar;
 	int finished = 0;
 	BeatList* beatlist;
 	int beatPos = 0;

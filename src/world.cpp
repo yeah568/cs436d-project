@@ -121,9 +121,7 @@ void World::draw()
 
 	// Updating window title with points
 	std::stringstream title_ss;
-	
-	// TODO: Fix
-	//title_ss << "Points: " << m_points;
+	title_ss << "Boss Health: " << levelList[levelCounter]->getBossHealth();
 	glfwSetWindowTitle(m_window, title_ss.str().c_str());
 
 	// Clearing backbuffer
@@ -146,6 +144,7 @@ void World::draw()
 	float tx = -(right + left) / (right - left);
 	float ty = -(top + bottom) / (top - bottom);
 	mat3 projection_2D{ { sx, 0.f, 0.f },{ 0.f, sy, 0.f },{ tx, ty, 1.f } };
+	
 
 	levelList[levelCounter]->draw();
 
