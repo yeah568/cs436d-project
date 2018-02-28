@@ -160,8 +160,8 @@ bbox Sprite::get_bounding_box() const
 	points[3] = { -wr, +hr };
 	float min_x = FLT_MAX;
 	float min_y = FLT_MAX;
-	float max_x = FLT_MIN;
-	float max_y = FLT_MIN;
+	float max_x = -FLT_MAX;
+	float max_y = -FLT_MAX;
 	for (vec2 point : points) {
 		point = rotate(point, m_rotation) + m_position;
 		min_x = point.x < min_x ? point.x : min_x;
