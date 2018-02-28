@@ -124,20 +124,6 @@ bool Player::collides_with(const LittleEnemy& little_enemy)
 	return false;
 }
 
-bool Player::collides_with(const LittleEnemy& little_enemy)
-{
-	float dx = m_position.x - little_enemy.get_position().x;
-	float dy = m_position.y - little_enemy.get_position().y;
-	float d_sq = dx * dx + dy * dy;
-	float other_r = std::max(little_enemy.get_bounding_box().x, little_enemy.get_bounding_box().y);
-	float my_r = std::max(m_scale.x, m_scale.y);
-	float r = std::max(other_r, my_r);
-	r *= 0.6f;
-	if (d_sq < r * r)
-		return true;
-	return false;
-}
-
 bool Player::collides_with(const Bullet& bullet)
 {
 	/*float dx = m_position.x - bullet.get_position().x;
@@ -200,9 +186,4 @@ void Player::set_scale(float scale) {
 void Player::scale_by(float scale) {
 	m_scale.x *= scale;
 	m_scale.y *= scale;
-}
-
-void Player::set_scale(float scale) {
-	m_scale.x = -scale;
-	m_scale.y = scale;
 }

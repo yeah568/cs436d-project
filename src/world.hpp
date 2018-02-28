@@ -4,7 +4,7 @@
 #include "common.hpp"
 #include "level.hpp"
 
-#include "LittleEnemy.hpp"
+#include "enemy.hpp"
 // stlib
 #include <vector>
 #include <string>
@@ -37,6 +37,8 @@ public:
     // Releases all associated resources
     void destroy();
 
+	void draw();
+
     // Steps the game ahead by ms milliseconds
     bool update(float ms);
 
@@ -51,11 +53,6 @@ private:
 	void on_mouse_move(GLFWwindow* window, double xpos, double ypos);
 
     bool spawn_beat_circle(int dir, float pos, float speed);
-
-    // !!! INPUT CALLBACK FUNCTIONS
-    void on_key(GLFWwindow *, int key, int, int action, int mod);
-
-    void on_mouse_move(GLFWwindow *window, double xpos, double ypos);
 
   void load_textures();
 

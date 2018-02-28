@@ -468,14 +468,14 @@ void Level::on_key(int key, int action, int mod)
 			switch (closest.get_dir()) {
 			case 1:
 			case 3:
-				on_beat_radius = 50;
+				on_beat_radius = 100;
 				break;
 			case 2:
 			case 4:
-				on_beat_radius = 40;
+				on_beat_radius = 50;
 				break;
 			}
-			on_beat = length(m_beatcircles[0].get_position()) <= on_beat_radius;
+			on_beat = length(m_beatcircles[0].get_local_position()) <= on_beat_radius;
 			m_beatcircles.erase(m_beatcircles.begin());
 		}
 
