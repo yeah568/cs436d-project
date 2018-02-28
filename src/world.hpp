@@ -2,13 +2,6 @@
 
 // internal
 #include "common.hpp"
-#include "player.hpp"
-#include "turtle.hpp"
-#include "bullet.hpp"
-#include "background.hpp"
-#include "BeatList.hpp"
-#include "BeatCircle.hpp"
-#include "CenterBeatCircle.hpp"
 #include "level.hpp"
 
 // stlib

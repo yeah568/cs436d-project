@@ -15,6 +15,7 @@
 // stlib
 #include <vector>
 #include <random>
+#include <unordered_map>
 
 #define SDL_MAIN_HANDLED
 #if defined(__linux__) || defined(LINUX)
@@ -53,10 +54,13 @@ public:
 	void on_key(int key, int action, int mod);
 	void on_mouse_move(double xpos, double ypos);
 
+	void load_textures();
+
 private:
 	// Generates a new turtle
 	bool spawn_turtle();
 
+	std::unordered_map<std::string, Texture*> m_textures;
 	// Generates a new fish
 	bool spawn_bullet(vec2 position, float angle, bool bullet_type, bool on_beat);
 

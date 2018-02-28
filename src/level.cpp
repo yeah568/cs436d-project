@@ -3,6 +3,7 @@
 #include "common.hpp"
 #include "OsuParser.hpp"
 #include "BeatCircle.hpp"
+#include "bullet.hpp"
 
 // stlib
 #include <string.h>
@@ -91,7 +92,7 @@ bool Level2::init() {
 
 	m_background.init();
 
-	BeatCircle::player = &m_player;
+	load_textures();
 
 	if (m_player.init() && m_boss.init(500.f, &m_little_enemies)) {
 		blue_center_beat_circle.init(false);
@@ -147,7 +148,7 @@ bool Level1::init() {
 
 	m_background.init();
 
-	BeatCircle::player = &m_player;
+	load_textures();
 
 	if (m_player.init() && m_boss.init(500.f, &m_little_enemies)) {
 		blue_center_beat_circle.init(false);
@@ -262,14 +263,12 @@ bool Level::update(float elapsed_ms)
 
 	// Checking player - beatcircle complete overlaps/overshoots
 	auto beatcircle_it = m_beatcircles.begin();
-	BeatCircle bc;
 	vec2 player_pos = m_player.get_position();
 	bool bad = false;
 	vec2 mov_dir;
 	vec2 bc_player;
 	while (beatcircle_it != m_beatcircles.end()) {
-		bc = (*beatcircle_it);
-		bad = length(bc.get_position()) <= 10;
+		bad = length(beatcircle_it->get_position()) <= 10;
 		if (bad) {
 			beatcircle_it = m_beatcircles.erase(beatcircle_it);
 		}
@@ -385,8 +384,10 @@ bool Level::is_over()const
 bool Level::spawn_bullet(vec2 position, float angle, bool bullet_type, bool on_beat)
 {
 	Bullet bullet;
-	if (bullet.init(bullet_type))
+	bullet.set_texture(m_textures[bullet_type ? "bullet_1" : "bullet_2"]);
+	if (bullet.init())
 	{
+		
 		bullet.set_position(position);
 		bullet.set_rotation(angle);
 		if (on_beat) {
@@ -429,18 +430,21 @@ bool Level::spawn_little_enemy() {
 }
 
 bool Level::spawn_beat_circle(int dir, float pos, float speed) {
-	BeatCircle beatcircle;
-	if (beatcircle.init(speed)) {
-		beatcircle.set_dir(dir);
-		float angle = m_player.get_rotation();
-		vec2 spawn_pos = -1 * pos * beatcircle.m_movement_dir;
-		beatcircle.set_position(spawn_pos);
-		beatcircle.set_scale({ 1.5,1.5 });
-		m_beatcircles.emplace_back(beatcircle);
-		return true;
-	}
-	fprintf(stderr, "Failed to spawn beat circle");
-	return false;
+	BeatCircle beat_circle(&m_player, speed);
+    bool type = ((dir % 2) == 1);
+    beat_circle.set_texture(m_textures[type ? "orange_moving_beat" : "blue_moving_beat"]);
+    if (beat_circle.init()) {
+        beat_circle.set_dir(dir);
+        float angle = m_player.get_rotation();
+        vec2 spawn_pos = -1*pos * beat_circle.get_movement_dir();
+        beat_circle.set_position(spawn_pos);
+        beat_circle.set_scale({1.5,1.5});
+        m_beatcircles.emplace_back(beat_circle);
+        printf("Spawned beat circle\n");
+        return true;
+    }
+    fprintf(stderr, "Failed to spawn beat circle");
+    return false;
 }
 
 
@@ -459,7 +463,7 @@ void Level::on_key(int key, int action, int mod)
 		if (m_beatcircles.size() > 0) {
 			BeatCircle closest = m_beatcircles[0];
 			float on_beat_radius = 20;
-			switch (closest.dir) {
+			switch (closest.get_dir()) {
 			case 1:
 			case 3:
 				on_beat_radius = 50;
@@ -507,12 +511,6 @@ void Level::on_key(int key, int action, int mod)
 
 		case GLFW_KEY_U:
 			m_player.exploding_timer = 1;
-			break;
-
-		case GLFW_KEY_I:
-			m_player.player_texture.load_from_file(textures_path("character.png"));
-			m_player.exploding_timer = 0;
-			m_player.set_scale({ -0.1f, 0.1f });
 			break;
 		}
 	}
@@ -568,4 +566,27 @@ void Level::on_mouse_move(double xpos, double ypos)
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 	m_player.set_mouse((float)xpos, (float)ypos);
+}
+
+void Level::load_textures() {
+  std::vector<std::string> texture_names{
+    "character",
+    "bullet_1",
+    "bullet_2",
+    "orange_moving_beat",
+    "blue_moving_beat",
+  };
+
+  for (const auto& texture_name : texture_names)
+  {
+    Texture* texture = new Texture(); 
+    // TODO: fix the macro
+    auto texture_path = textures_path("") + texture_name + ".png";
+    std::cout << texture_path << std::endl;
+    if (!texture->load_from_file(texture_path.c_str()))
+    {
+      fprintf(stderr, "Failed to load texture!");
+    }
+    m_textures[texture_name] = texture;
+  }
 }

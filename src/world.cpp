@@ -1,8 +1,6 @@
 // Header
 #include "world.hpp"
 #include "common.hpp"
-#include "OsuParser.hpp"
-#include "BeatCircle.hpp"
 #include "level.hpp"
 
 // stlib
@@ -174,50 +172,4 @@ void World::on_mouse_move(GLFWwindow* window, double xpos, double ypos)
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 	levelList[levelCounter]->on_mouse_move(xpos, ypos);
-}
-
-
-
-float World::getWindowRatio()
-{
-	int w, h;
-	glfwGetFramebufferSize(m_window, &w, &h);
-	int w2, h2;
-	glfwGetWindowSize(m_window, &w2, &h2);
-	float scale = ((float)w2 / (float)w + (float)h2 / (float)h) / 2.0;
-	return 1.0f/scale;
-}
-
-float World::getWindowRatio(GLFWwindow * window)
-{
-	int w, h;
-	glfwGetFramebufferSize(window, &w, &h);
-	int w2, h2;
-	glfwGetWindowSize(window, &w2, &h2);
-	float scale = ((float)w2 / (float)w + (float)h2 / (float)h) / 2.0;
-	return 1.0f / scale;
-}
-
-
-void World::load_textures() {
-  std::vector<std::string> texture_names{
-    "character",
-    "bullet_1",
-    "bullet_2",
-    "orange_moving_beat",
-    "blue_moving_beat",
-  };
-
-  for (const auto& texture_name : texture_names)
-  {
-    Texture* texture = new Texture(); 
-    // TODO: fix the macro
-    auto texture_path = textures_path("") + texture_name + ".png";
-    std::cout << texture_path << std::endl;
-    if (!texture->load_from_file(texture_path.c_str()))
-    {
-      fprintf(stderr, "Failed to load texture!");
-    }
-    m_textures[texture_name] = texture;
-  }
 }

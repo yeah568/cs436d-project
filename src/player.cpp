@@ -3,7 +3,6 @@
 
 // internal
 #include "turtle.hpp"
-#include "enemy.hpp"
 #include "bullet.hpp"
 #include "common.hpp"
 
