@@ -218,8 +218,10 @@ bbox Boss::get_bounding_box()const
 	points[1] = { +wr, -hr };
 	points[2] = { +wr, +hr };
 	points[3] = { -wr, +hr };
-	float min_x = FLT_MAX, min_y = FLT_MAX;
-	float max_x = FLT_MIN, max_y = FLT_MIN;
+	float min_x = FLT_MAX;
+	float min_y = FLT_MAX;
+	float max_x = FLT_MIN;
+	float max_y = FLT_MIN; 
 	for (vec2 point : points) {
 		point = rotate(point, m_rotation) + m_position;
 		min_x = point.x < min_x ? point.x : min_x;
