@@ -1,7 +1,7 @@
 #pragma once
 
 #include "common.hpp"
-#include "enemy.hpp"
+#include "Enemy.hpp"
 #include "Sprite.hpp"
 
 class Turtle;

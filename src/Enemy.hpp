@@ -1,8 +1,8 @@
 #pragma once
 
 #include "common.hpp"
-#include "bullet.hpp"
-#include "player.hpp"
+#include "Bullet.hpp"
+#include "Player.hpp"
 
 // TODO:
 // WANT THE LITTLE ENEMIES TO SPAWN ON THE BEAT OR WHENEVER THEY ARE CALLED BY BIG BOSS (not implemented)

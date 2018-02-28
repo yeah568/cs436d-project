@@ -1,6 +1,6 @@
 #pragma once
 #include "common.hpp"
-#include "player.hpp"
+#include "Player.hpp"
 
 // Salmon food
 class CenterBeatCircle : public Renderable

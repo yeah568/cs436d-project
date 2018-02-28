@@ -1,9 +1,9 @@
 #pragma once
 
 #include "common.hpp"
-#include "bullet.hpp"
+#include "Bullet.hpp"
 #include "BeatList.hpp"
-#include "enemy.hpp"
+#include "Enemy.hpp"
 
 #include <vector>
 

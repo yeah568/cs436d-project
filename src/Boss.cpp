@@ -1,8 +1,4 @@
-#include "boss.hpp"
-
-#include "common.hpp"
-#include "BeatList.hpp"
-#include "bullet.hpp"
+#include "Boss.hpp"
 
 #include <cmath>
 #include <vector>

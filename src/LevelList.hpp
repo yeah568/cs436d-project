@@ -2,8 +2,8 @@
 
 // internal
 #include "common.hpp"
-#include "level.hpp"
-#include "background.hpp"
+#include "Level.hpp"
+#include "Background.hpp"
 
 // stlib
 #include <vector>

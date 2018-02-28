@@ -1,12 +1,9 @@
-// Header
-#include "player.hpp"
+#include "Player.hpp"
 
-// internal
-#include "turtle.hpp"
-#include "bullet.hpp"
+#include "Turtle.hpp"
+#include "Bullet.hpp"
 #include "common.hpp"
 
-// stlib
 #include <math.h>
 #include <vector>
 #include <string>
