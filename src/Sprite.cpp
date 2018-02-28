@@ -1,5 +1,6 @@
 #include <cmath>
 #include "Sprite.hpp"
+#include <cfloat>
 
 Sprite::Sprite(Texture* texture)
   : m_texture(texture) {
@@ -145,10 +146,30 @@ void Sprite::set_rotation(float rotation)
   m_rotation = rotation;
 }
 
-vec2 Sprite::get_bounding_box() const
+bbox Sprite::get_bounding_box() const
 {
   // fabs is to avoid negative scale due to the facing direction
-  return { std::fabs(m_scale.x) * m_texture->width, std::fabs(m_scale.y) * m_texture->height };
+	float width = std::fabs(m_scale.x) * m_texture->width;
+	float height = std::fabs(m_scale.y) * m_texture->height;
+	float wr = width * 0.5f;
+	float hr = height * 0.5f;
+	vec2 points[4];
+	points[0] = { -wr, -hr };
+	points[1] = { +wr, -hr };
+	points[2] = { +wr, +hr };
+	points[3] = { -wr, +hr };
+	float min_x = FLT_MAX;
+	float min_y = FLT_MAX;
+	float max_x = FLT_MIN;
+	float max_y = FLT_MIN;
+	for (vec2 point : points) {
+		point = rotate(point, m_rotation) + m_position;
+		min_x = point.x < min_x ? point.x : min_x;
+		min_y = point.y < min_y ? point.y : min_y;
+		max_x = point.x > max_x ? point.x : max_x;
+		max_y = point.y > max_y ? point.y : max_y;
+	}
+	return { min_x, min_y, max_x, max_y };
 }
 
 void Sprite::set_texture(Texture* texture)

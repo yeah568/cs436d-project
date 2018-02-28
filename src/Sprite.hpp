@@ -21,7 +21,7 @@ public:
   float get_rotation() const;
   void set_rotation(float rotation);
 
-  vec2 get_bounding_box() const;
+  bbox get_bounding_box() const;
 
   void set_texture(Texture* texture);
 
