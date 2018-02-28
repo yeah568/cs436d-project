@@ -1,11 +1,12 @@
 #pragma once
 
 #include "common.hpp"
-#include "LittleEnemy.hpp"
+#include "enemy.hpp"
 #include "Sprite.hpp"
 
 class Turtle;
 class Bullet;
+//class Enemy;
 
 class Player : public Sprite
 {
@@ -18,9 +19,9 @@ public:
 	void update(float ms);
 
 	// Collision routines for turtles and fish
-	bool collides_with(const Turtle& turtle);
-	bool collides_with(const Bullet& bullet);
 	bool collides_with(const LittleEnemy& little_enemy);
+	
+	bool collides_with(const Bullet& fish);
 
 	// Moves the salmon's position by the specified offset
 	void move(vec2 off);

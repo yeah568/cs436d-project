@@ -3,7 +3,7 @@
 #include "common.hpp"
 #include "bullet.hpp"
 #include "BeatList.hpp"
-#include "LittleEnemy.hpp"
+#include "enemy.hpp"
 
 #include <vector>
 

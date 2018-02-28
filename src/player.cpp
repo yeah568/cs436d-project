@@ -90,17 +90,17 @@ void Player::update(float ms)
 	}
 
 	if (abs(m_scale.x * 0.95) < 1.f) {
-		m_scale.x = -1.f;
+		m_scale.x = -0.5f;
 	}
 	else {
-		m_scale.x *= 0.95;
+		m_scale.x *= 0.5;
 	}
 
 	if (abs(m_scale.y * 0.95) < 1.f) {
-		m_scale.y = 1.f;
+		m_scale.y = 0.5f;
 	}
 	else {
-		m_scale.y *= 0.95;
+		m_scale.y *= 0.5;
 	}
 
 	if (m_light_up_countdown_ms > 0.f)
@@ -108,19 +108,7 @@ void Player::update(float ms)
 }
 
 // Simple bounding box collision check, 
-bool Player::collides_with(const Turtle& turtle)
-{
-	float dx = m_position.x - turtle.get_position().x;
-	float dy = m_position.y - turtle.get_position().y;
-	float d_sq = dx * dx + dy * dy;
-	float other_r = std::max(turtle.get_bounding_box().x, turtle.get_bounding_box().y);
-	float my_r = std::max(m_scale.x, m_scale.y);
-	float r = std::max(other_r, my_r);
-	r *= 0.6f;
-	if (d_sq < r * r)
-		return true;
-	return false;
-}
+
 
 bool Player::collides_with(const LittleEnemy& little_enemy)
 {

@@ -23,11 +23,11 @@ bool CenterBeatCircle::init(bool type)
 		}
 	}
 	if (!type) {
-		m_scale.x = 4.0f;
-		m_scale.y = 2.0;
+		m_scale.x = 2.0f;
+		m_scale.y = 1.0;
 	} else {
-		m_scale.x = 3.0f;
-		m_scale.y = 1.0f;
+		m_scale.x = 1.5f;
+		m_scale.y = 0.5f;
 	}
 	// The position corresponds to the center of the texture
 	float wr = center_beat_circle_texture.width * 0.5f;
@@ -109,6 +109,7 @@ void CenterBeatCircle::set_scale(vec2 scale) {
 
 void CenterBeatCircle::draw(const mat3& projection)
 {
+	
 	// Transformation code, see Rendering and Transformation in the template specification for more info
 	// Incrementally updates transformation matrix, thus ORDER IS IMPORTANT
 	// vec2 rotated = rotate(m_position, -player->get_rotation());
@@ -156,6 +157,7 @@ void CenterBeatCircle::draw(const mat3& projection)
 
 	// Drawing!
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, nullptr);
+	
 }
 
 vec2 CenterBeatCircle::get_position()const
@@ -165,7 +167,7 @@ vec2 CenterBeatCircle::get_position()const
 
 void CenterBeatCircle::set_position(vec2 position)
 {
-	printf("BC.x=%f,BC.y=%f\n", position.x, position.y);
+	
 	m_position = position;
 }
 
