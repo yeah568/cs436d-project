@@ -4,11 +4,12 @@
 #include "BeatList.hpp"
 #include "bullet.hpp"
 
-#include <math.h>
+#include <cmath>
 #include <vector>
 #include <string>
 #include <algorithm>
 #include <stdlib.h>
+#include <cfloat>
 
 Texture Boss::boss_texture;
 
@@ -62,13 +63,13 @@ bool Boss::init(float health, std::vector<LittleEnemy>* little_enemies)
 	// Loading shaders
 	if (!effect.load_from_file(shader_path("textured.vs.glsl"), shader_path("textured.fs.glsl")))
 		return false;
-
+	
 	// Setting initial values
 	m_scale.x = 0.75;
 	m_scale.y = 0.75;
 	m_position = { 600.f, 80.f };
 	m_rotation = 0.f;
-	m_health = health;
+    m_health = health;
 	m_little_enemies = little_enemies;
 
 	return true;
@@ -95,8 +96,8 @@ void Boss::draw(const mat3& projection)
 	transform_begin();
 	transform_translate({ m_position.x, m_position.y });
 	transform_scale(m_scale);
-	transform_rotate(m_rotation);
-	transform_end();
+    transform_rotate(m_rotation);
+    transform_end();
 
 	// Setting shaders
 	glUseProgram(effect.program);
@@ -148,7 +149,6 @@ void Boss::on_beat(Beat* beat, vec2 screen) {
 		move({ 20.f, 0.f });
 		break;
 	case 2:
-		
 		LittleEnemy little_enemy;
 		if (little_enemy.init()) {
 
@@ -156,24 +156,16 @@ void Boss::on_beat(Beat* beat, vec2 screen) {
 				{ ((64.f + (float)beat->x) / 640.f) * screen.x, ((48.f + (float)beat->y) / 480.f) * screen.y });
 			m_little_enemies->emplace_back(little_enemy);
 		}
-		
 		break;
-		
 	}
 }
 
 bool Boss::collides_with(const Bullet& bullet)
 {
-	float dx = m_position.x - bullet.get_position().x;
-	float dy = m_position.y - bullet.get_position().y;
-	float d_sq = dx * dx + dy * dy;
-	float other_r = std::max(bullet.get_bounding_box().x, bullet.get_bounding_box().y);
-	float my_r = std::max(m_scale.x, m_scale.y);
-	float r = std::max(other_r, my_r);
-	r *= 0.6f;
-	if (d_sq < r * r)
-		return true;
-	return false;
+	bbox boss_bbox = get_bounding_box();
+	bbox bullet_bbox = bullet.get_bounding_box();
+	return bullet_bbox.min_x <= boss_bbox.max_x && bullet_bbox.max_x >= boss_bbox.min_x &&
+		bullet_bbox.min_y <= boss_bbox.max_y && bullet_bbox.max_y >= boss_bbox.min_y;
 }
 
 vec2 Boss::get_position()const
@@ -207,10 +199,36 @@ vec2 Boss::get_scale() {
 
 float Boss::get_health()const
 {
-	return m_health;
+    return m_health;
 }
 
 void Boss::set_health(float delta)
 {
-	m_health += delta;
+    m_health += delta;
 }
+
+bbox Boss::get_bounding_box()const
+{
+	// fabs is to avoid negative scale due to the facing direction
+	float width = std::fabs(m_scale.x) * boss_texture.width;
+	float height = std::fabs(m_scale.y) * boss_texture.height;
+	float wr = width * 0.5f;
+	float hr = height * 0.5f;
+	vec2 points[4];
+	points[0] = { -wr, -hr };
+	points[1] = { +wr, -hr };
+	points[2] = { +wr, +hr };
+	points[3] = { -wr, +hr };
+	float min_x = FLT_MAX;
+	float min_y = FLT_MAX;
+	float max_x = FLT_MIN;
+	float max_y = FLT_MIN; 
+	for (vec2 point : points) {
+		point = rotate(point, m_rotation) + m_position;
+		min_x = point.x < min_x ? point.x : min_x;
+		min_y = point.y < min_y ? point.y : min_y;
+		max_x = point.x > max_x ? point.x : max_x;
+		max_y = point.y > max_y ? point.y : max_y;
+	}
+	return { min_x, min_y, max_x, max_y };
+};

@@ -4,6 +4,7 @@
 #include "common.hpp"
 #include "level.hpp"
 
+#include "LittleEnemy.hpp"
 // stlib
 #include <vector>
 #include <string>
@@ -15,30 +16,29 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_mixer.h>
 #else
+
 #include <SDL/SDL.h>
 #include <SDL/SDL_mixer.h>
+
 #endif
 
 // Container for all our entities and game logic. Individual rendering / update is 
 // deferred to the relative update() methods
-class World
-{
+class World {
 
 public:
-	World();
-	~World();
+    World();
 
-	// Creates a window, sets up events and begins the game
-	bool init(vec2 screen);
+    ~World();
 
-	// Releases all associated resources
-	void destroy();
+    // Creates a window, sets up events and begins the game
+    bool init(vec2 screen);
 
-	// Steps the game ahead by ms milliseconds
-	bool update(float ms);
+    // Releases all associated resources
+    void destroy();
 
-	// Renders our scene
-	void draw();
+    // Steps the game ahead by ms milliseconds
+    bool update(float ms);
 
 	// Should the game be over ?
 	bool is_over()const;
@@ -49,6 +49,13 @@ private:
 	// !!! INPUT CALLBACK FUNCTIONS
 	void on_key(GLFWwindow*, int key, int, int action, int mod);
 	void on_mouse_move(GLFWwindow* window, double xpos, double ypos);
+
+    bool spawn_beat_circle(int dir, float pos, float speed);
+
+    // !!! INPUT CALLBACK FUNCTIONS
+    void on_key(GLFWwindow *, int key, int, int action, int mod);
+
+    void on_mouse_move(GLFWwindow *window, double xpos, double ypos);
 
   void load_textures();
 

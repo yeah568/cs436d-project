@@ -2,7 +2,7 @@
 #include "bullet.hpp"
 
 #include <cmath>
-#include "float.h"
+#include <cfloat>
 
 Bullet::Bullet()
   : Sprite(nullptr)
@@ -19,9 +19,9 @@ void Bullet::update(float ms)
 	// having entities move at different speed based on the machine.
 	float BULLET_SPEED;
 	if (m_scale.x > 1.1)
-		BULLET_SPEED = 1600.f;
+		BULLET_SPEED = 3200.f;
 	else
-		BULLET_SPEED = 400.f;
+		BULLET_SPEED = 800.f;
 	float step = BULLET_SPEED * (ms / 1000);
 	
 	m_position.x += m_movement_dir.x*step;

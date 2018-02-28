@@ -3,7 +3,7 @@
 #include "common.hpp"
 #include "bullet.hpp"
 #include "BeatList.hpp"
-#include "enemy.hpp"
+#include "LittleEnemy.hpp"
 
 #include <vector>
 
@@ -42,6 +42,8 @@ public:
 	float get_health()const;
 
 	void set_health(float delta);
+
+	bbox get_bounding_box()const;
 
 private:
 	vec2 m_position; // Window coordinates

@@ -516,7 +516,7 @@
     <ClCompile Include="$(ProjectDir)..\src\turtle.cpp" />
     <ClCompile Include="$(ProjectDir)..\src\OsuParser.cpp" />
     <ClCompile Include="$(ProjectDir)..\src\utils\StringUtils.cpp" />
-    <ClCompile Include="..\src\BeatList.cpp" />
+    <ClCompile Include="$(ProjectDir)..\src\BeatList.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(ProjectDir)..\src\Sprite.hpp" />
@@ -528,6 +528,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\background.hpp" />
+    <ClInclude Include="..\src\boss.hpp" />
+    <ClInclude Include="..\src\LittleEnemy.hpp" />
     <ClInclude Include="..\src\bullet.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
