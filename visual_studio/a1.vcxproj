@@ -501,6 +501,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="$(ProjectDir)..\src\a1.cpp" />
+    <ClCompile Include="$(ProjectDir)..\src\Sprite.cpp" />
     <ClCompile Include="$(ProjectDir)..\src\BeatCircle.cpp" />
     <ClCompile Include="$(ProjectDir)..\src\CenterBeatCircle.cpp" />
     <ClCompile Include="$(ProjectDir)..\src\common.cpp" />
@@ -516,6 +517,7 @@
     <ClCompile Include="$(ProjectDir)..\src\BeatList.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="$(ProjectDir)..\src\Sprite.hpp" />
     <ClInclude Include="$(ProjectDir)..\src\OsuParser.hpp" />
     <ClInclude Include="$(ProjectDir)..\src\utils\StringUtils.hpp" />
     <ClInclude Include="..\src\BeatList.hpp" />

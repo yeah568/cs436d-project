@@ -25,11 +25,12 @@ namespace {
 }
 
 World::World() :
-        m_points(0),
-        m_next_fish_spawn(0.f),
-        m_next_little_enemies_spawn(0.f) {
-    // Seeding rng with random device
-    m_rng = std::default_random_engine(std::random_device()());
+	m_points(0),
+	//m_next_turtle_spawn(0.f),
+	m_next_fish_spawn(0.f)
+{
+	// Seeding rng with random device
+	m_rng = std::default_random_engine(std::random_device()());
 }
 
 World::~World() {
@@ -129,7 +130,10 @@ bool World::init(vec2 screen) {
 
     m_background.init();
 
-	BeatCircle::player = &m_salmon;
+  // Load textures.
+  load_textures();
+
+  m_salmon.set_texture(m_textures["character"]);
 	
 	if (m_salmon.init() && m_boss.init(500.f, &m_little_enemies)) {
 		blue_center_beat_circle.init(false);
@@ -277,23 +281,23 @@ bool World::update(float elapsed_ms) {
 		}
 	}
 
-    // Checking player - beatcircle complete overlaps/overshoots
-    auto beatcircle_it = m_beatcircles.begin();
-    BeatCircle bc;
-    vec2 player_pos = m_salmon.get_position();
-    bool bad = false;
-    vec2 mov_dir;
-    vec2 bc_player;
-    while (beatcircle_it != m_beatcircles.end()) {
-        bc = (*beatcircle_it);
-        bad = length(bc.get_position()) <= 10;
-        if (bad) {
-            beatcircle_it = m_beatcircles.erase(beatcircle_it);
-        } else {
-            ++beatcircle_it;
-        }
-    }
-
+	// Checking player - beatcircle complete overlaps/overshoots
+	auto beatcircle_it = m_beatcircles.begin();
+	vec2 player_pos = m_salmon.get_position();
+	bool bad = false;
+	vec2 mov_dir;
+	vec2 bc_player;
+	while (beatcircle_it != m_beatcircles.end()) {
+		printf("Distance away: %f\n", length(beatcircle_it->get_local_position()));
+		bad = length(beatcircle_it->get_local_position()) <= 10.0f;
+		if (bad) {
+			beatcircle_it = m_beatcircles.erase(beatcircle_it);
+			printf("Erased bc\n");
+		} else {
+			++beatcircle_it;
+		}
+	}
+	
 
 
 	// Checking Salmon - Turtle collisions
@@ -516,154 +520,167 @@ bool World::spawn_little_enemy() {
     fprintf(stderr, "Failed to spawn little enemy");
     return false;
 }
-
 // Creates a new fish and if successfull adds it to the list of fish
-bool World::spawn_bullet(vec2 position, float angle, bool bullet_type, bool on_beat) {
-    Bullet bullet;
-    if (bullet.init(bullet_type)) {
-        bullet.set_position(position);
-        bullet.set_rotation(angle);
-        if (on_beat) {
-            bullet.set_scale({2, 2});
-        }
-        bullet.m_movement_dir = {(float) cos(angle), (float) -sin(angle)};
-        m_bullets.emplace_back(bullet);
+bool World::spawn_bullet(vec2 position, float angle, bool bullet_type, bool on_beat)
+{
+	Bullet bullet;
 
-        return true;
-    }
-    fprintf(stderr, "Failed to spawn fish");
-    return false;
+	bullet.set_texture(m_textures[bullet_type ? "bullet_1" : "bullet_2"]);
+
+	if (bullet.init())
+	{
+		bullet.set_position(position);
+		bullet.set_rotation(angle);
+		if (on_beat) {
+			bullet.set_scale({ 2,2 });
+		}
+		bullet.m_movement_dir = { (float)cos(angle), (float)-sin(angle) };
+		m_bullets.emplace_back(bullet);
+		return true;
+	}
+	return false;
 }
 
 bool World::spawn_beat_circle(int dir, float pos, float speed) {
-    BeatCircle beatcircle;
-    if (beatcircle.init(speed)) {
-        beatcircle.set_dir(dir);
-        float angle = m_salmon.get_rotation();
-        vec2 spawn_pos = -1 * pos * beatcircle.m_movement_dir;
-        beatcircle.set_position(spawn_pos);
-        beatcircle.set_scale({1.5, 1.5});
-        m_beatcircles.emplace_back(beatcircle);
-        return true;
-    }
-    fprintf(stderr, "Failed to spawn beat circle");
-    return false;
+	BeatCircle beat_circle(&m_salmon, speed);
+
+	bool type = ((dir % 2) == 1);
+
+  	beat_circle.set_texture(m_textures[type ? "orange_moving_beat" : "blue_moving_beat"]);
+
+	if (beat_circle.init()) {
+		beat_circle.set_dir(dir);
+		float angle = m_salmon.get_rotation();
+		vec2 spawn_pos = -1*pos * beat_circle.get_movement_dir();
+		beat_circle.set_position(spawn_pos);
+		beat_circle.set_scale({1.5,1.5});
+		m_beatcircles.emplace_back(beat_circle);
+		printf("Spawned beat circle\n");
+		return true;
+	}
+	fprintf(stderr, "Failed to spawn beat circle");
+	return false;
 }
 
 
 // On key callback
-void World::on_key(GLFWwindow *, int key, int, int action, int mod) {
-    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    // HANDLE SALMON MOVEMENT HERE
-    // key is of 'type' GLFW_KEY_
-    // action can be GLFW_PRESS GLFW_RELEASE GLFW_REPEAT
-    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    int w, h;
-    glfwGetFramebufferSize(m_window, &w, &h);
-    vec2 screen = {(float) w, (float) h};
+void World::on_key(GLFWwindow*, int key, int, int action, int mod)
+{
+	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	// HANDLE SALMON MOVEMENT HERE
+	// key is of 'type' GLFW_KEY_
+	// action can be GLFW_PRESS GLFW_RELEASE GLFW_REPEAT
+	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	int w, h;
+	glfwGetFramebufferSize(m_window, &w, &h);
+	vec2 screen = { (float)w, (float)h };
 
 
-    if (action == GLFW_PRESS && key == GLFW_KEY_SPACE) {
-        bool on_beat = false;
-        if (m_beatcircles.size() > 0) {
-            BeatCircle closest = m_beatcircles[0];
-            float on_beat_radius = 20;
-            switch (closest.dir) {
-                case 1:
-                case 3:
-                    on_beat_radius = 50;
-                    break;
-                case 2:
-                case 4:
-                    on_beat_radius = 40;
-                    break;
-            }
-            on_beat = length(m_beatcircles[0].get_position()) <= on_beat_radius;
-            m_beatcircles.erase(m_beatcircles.begin());
-        }
+	if (action == GLFW_PRESS && key == GLFW_KEY_SPACE) {
+		bool on_beat =false;
+		if (m_beatcircles.size() > 0) {
+			BeatCircle closest = m_beatcircles[0];
+			float on_beat_radius = 20;
+			// TODO: Remove these magic numbers
+			switch (closest.get_dir()) {
+				case 1:
+				case 3:
+					on_beat_radius = 200;
+					break;
+				case 2:
+				case 4:
+					on_beat_radius = 160;
+					break;
+			}
+			on_beat = length(m_beatcircles[0].get_local_position()) <= on_beat_radius;
+			m_beatcircles.erase(m_beatcircles.begin());
+		}
+		
+		float player_angle = m_salmon.get_rotation()+1.57;
+		vec2 salmon_pos = m_salmon.get_position();
+		spawn_bullet(salmon_pos, player_angle, m_salmon.bullet_type, on_beat);
+		m_salmon.bullet_type = !m_salmon.bullet_type;
+		
+	}
 
-        float player_angle = m_salmon.get_rotation() + 1.57;
-        vec2 salmon_pos = m_salmon.get_position();
-        spawn_bullet(salmon_pos, player_angle, m_salmon.bullet_type, on_beat);
-        m_salmon.bullet_type = !m_salmon.bullet_type;
+	if (action == GLFW_PRESS) {
+		switch (key) {
+		case GLFW_KEY_RIGHT:
+		case GLFW_KEY_D:
+			m_salmon.add_movement_dir({ 1.f, 0.f });
+			break;
+		case GLFW_KEY_LEFT:
+		case GLFW_KEY_A:
+			m_salmon.add_movement_dir({ -1.f, 0.f });
+			break;
+		//case GLFW_KEY_UP:
+		//case GLFW_KEY_W:
+		//	m_salmon.add_movement_dir({ 0.f, -1.f });
+		//	break;
+		//case GLFW_KEY_DOWN:
+		//case GLFW_KEY_S:
+		//	m_salmon.add_movement_dir({ 0.f, 1.f });
+		//	break;
+		case GLFW_KEY_LEFT_SHIFT:
+			m_salmon.dash();
+			break;
 
-    }
+		case GLFW_KEY_U:
+			m_salmon.exploding_timer = 1;
+			break;
 
-    if (action == GLFW_PRESS) {
-        switch (key) {
-            case GLFW_KEY_RIGHT:
-            case GLFW_KEY_D:
-                m_salmon.add_movement_dir({1.f, 0.f});
-                break;
-            case GLFW_KEY_LEFT:
-            case GLFW_KEY_A:
-                m_salmon.add_movement_dir({-1.f, 0.f});
-                break;
-                //case GLFW_KEY_UP:
-                //case GLFW_KEY_W:
-                //	m_salmon.add_movement_dir({ 0.f, -1.f });
-                //	break;
-                //case GLFW_KEY_DOWN:
-                //case GLFW_KEY_S:
-                //	m_salmon.add_movement_dir({ 0.f, 1.f });
-                //	break;
-            case GLFW_KEY_LEFT_SHIFT:
-                m_salmon.dash();
-                break;
+		case GLFW_KEY_I:
+      /*
+			m_salmon.player_texture.load_from_file(textures_path("character.png"));
+			m_salmon.exploding_timer = 0;
+			m_salmon.set_scale({ -0.2f, 0.2f });
+      */
+			break;
+		}
+	}
 
-            case GLFW_KEY_U:
-                m_salmon.exploding_timer = 1;
-                break;
-
-            case GLFW_KEY_I:
-                m_salmon.player_texture.load_from_file(textures_path("character.png"));
-                m_salmon.exploding_timer = 0;
-                m_salmon.set_scale({-0.2f, 0.2f});
-                break;
-        }
-    }
-
-    if (action == GLFW_RELEASE) {
-        switch (key) {
-            case GLFW_KEY_RIGHT:
-            case GLFW_KEY_D:
-                m_salmon.add_movement_dir({-1.f, 0.f});
-                break;
-            case GLFW_KEY_LEFT:
-            case GLFW_KEY_A:
-                m_salmon.add_movement_dir({1.f, 0.f});
-                break;
-                //case GLFW_KEY_UP:
-                //case GLFW_KEY_W:
-                //	m_salmon.add_movement_dir({ 0.f, 1.f });
-                ///	break;
-                //case GLFW_KEY_DOWN:
-                //case GLFW_KEY_S:
-                //	m_salmon.add_movement_dir({ 0.f, -1.f });
-                //	break;
-        }
-    }
+	if (action == GLFW_RELEASE) {
+		switch (key) {
+		case GLFW_KEY_RIGHT:
+		case GLFW_KEY_D:
+			m_salmon.add_movement_dir({ -1.f, 0.f });
+			break;
+		case GLFW_KEY_LEFT:
+		case GLFW_KEY_A:
+			m_salmon.add_movement_dir({ 1.f, 0.f });
+			break;
+		//case GLFW_KEY_UP:
+		//case GLFW_KEY_W:
+		//	m_salmon.add_movement_dir({ 0.f, 1.f });
+		///	break;
+		//case GLFW_KEY_DOWN:
+		//case GLFW_KEY_S:
+		//	m_salmon.add_movement_dir({ 0.f, -1.f });
+		//	break;
+		}
+	}
 
 
-    // Resetting game
-    if (action == GLFW_RELEASE && key == GLFW_KEY_R) {
-        int w, h;
-        glfwGetWindowSize(m_window, &w, &h);
-        m_salmon.destroy();
-        m_salmon.init();
-        m_background.init();
-        m_turtles.clear();
-        m_bullets.clear();
-        m_current_speed = 1.f;
-    }
+	// Resetting game
+	if (action == GLFW_RELEASE && key == GLFW_KEY_R)
+	{
+		int w, h;
+		glfwGetWindowSize(m_window, &w, &h);
+		m_salmon.destroy();
+		m_salmon.init();
+		m_background.init();
+		m_turtles.clear();
+		m_bullets.clear();
+		m_current_speed = 1.f;
+	}
 
-    // Control the current speed with `<` `>`
-    if (action == GLFW_RELEASE && (mod & GLFW_MOD_SHIFT) && key == GLFW_KEY_COMMA)
-        m_current_speed -= 0.1f;
-    if (action == GLFW_RELEASE && (mod & GLFW_MOD_SHIFT) && key == GLFW_KEY_PERIOD)
-        m_current_speed += 0.1f;
+	// Control the current speed with `<` `>`
+	if (action == GLFW_RELEASE && (mod & GLFW_MOD_SHIFT) &&  key == GLFW_KEY_COMMA)
+		m_current_speed -= 0.1f;
+	if (action == GLFW_RELEASE && (mod & GLFW_MOD_SHIFT) && key == GLFW_KEY_PERIOD)
+		m_current_speed += 0.1f;
 
-    m_current_speed = fmax(0.f, m_current_speed);
+	m_current_speed = fmax(0.f, m_current_speed);
 }
 
 void World::on_mouse_move(GLFWwindow *window, double xpos, double ypos) {
@@ -675,4 +692,27 @@ void World::on_mouse_move(GLFWwindow *window, double xpos, double ypos) {
 
     m_salmon.set_mouse((float) xpos, (float) ypos);
 
+}
+
+void World::load_textures() {
+  std::vector<std::string> texture_names{
+    "character",
+    "bullet_1",
+    "bullet_2",
+    "orange_moving_beat",
+    "blue_moving_beat",
+  };
+
+  for (const auto& texture_name : texture_names)
+  {
+    Texture* texture = new Texture(); 
+    // TODO: fix the macro
+    auto texture_path = textures_path("") + texture_name + ".png";
+    std::cout << texture_path << std::endl;
+    if (!texture->load_from_file(texture_path.c_str()))
+    {
+      fprintf(stderr, "Failed to load texture!");
+    }
+    m_textures[texture_name] = texture;
+  }
 }

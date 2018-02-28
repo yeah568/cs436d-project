@@ -109,7 +109,6 @@ void CenterBeatCircle::set_scale(vec2 scale) {
 
 void CenterBeatCircle::draw(const mat3& projection)
 {
-	// printf("Started Drawing\n");
 	// Transformation code, see Rendering and Transformation in the template specification for more info
 	// Incrementally updates transformation matrix, thus ORDER IS IMPORTANT
 	// vec2 rotated = rotate(m_position, -player->get_rotation());
@@ -157,7 +156,6 @@ void CenterBeatCircle::draw(const mat3& projection)
 
 	// Drawing!
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, nullptr);
-	// printf("Finished Drawing\n");
 }
 
 vec2 CenterBeatCircle::get_position()const

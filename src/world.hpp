@@ -14,6 +14,8 @@
 #include "LittleEnemy.hpp"
 // stlib
 #include <vector>
+#include <string>
+#include <unordered_map>
 #include <random>
 
 #define SDL_MAIN_HANDLED
@@ -72,9 +74,12 @@ private:
 
     void on_mouse_move(GLFWwindow *window, double xpos, double ypos);
 
+  void load_textures();
+
 private:
-    // Window hjandle
-    GLFWwindow *m_window;
+	// Window handle
+	GLFWwindow* m_window;
+  	std::unordered_map<std::string, Texture*> m_textures;
 
     // Number of fish eaten by the salmon, displayed in the window title
     unsigned int m_points;
