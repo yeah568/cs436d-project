@@ -2,7 +2,7 @@
 #include "bullet.hpp"
 
 #include <cmath>
-#include "float.h"
+#include <cfloat>
 
 Bullet::Bullet()
   : Sprite(nullptr)

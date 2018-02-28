@@ -1,5 +1,6 @@
 #include <cmath>
 #include "Sprite.hpp"
+#include <cfloat>
 
 Sprite::Sprite(Texture* texture)
   : m_texture(texture) {
