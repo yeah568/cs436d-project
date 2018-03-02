@@ -46,6 +46,7 @@ Level::Level(int width, int height)  : m_points(0), m_next_little_enemies_spawn(
 	load_textures();
 	m_player.set_texture(m_textures["character"]);
 	m_boss.set_texture(m_textures["boss0"]);
+	m_boss_health_bar.set_texture(m_textures["boss_health_bar"]);
 	m_points = 0;
 	}
 
@@ -105,6 +106,10 @@ bool Level2::init() {
 
 	if (m_player.init() && m_boss.init(375.f, &m_little_enemies)) {
 		m_player.set_health(2);
+		m_boss_health_bar.init();
+		m_boss_health_bar.set_rotation(0);
+		bbox bhp_bbox = m_boss_health_bar.get_bounding_box();
+		m_boss_health_bar.set_position({screen.x/2.0f, (bhp_bbox.max_y + bhp_bbox.min_y)/2.0f});
 		blue_center_beat_circle.init(false);
 		orange_center_beat_circle.init(true);
 		CenterBeatCircle::player = &m_player;
@@ -117,7 +122,7 @@ bool Level2::init() {
 }
 // World initialization
 bool Level1::init() {
-	printf("in level init");
+	printf("in level 1 init");
 	OsuParser* parser;
 	//-------------------------------------------------------------------------
 	
@@ -166,7 +171,7 @@ bool Level1::init() {
 	healthbar.set_rotation(0);
 
 	spritesheet.set_texture(m_textures["healthbar"]);
-	spritesheet.init(6);
+	spritesheet.init(5);
 	
 	spritesheet.set_scale({ 1.0,1.5 });
 	spritesheet.set_position({ 200 , 200});
@@ -179,6 +184,10 @@ bool Level1::init() {
 	}
 	m_player.set_health(5);
 	if (m_boss.init(250.f, &m_little_enemies)) {
+		m_boss_health_bar.init();
+		m_boss_health_bar.set_rotation(0);
+		bbox bhp_bbox = m_boss_health_bar.get_bounding_box();
+		m_boss_health_bar.set_position({screen.x/2.0f, (bhp_bbox.max_y + bhp_bbox.min_y)/2.0f});
 		blue_center_beat_circle.init(false);
 		orange_center_beat_circle.init(true);
 		CenterBeatCircle::player = &m_player;
@@ -212,7 +221,8 @@ void Level::destroy()
 		enemy.destroy();
 	orange_center_beat_circle.destroy();
 	blue_center_beat_circle.destroy();
-	
+	spritesheet.destroy();
+	m_boss_health_bar.destroy();
 	m_bullets.clear();
 	m_little_enemies.clear();
 	m_beatcircles.clear();
@@ -317,6 +327,7 @@ bool Level::update(float elapsed_ms)
 			Mix_PlayChannel(-1, m_player_dead_sound, 0);
 			printf("Boss hit by bullet\n");
 			m_boss.set_health(-bullet_it->get_damage());
+			m_boss_health_bar.set_health_percentage(m_boss.get_health()/m_boss.get_total_health());
 			m_bullets.erase(bullet_it);
 			if (m_boss.get_health() <= 0) {
 				finished = 1;
@@ -360,6 +371,7 @@ bool Level::update(float elapsed_ms)
 			healthbar.set_color(r*2.0f,g,g);
 			if (m_player.get_health() <= 0) {
 				m_player.kill();
+				printf("Player has died\n");
 			}
 			break;
 		} else {
@@ -424,6 +436,7 @@ void Level::draw()
 	for (auto& enemy : m_little_enemies)
 		enemy.draw(projection_2D); 
 	m_boss.draw(projection_2D);
+	m_boss_health_bar.draw(projection_2D);
 	//healthbar.draw(projection_2D);
 	spritesheet.draw(projection_2D);
 	orange_center_beat_circle.draw(projection_2D);
@@ -639,7 +652,8 @@ void Level::load_textures() {
     "orange_moving_beat",
     "blue_moving_beat",
 	"healthbar",
-	"enemy0"
+	"enemy0",
+	"boss_health_bar"
   };
 
   for (const auto& texture_name : texture_names)

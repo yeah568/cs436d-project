@@ -28,7 +28,10 @@ public:
 
 	void set_health(float delta);
 
+	float get_total_health() {return total_health;};
+
 private:
 	float m_health;
+	float total_health;
 	std::vector<LittleEnemy>* m_little_enemies;
 };

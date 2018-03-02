@@ -13,6 +13,7 @@
 #include "HealthBar.hpp"
 #include "SpriteSheet.hpp"
 #include "Enemy.hpp"
+#include "BossHealthBar.hpp"
 
 // stlib
 #include <vector>
@@ -90,6 +91,7 @@ protected:
 	static std::default_random_engine m_rng;
 	static std::uniform_real_distribution<float> m_dist; // default 0..1
 
+	BossHealthBar m_boss_health_bar;
 	HealthBar healthbar;
 	int finished = 0;
 	SpriteSheet spritesheet;

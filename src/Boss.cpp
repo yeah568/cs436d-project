@@ -14,13 +14,14 @@ Boss::Boss()
 	// Setting initial values
 	m_scale.x = 0.75;
 	m_scale.y = 0.75;
-	m_position = { 600.f, 80.f };
+	m_position = { 600.f, 180.f };
 	m_rotation = 0.f;
 }
 
 bool Boss::init(float health, std::vector<LittleEnemy>* little_enemies)
 {
 	m_health = health;
+	total_health = health;
 	m_little_enemies = little_enemies;
 	return Sprite::init();
 }
