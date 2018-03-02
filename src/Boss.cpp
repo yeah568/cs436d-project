@@ -23,6 +23,7 @@ bool Boss::init(float health, std::vector<LittleEnemy>* little_enemies)
 	m_health = health;
 	total_health = health;
 	m_little_enemies = little_enemies;
+	
 	return Sprite::init();
 }
 
@@ -56,14 +57,17 @@ void Boss::update(float ms, vec2 screen, std::vector<Bullet>* bullets)
 }
 
 void Boss::on_beat(Beat* beat, vec2 screen, Texture* enemy_texture) {
+	
+	
 	int action = rand() % 3;
+	
 
 	switch (action) {
 	case 0:
-		move({ -20.f, 0.f });
+		move({ -10.f, 0.f });
 		break;
 	case 1:
-		move({ 20.f, 0.f });
+		move({ 10.f, 0.f });
 		break;
 	case 2:
 		LittleEnemy little_enemy;

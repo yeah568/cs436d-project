@@ -7,8 +7,8 @@
 Bullet::Bullet()
   : Sprite(nullptr)
 {
-  m_scale.x = -1.1f;
-  m_scale.y = 1.1f;
+  m_scale.x = 0.5f;
+  m_scale.y = 0.5f;
   m_position.x = -50;
   m_position.y = 50;
 }

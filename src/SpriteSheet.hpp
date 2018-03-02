@@ -8,6 +8,7 @@ public:
 	SpriteSheet();
 	bool init(int pictures);
 	void update(float ms);
+	void update();
 private:
 	int m_pictures;
 	float time_until_update;

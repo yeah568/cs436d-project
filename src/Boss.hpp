@@ -33,5 +33,6 @@ public:
 private:
 	float m_health;
 	float total_health;
+	
 	std::vector<LittleEnemy>* m_little_enemies;
 };

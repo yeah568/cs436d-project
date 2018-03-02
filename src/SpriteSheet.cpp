@@ -15,7 +15,7 @@ bool SpriteSheet::init(int pictures) {
 	float wr = m_texture->width * 0.5f;
 	float hr = m_texture->height * 0.5f;
 
-	vertices[0].position = { -wr/6, +hr, -0.01f };
+	vertices[0].position = { -wr/m_pictures, +hr, -0.01f };
 	vertices[0].texcoord = { 0.f, 1.f };
 	vertices[1].position = { +wr/m_pictures, +hr, -0.01f };
 	vertices[1].texcoord = { 1.f/m_pictures, 1.f, };
@@ -67,5 +67,17 @@ void SpriteSheet::update(float ms) {
 		glBufferData(GL_ARRAY_BUFFER, sizeof(TexturedVertex) * 4, vertices, GL_STATIC_DRAW);
 	}
 
+}
+void SpriteSheet::update() {
+	vertices[0].texcoord.x += 1.f / m_pictures;
+	printf("Left Vertex: %f ", vertices[0].texcoord.x);
+	vertices[1].texcoord.x += 1.f / m_pictures;
+	vertices[2].texcoord.x += 1.f / m_pictures;
+	vertices[3].texcoord.x += 1.f / m_pictures;
+	if (vertices[0].texcoord.x < 1) {
+		glGenBuffers(1, &mesh.vbo);
+		glBindBuffer(GL_ARRAY_BUFFER, mesh.vbo);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(TexturedVertex) * 4, vertices, GL_STATIC_DRAW);
+	}
 }
 

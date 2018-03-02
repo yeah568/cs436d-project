@@ -102,6 +102,14 @@ bool Level2::init() {
 	healthbar.set_position({ (hp_bbox.max_x - hp_bbox.min_x)/2.0f,200 });
 	healthbar.set_rotation(0);
 
+	spritesheet.set_texture(m_textures["healthbar"]);
+	spritesheet.init(5);
+
+	spritesheet.set_scale({ 0.6f,0.7f });
+	spritesheet.set_position({ 200 , 50 });
+	spritesheet.set_rotation(0);
+	m_background.init();
+
 	
 
 	if (m_player.init() && m_boss.init(375.f, &m_little_enemies)) {
@@ -173,8 +181,8 @@ bool Level1::init() {
 	spritesheet.set_texture(m_textures["healthbar"]);
 	spritesheet.init(5);
 	
-	spritesheet.set_scale({ 1.0,1.5 });
-	spritesheet.set_position({ 200 , 200});
+	spritesheet.set_scale({ 0.6f,0.7f });
+	spritesheet.set_position({ 200 , 50});
 	spritesheet.set_rotation(0);
 	m_background.init();
 
@@ -243,7 +251,7 @@ void Level::handle_beat(float remaining_offset, Beat* curBeat, vec2 screen) {
 	//Turtle& new_turtle = m_turtles.back();
 	//new_turtle.set_position({ ((64.f + (float)curBeat->x) / 640.f)*screen.x, ((48.f + (float)curBeat->y) / 480.f)*screen.y });
 
-	m_player.scale_by(1.3);
+	m_player.scale_by(1.3f);
 	m_boss.on_beat(curBeat, screen, m_textures["enemy0"]);
 }
 
@@ -342,7 +350,7 @@ bool Level::update(float elapsed_ms)
 		}
 		++bullet_it;
 	}
-	spritesheet.update(elapsed_ms);
+	
 	m_player.update(elapsed_ms);
 	if (m_player.get_position().y > screen.y)
 		exit(0);
@@ -358,6 +366,7 @@ bool Level::update(float elapsed_ms)
 		enemy.update(elapsed_modified_ms);
 	for (auto little_enemy_it = m_little_enemies.begin(); little_enemy_it != m_little_enemies.end();) {
 		if (m_player.collides_with(*little_enemy_it)) {
+			spritesheet.update();
 			little_enemy_it = m_little_enemies.erase(little_enemy_it);
 			m_player.set_health(-1);
 			printf("%f\n", m_player.get_health());
@@ -465,7 +474,7 @@ bool Level::spawn_bullet(vec2 position, float angle, bool bullet_type, bool on_b
 		bullet.set_position(position);
 		bullet.set_rotation(angle);
 		if (on_beat) {
-			bullet.set_scale({ 0.5,0.5 });
+			bullet.set_scale({ 0.9f,0.9f });
 		}
 		bullet.set_on_beat(on_beat);
 		bullet.m_movement_dir = { (float)cos(angle), (float)-sin(angle) };
@@ -549,7 +558,9 @@ void Level::on_key(int key, int action, int mod)
 				break;
 			}
 			on_beat = length(m_beatcircles[0].get_local_position()) <= on_beat_radius;
-			m_beatcircles.erase(m_beatcircles.begin());
+			if (on_beat) {
+				m_beatcircles.erase(m_beatcircles.begin());
+			}
 		}
 
 		float player_angle = m_player.get_rotation() + 1.57;
