@@ -78,6 +78,20 @@ mat3 mul(const mat3 & l, const mat3 & r)
 	return ret;
 }
 
+vec3 mul(const mat3& m, vec3 v)
+{
+	vec3 ret;
+	ret.x = v.x * m.c0.x + v.y * m.c1.x + v.z * m.c2.x;
+	ret.y = v.x * m.c0.y + v.y * m.c1.y + v.z * m.c2.y;
+	ret.z = v.x * m.c0.z + v.y * m.c1.z + v.z * m.c2.z;
+	return ret;
+}
+
+mat3 identity()
+{
+	return { {1.f, 0.f, 0.f}, {0.f, 1.f, 0.f}, {0.f, 0.f, 1.f} };
+}
+
 vec2 operator/(const vec2& lhs, const vec2& rhs) {
 	return {lhs.x/rhs.x, lhs.y/rhs.y};
 }
