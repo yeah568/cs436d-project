@@ -4,6 +4,7 @@
 #include "OsuParser.hpp"
 #include "BeatCircle.hpp"
 #include "Bullet.hpp"
+#include "SpriteSheet.hpp"
 
 // stlib
 #include <string.h>
@@ -99,7 +100,8 @@ bool Level2::init() {
 	healthbar.set_scale({ 1.0,1.5 });
 	healthbar.set_position({ (hp_bbox.max_x - hp_bbox.min_x)/2.0f,200 });
 	healthbar.set_rotation(0);
-	m_background.init();
+
+	
 
 	if (m_player.init() && m_boss.init(375.f, &m_little_enemies)) {
 		m_player.set_health(2);
@@ -162,6 +164,15 @@ bool Level1::init() {
 	healthbar.set_scale({ 1.0,1.5 });
 	healthbar.set_position({ (hp_bbox.max_x - hp_bbox.min_x)/2.0f,200 });
 	healthbar.set_rotation(0);
+
+	spritesheet.set_texture(m_textures["healthbar"]);
+	spritesheet.init(6);
+	
+	spritesheet.set_scale({ 1.0,1.5 });
+	spritesheet.set_position({ 200 , 200});
+	spritesheet.set_rotation(0);
+	m_background.init();
+
 
 	if (!m_player.init()){
 		return false;
@@ -320,7 +331,7 @@ bool Level::update(float elapsed_ms)
 		}
 		++bullet_it;
 	}
-
+	spritesheet.update(elapsed_ms);
 	m_player.update(elapsed_ms);
 	if (m_player.get_position().y > screen.y)
 		exit(0);
@@ -413,7 +424,8 @@ void Level::draw()
 	for (auto& enemy : m_little_enemies)
 		enemy.draw(projection_2D); 
 	m_boss.draw(projection_2D);
-	healthbar.draw(projection_2D);
+	//healthbar.draw(projection_2D);
+	spritesheet.draw(projection_2D);
 	orange_center_beat_circle.draw(projection_2D);
 	blue_center_beat_circle.draw(projection_2D);
 	m_player.draw(projection_2D);

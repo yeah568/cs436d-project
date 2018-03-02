@@ -518,6 +518,7 @@
     <ClCompile Include="$(ProjectDir)..\src\OsuParser.cpp" />
     <ClCompile Include="$(ProjectDir)..\src\utils\StringUtils.cpp" />
     <ClCompile Include="$(ProjectDir)..\src\BeatList.cpp" />
+    <ClCompile Include="..\src\SpriteSheet.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(ProjectDir)..\src\Sprite.hpp" />
@@ -527,6 +528,7 @@
     <ClInclude Include="..\src\HealthBar.hpp" />
     <ClInclude Include="..\src\Level.hpp" />
     <ClInclude Include="..\src\LevelList.hpp" />
+    <ClInclude Include="..\src\SpriteSheet.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\Background.hpp" />

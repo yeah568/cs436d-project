@@ -11,6 +11,7 @@
 #include "CenterBeatCircle.hpp"
 #include "Boss.hpp"
 #include "HealthBar.hpp"
+#include "SpriteSheet.hpp"
 #include "Enemy.hpp"
 
 // stlib
@@ -91,6 +92,7 @@ protected:
 
 	HealthBar healthbar;
 	int finished = 0;
+	SpriteSheet spritesheet;
 	BeatList* beatlist;
 	int beatPos = 0;
 	int m_song;
