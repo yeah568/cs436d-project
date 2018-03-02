@@ -42,6 +42,9 @@ mat3  mul(const mat3& l, const mat3& r);
 vec3  mul(const mat3& m, vec3 v);
 vec2  normalize(vec2 v);
 mat3  identity();
+mat3  mat_translate(mat3 m, vec2 offset);
+mat3  mat_scale(mat3 m, vec2 scale);
+mat3  mat_rotate(mat3 m, float radians);
 
 // OpenGL utilities
 // cleans error buffer

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "common.hpp"
+#include "Hitbox.hpp"
 
 #include <vector>
 #include <array>
@@ -37,7 +38,7 @@ public:
 
   std::array<vec2, 4> get_vertices() const;
 
-  std::vector<mat3> get_hitboxes() const;
+  std::vector<Hitbox*> get_hitboxes() const;
 
   std::vector<std::array<vec2, 4>> get_hitbox_points() const;
 
@@ -54,5 +55,5 @@ protected:
   Texture* m_texture;
   float m_color[3];
   // Hitboxes represented as a transformation vector from the sprite
-  std::vector<mat3> m_hitboxes;
+  std::vector<Hitbox*> m_hitboxes;
 };

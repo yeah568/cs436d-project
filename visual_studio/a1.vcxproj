@@ -508,6 +508,7 @@
     <ClCompile Include="$(ProjectDir)..\src\World.cpp" />
     <ClCompile Include="..\src\Background.cpp" />
     <ClCompile Include="..\src\HealthBar.cpp" />
+    <ClCompile Include="..\src\Hitbox.cpp" />
     <ClCompile Include="..\src\Level.cpp" />
     <ClCompile Include="..\src\LevelList.cpp" />
     <ClCompile Include="..\src\Player.cpp" />
@@ -525,6 +526,7 @@
     <ClInclude Include="$(ProjectDir)..\src\utils\StringUtils.hpp" />
     <ClInclude Include="..\src\BeatList.hpp" />
     <ClInclude Include="..\src\HealthBar.hpp" />
+    <ClInclude Include="..\src\Hitbox.hpp" />
     <ClInclude Include="..\src\Level.hpp" />
     <ClInclude Include="..\src\LevelList.hpp" />
   </ItemGroup>

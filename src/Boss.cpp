@@ -1,4 +1,5 @@
 #include "Boss.hpp"
+#include "Hitbox.hpp"
 
 #include <cmath>
 #include <vector>
@@ -16,13 +17,16 @@ Boss::Boss()
 	m_scale.y = 0.75;
 	m_position = { 600.f, 80.f };
 	m_rotation = 0.f;
-	m_hitboxes.push_back({ {0.3535f, -0.3535f, 0.f}, {0.3535f, 0.3535f, 0.f}, {0.f, 0.f, 1.f} });
 }
 
 bool Boss::init(float health, std::vector<LittleEnemy>* little_enemies)
 {
 	m_health = health;
 	m_little_enemies = little_enemies;
+	Hitbox* hitbox = new Hitbox();
+	if (hitbox->init({ 0.f, 100.f }, { 0.8f, 0.6f }, 0.f, this, m_texture)) {
+		m_hitboxes.push_back(hitbox);
+	}
 	return Sprite::init();
 }
 
@@ -33,7 +37,7 @@ void Boss::update(float ms, vec2 screen, std::vector<Bullet>* bullets)
 	// and go the other direction only if the bullet will hit it.
 	float boss_speed = 500.0f;
 	float step = ms / 1000.0f;
-	/*if (bullets->size() > 0) {
+	if (bullets->size() > 0) {
 		auto top_bullet = bullets->at(0);
 		auto top_bullet_bb = top_bullet.get_bounding_box();
 		auto dist_left = top_bullet.get_position().x;
@@ -51,7 +55,7 @@ void Boss::update(float ms, vec2 screen, std::vector<Bullet>* bullets)
 			move({ boss_speed*step, 0.f });
 			if (bb.max_x > screen.x) { m_position.x = screen.x - (bb.max_x - bb.min_x) / 2; }
 		}
-	}*/
+	}
 
 }
 

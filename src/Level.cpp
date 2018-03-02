@@ -305,7 +305,7 @@ bool Level::update(float elapsed_ms)
 		{
 			Mix_PlayChannel(-1, m_player_dead_sound, 0);
 			printf("Boss hit by bullet\n");
-			/*m_boss.set_health(-bullet_it->get_damage());*/
+			m_boss.set_health(-bullet_it->get_damage());
 			m_bullets.erase(bullet_it);
 			if (m_boss.get_health() <= 0) {
 				finished = 1;
@@ -337,14 +337,14 @@ bool Level::update(float elapsed_ms)
 	for (auto little_enemy_it = m_little_enemies.begin(); little_enemy_it != m_little_enemies.end();) {
 		if (m_player.collides_with(*little_enemy_it)) {
 			little_enemy_it = m_little_enemies.erase(little_enemy_it);
-			/*m_player.set_health(-1);*/
+			m_player.set_health(-1);
 			printf("%f\n", m_player.get_health());
 			float percent_health = m_player.get_health()/5.0f;
 			healthbar.set_scale({percent_health, 1.5f});
 			bbox hp_bb = healthbar.get_bounding_box();
 			healthbar.set_position({(hp_bb.max_x-hp_bb.min_x)/2.0f,200.0f});
 			float r = 1.0f;
-			//std::min(0.5f+(1.0f-(percent_health))/2.0f, 1.0f);
+			std::min(0.5f+(1.0f-(percent_health))/2.0f, 1.0f);
 			float g = std::max(percent_health,0.0f);
 			healthbar.set_color(r*2.0f,g,g);
 			if (m_player.get_health() <= 0) {
@@ -414,9 +414,6 @@ void Level::draw()
 		enemy.draw(projection_2D); 
 
 	m_boss.draw(projection_2D);
-	m_boss.set_texture(m_textures["hitbox"]);
-	m_boss.draw_hitboxes(projection_2D);
-	m_boss.set_texture(m_textures["boss0"]);
 	healthbar.draw(projection_2D);
 	orange_center_beat_circle.draw(projection_2D);
 	blue_center_beat_circle.draw(projection_2D);
@@ -631,8 +628,7 @@ void Level::load_textures() {
     "orange_moving_beat",
     "blue_moving_beat",
 	"healthbar",
-	"enemy0",
-	"hitbox"
+	"enemy0"
   };
 
   for (const auto& texture_name : texture_names)

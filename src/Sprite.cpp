@@ -118,59 +118,15 @@ void Sprite::draw(const mat3& projection)
 
   // Drawing!
   glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, nullptr);
+
+  draw_hitboxes(projection);
 }
 
 void Sprite::draw_hitboxes(const mat3& projection)
 {
 	if (m_hitboxes.size() == 0) return;
-	// Transformation code, see Rendering and Transformation in the template specification for more info
-	// Incrementally updates transformation matrix, thus ORDER IS IMPORTANT
-	//printf("BC.x=%f,BC.y=%f\n", final_pos.x, final_pos.y);
 	for (auto& hitbox : m_hitboxes) {
-		transform_begin();
-		transform_translate(m_position);
-		transform_scale(m_scale);
-		transform_rotate(m_rotation);
-		transform = mul(transform, hitbox);
-		transform_end();
-
-		// Setting shaders
-		glUseProgram(effect.program);
-
-		// Enabling alpha channel for textures
-		glEnable(GL_BLEND); glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glDisable(GL_DEPTH_TEST);
-
-		// Getting uniform locations for glUniform* calls
-		GLint transform_uloc = glGetUniformLocation(effect.program, "transform");
-		GLint color_uloc = glGetUniformLocation(effect.program, "fcolor");
-		GLint projection_uloc = glGetUniformLocation(effect.program, "projection");
-
-		// Setting vertices and indices
-		glBindVertexArray(mesh.vao);
-		glBindBuffer(GL_ARRAY_BUFFER, mesh.vbo);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.ibo);
-
-		// Input data location as in the vertex buffer
-		GLint in_position_loc = glGetAttribLocation(effect.program, "in_position");
-		GLint in_texcoord_loc = glGetAttribLocation(effect.program, "in_texcoord");
-		glEnableVertexAttribArray(in_position_loc);
-		glEnableVertexAttribArray(in_texcoord_loc);
-		glVertexAttribPointer(in_position_loc, 3, GL_FLOAT, GL_FALSE, sizeof(TexturedVertex), (void*)0);
-		glVertexAttribPointer(in_texcoord_loc, 2, GL_FLOAT, GL_FALSE, sizeof(TexturedVertex), (void*)sizeof(vec3));
-
-		// Enabling and binding texture to slot 0
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, m_texture->id);
-
-		// Setting uniform values to the currently bound program
-		glUniformMatrix3fv(transform_uloc, 1, GL_FALSE, (float*)&transform);
-		glUniform3fv(color_uloc, 1, m_color);
-		glUniformMatrix3fv(projection_uloc, 1, GL_FALSE, (float*)&projection);
-
-		// Drawing!
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, nullptr);
-
+		hitbox->draw(projection);
 	}
 }
 
@@ -220,16 +176,20 @@ std::vector<std::array<vec2, 4>> Sprite::get_hitbox_points() const
 {
 	std::array<vec2, 4> vertices = get_vertices();
 	std::vector<std::array<vec2, 4>> ret;
-	std::vector<mat3> hitboxes(m_hitboxes);
-	if (hitboxes.size() == 0) {
-		hitboxes.push_back(identity());
+	std::vector<mat3> hitbox_matrices;
+	if (m_hitboxes.size() == 0) {
+		hitbox_matrices.push_back(identity());
 	}
 
-	for (auto& hitbox : hitboxes) {
+	for (auto& hitbox : m_hitboxes) {
+		hitbox_matrices.push_back(hitbox->get_matrix());
+	}
+
+	for (auto& matrix : hitbox_matrices) {
 		std::array<vec2, 4> points = vertices;
 		for (int i = 0; i < 4; i++) {
 			vec3 point_3 = { points[i].x, points[i].y, 1.f };
-			point_3 = mul(hitbox, point_3);
+			point_3 = mul(matrix, point_3);
 			points[i] = { point_3.x, point_3.y };
 			points[i] = points[i] + m_position;
 		}
@@ -299,7 +259,7 @@ bool Sprite::collides_with(const Sprite& other)
 	return false;
 }
 
-std::vector<mat3> Sprite::get_hitboxes() const
+std::vector<Hitbox*> Sprite::get_hitboxes() const
 {
 	return m_hitboxes;
 }

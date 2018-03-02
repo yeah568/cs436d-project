@@ -92,6 +92,26 @@ mat3 identity()
 	return { {1.f, 0.f, 0.f}, {0.f, 1.f, 0.f}, {0.f, 0.f, 1.f} };
 }
 
+mat3 mat_scale(mat3 m, vec2 scale)
+{
+	mat3 S = { { scale.x, 0.f, 0.f },{ 0.f, scale.y, 0.f },{ 0.f, 0.f, 1.f } };
+	return mul(m, S);
+}
+
+mat3 mat_rotate(mat3 m, float radians)
+{
+	float c = cosf(radians);
+	float s = sinf(radians);
+	mat3 R = { { c, s, 0.f },{ -s, c, 0.f },{ 0.f, 0.f, 1.f } };
+	return mul(m, R);
+}
+
+mat3 mat_translate(mat3 m, vec2 offset)
+{
+	mat3 T = { { 1.f, 0.f, 0.f },{ 0.f, 1.f, 0.f },{ offset.x, offset.y, 1.f } };
+	return mul(m, T);
+}
+
 vec2 operator/(const vec2& lhs, const vec2& rhs) {
 	return {lhs.x/rhs.x, lhs.y/rhs.y};
 }
