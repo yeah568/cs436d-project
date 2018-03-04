@@ -124,7 +124,7 @@ void World::draw()
 
 	// Updating window title with points
 	std::stringstream title_ss;
-	title_ss << "Boss Health: " << levelList[levelCounter]->getBossHealth() << " | Points: " << m_points;
+	title_ss << "Points: " << m_points;
 	glfwSetWindowTitle(m_window, title_ss.str().c_str());
 
 	// Clearing backbuffer

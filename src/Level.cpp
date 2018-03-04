@@ -50,87 +50,7 @@ Level::Level(int width, int height)  : m_points(0), m_next_little_enemies_spawn(
 	m_points = 0;
 	}
 
-Level::~Level()
-{
-
-}
-bool Level2::init() {
-	
-	OsuParser* parser;
-	//-------------------------------------------------------------------------
-	
-	//-------------------------------------------------------------------------
-	// Loading music and sounds
-	if (SDL_Init(SDL_INIT_AUDIO) < 0)
-	{
-		fprintf(stderr, "Failed to initialize SDL Audio");
-		return false;
-	}
-
-	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) == -1)
-	{
-		fprintf(stderr, "Failed to open audio device");
-		return false;
-	}
-
-	m_background_music = Mix_LoadMUS(song_path("598830 Shawn Wasabi - Marble Soda/Marble Soda.wav"));
-	parser = new OsuParser(song_path("598830 Shawn Wasabi - Marble Soda/Shawn Wasabi - Marble Soda (Exa) [Insane].osu"));
-
-	OsuBeatmap beatmap = parser->parse();
-	beatlist = new BeatList(beatmap);
-	if (!m_background_music) {
-		printf("Mix_LoadMUS(\"music.mp3\"): %s\n", Mix_GetError());
-		// this might be a critical error...
-	}
-
-	m_player_dead_sound = Mix_LoadWAV(audio_path("salmon_dead.wav"));
-	m_player_eat_sound = Mix_LoadWAV(audio_path("salmon_eat.wav"));
-
-	if (m_background_music == nullptr || m_player_dead_sound == nullptr || m_player_eat_sound == nullptr)
-	{
-		fprintf(stderr, "Failed to load sounds, make sure the data directory is present");
-		return false;
-	}
-
-	fprintf(stderr, "Loaded music");
-
-	m_current_speed = 1.f;
-	healthbar.set_texture(m_textures["healthbar"]);
-	healthbar.init();
-	bbox hp_bbox = healthbar.get_bounding_box();
-	healthbar.set_scale({ 1.0,1.5 });
-	healthbar.set_position({ (hp_bbox.max_x - hp_bbox.min_x)/2.0f,200 });
-	healthbar.set_rotation(0);
-
-	spritesheet.set_texture(m_textures["healthbar"]);
-	spritesheet.init(5);
-
-	spritesheet.set_scale({ 0.6f,0.7f });
-	spritesheet.set_position({ 200 , 50 });
-	spritesheet.set_rotation(0);
-	m_background.init();
-
-	
-
-	if (m_player.init() && m_boss.init(375.f, &m_little_enemies)) {
-		m_player.set_health(2);
-		m_boss_health_bar.init();
-		m_boss_health_bar.set_rotation(0);
-		bbox bhp_bbox = m_boss_health_bar.get_bounding_box();
-		m_boss_health_bar.set_position({screen.x/2.0f, (bhp_bbox.max_y + bhp_bbox.min_y)/2.0f});
-		blue_center_beat_circle.init(false);
-		orange_center_beat_circle.init(true);
-		CenterBeatCircle::player = &m_player;
-		LittleEnemy::player = &m_player;
-		return true;
-	}
-	
-	
-	return false;
-}
-// World initialization
-bool Level1::init() {
-	printf("in level 1 init");
+bool Level::init(std::string song_path, std::string osu_path, float boss_health) {
 	OsuParser* parser;
 	//-------------------------------------------------------------------------
 	
@@ -147,8 +67,8 @@ bool Level1::init() {
 		fprintf(stderr, "Failed to open audio device");
 		return false;
 	}
-	m_background_music = Mix_LoadMUS(song_path("BlendS/BlendS.wav"));
-	parser = new OsuParser(song_path("BlendS/Blend A - Bon Appetit S (Meg) [Easy].osu"));
+	m_background_music = Mix_LoadMUS(song_path.c_str());
+	parser = new OsuParser(osu_path.c_str());
 
 	OsuBeatmap beatmap = parser->parse();
 	beatlist = new BeatList(beatmap);
@@ -191,7 +111,7 @@ bool Level1::init() {
 		return false;
 	}
 	m_player.set_health(5);
-	if (m_boss.init(250.f, &m_little_enemies)) {
+	if (m_boss.init(boss_health, &m_little_enemies)) {
 		m_boss_health_bar.init();
 		m_boss_health_bar.set_rotation(0);
 		bbox bhp_bbox = m_boss_health_bar.get_bounding_box();
@@ -205,6 +125,22 @@ bool Level1::init() {
 	}
 	
 	return false;
+}
+
+Level::~Level()
+{
+
+}
+bool Level2::init() {
+	return Level::init(song_path("598830 Shawn Wasabi - Marble Soda/Marble Soda.wav"),
+		song_path("598830 Shawn Wasabi - Marble Soda/Shawn Wasabi - Marble Soda (Exa) [Insane].osu"),
+		375.0f);
+}
+// World initialization
+bool Level1::init() {
+	return Level::init(song_path("BlendS/BlendS.wav"),
+		song_path("BlendS/Blend A - Bon Appetit S (Meg) [Easy].osu"),
+		250.0f);
 }
 
 // Releases all the associated resources

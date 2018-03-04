@@ -39,6 +39,8 @@ public:
 	// Creates a window, sets up events and begins the game
 	virtual bool init() = 0;
 
+	bool init(std::string song_path, std::string osu_path, float boss_health);
+
 	// Releases all associated resources
 	void destroy();
 
