@@ -91,19 +91,14 @@ bool Level::init(std::string song_path, std::string osu_path, float boss_health)
 	m_current_speed = 1.f;
 
 	m_background.init();
-	healthbar.set_texture(m_textures["healthbar"]);
-	healthbar.init();
-	bbox hp_bbox = healthbar.get_bounding_box();
-	healthbar.set_scale({ 1.0,1.5 });
-	healthbar.set_position({ (hp_bbox.max_x - hp_bbox.min_x)/2.0f,200 });
-	healthbar.set_rotation(0);
 
-	spritesheet.set_texture(m_textures["healthbar"]);
-	spritesheet.init(5);
+
+	healthbar.set_texture(m_textures["healthbar"]);
+	healthbar.init(5);
 	
-	spritesheet.set_scale({ 0.6f,0.7f });
-	spritesheet.set_position({ 200 , 50});
-	spritesheet.set_rotation(0);
+	healthbar.set_scale({ 0.6f,0.7f });
+	healthbar.set_position({ 200 , 50});
+	healthbar.set_rotation(0);
 	m_background.init();
 
 
@@ -165,7 +160,7 @@ void Level::destroy()
 		enemy.destroy();
 	orange_center_beat_circle.destroy();
 	blue_center_beat_circle.destroy();
-	spritesheet.destroy();
+	healthbar.destroy();
 	m_boss_health_bar.destroy();
 	m_bullets.clear();
 	m_little_enemies.clear();
@@ -302,18 +297,9 @@ bool Level::update(float elapsed_ms)
 		enemy.update(elapsed_modified_ms);
 	for (auto little_enemy_it = m_little_enemies.begin(); little_enemy_it != m_little_enemies.end();) {
 		if (m_player.collides_with(*little_enemy_it)) {
-			spritesheet.update();
+			healthbar.update();
 			little_enemy_it = m_little_enemies.erase(little_enemy_it);
 			m_player.set_health(-1);
-			printf("%f\n", m_player.get_health());
-			float percent_health = m_player.get_health()/5.0f;
-			healthbar.set_scale({percent_health, 1.5f});
-			bbox hp_bb = healthbar.get_bounding_box();
-			healthbar.set_position({(hp_bb.max_x-hp_bb.min_x)/2.0f,200.0f});
-			float r = 1.0f;
-			//std::min(0.5f+(1.0f-(percent_health))/2.0f, 1.0f);
-			float g = std::max(percent_health,0.0f);
-			healthbar.set_color(r*2.0f,g,g);
 			if (m_player.get_health() <= 0) {
 				m_player.kill();
 				printf("Player has died\n");
@@ -383,7 +369,7 @@ void Level::draw()
 	m_boss.draw(projection_2D);
 	m_boss_health_bar.draw(projection_2D);
 	//healthbar.draw(projection_2D);
-	spritesheet.draw(projection_2D);
+	healthbar.draw(projection_2D);
 	orange_center_beat_circle.draw(projection_2D);
 	blue_center_beat_circle.draw(projection_2D);
 	m_player.draw(projection_2D);
