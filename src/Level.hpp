@@ -79,6 +79,7 @@ private:
 
 protected:
 	static Texture background_texture;
+	static bool show_hitboxes;
 	
 	static CenterBeatCircle blue_center_beat_circle;
 	static CenterBeatCircle orange_center_beat_circle;

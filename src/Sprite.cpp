@@ -118,8 +118,6 @@ void Sprite::draw(const mat3& projection)
 
   // Drawing!
   glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, nullptr);
-
-  draw_hitboxes(projection);
 }
 
 void Sprite::draw_hitboxes(const mat3& projection)

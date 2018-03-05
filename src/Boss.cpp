@@ -24,7 +24,7 @@ bool Boss::init(float health, std::vector<LittleEnemy>* little_enemies)
 	m_health = health;
 	m_little_enemies = little_enemies;
 	Hitbox* hitbox = new Hitbox();
-	if (hitbox->init({ 0.f, 100.f }, { 0.8f, 0.6f }, 0.f, this, m_texture)) {
+	if (hitbox->init({ 0.f, 80.f }, { 0.8f, 0.6f }, 0.f, this, m_texture)) {
 		m_hitboxes.push_back(hitbox);
 	}
 	return Sprite::init();
