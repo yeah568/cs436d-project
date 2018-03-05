@@ -69,7 +69,7 @@ private:
 	// Generates a new fish
 	bool spawn_bullet(vec2 position, float angle, bool bullet_type, bool on_beat);
 
-	bool spawn_beat_circle(int dir, float pos, float speed);
+	bool spawn_beat_circle(int dir, float pos, float speed, float scale, float abs_offset);
 	
 	void handle_beat(float remaining_offset, Beat* curBeat, vec2 screen);
 
@@ -85,6 +85,10 @@ protected:
 	static Player m_player;
 	unsigned int m_points;
 
+	const int perfect_timing = 40;
+	const int good_timing = 80;
+	const int bad_timing = 120;
+
 	// C++ rng
 	static std::default_random_engine m_rng;
 	static std::uniform_real_distribution<float> m_dist; // default 0..1
@@ -93,6 +97,7 @@ protected:
 	int finished = 0;
 	BeatList* beatlist;
 	int beatPos = 0;
+	int lastBeat = 0;
 	int m_song;
 	GLFWwindow* window;
 	// Game entities

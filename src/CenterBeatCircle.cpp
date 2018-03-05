@@ -24,10 +24,10 @@ bool CenterBeatCircle::init(bool type)
 	}
 	if (!type) {
 		m_scale.x = 2.0f;
-		m_scale.y = 1.0;
+		m_scale.y = 2.0f;
 	} else {
 		m_scale.x = 1.5f;
-		m_scale.y = 0.5f;
+		m_scale.y = 1.5f;
 	}
 	// The position corresponds to the center of the texture
 	float wr = center_beat_circle_texture.width * 0.5f;
@@ -117,7 +117,7 @@ void CenterBeatCircle::draw(const mat3& projection)
 	//printf("BC.x=%f,BC.y=%f\n", final_pos.x, final_pos.y);
 	transform_begin();
 	transform_translate(player->get_position());
-	transform_scale(m_scale+player->get_scale());
+	transform_scale(m_scale);
 	transform_end();
 
 	// Setting shaders

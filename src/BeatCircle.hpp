@@ -6,15 +6,16 @@
 class BeatCircle : public Sprite
 {
 public:
-  BeatCircle(Player* player, float speed);
+  BeatCircle(Player* player, float speed, float abs_offset);
 	
 	void update(float ms);
 
-	void set_dir(int direction);
+	void set_dir(int direction, float pos);
 
   const vec2& get_local_position() const;
   int get_dir() const;
   const vec2& get_movement_dir() const;
+  float get_offset() const;
 
 private:
   Player* m_player;
@@ -22,4 +23,5 @@ private:
 	vec2 m_local_position; // local coordinates
 	int m_dir;
 	vec2 m_movement_dir;
+	float m_abs_offset;
 };

@@ -211,7 +211,7 @@ void Level::destroy()
 
 void Level::handle_beat(float remaining_offset, Beat* curBeat, vec2 screen) {
 	remaining_offset -= curBeat->relativeOffset;
-	beatPos++;
+	//beatPos++;
 	// do beat things
 	// spawn thing
 
@@ -245,40 +245,35 @@ bool Level::update(float elapsed_ms)
 		//printf("remaining offset %f", remaining_offset);
 		float center_radius = 100.0f;  // TODO: use radius of circle around player
 		float ms_per_beat = curBeat->duration;
-		float speed = center_radius / ms_per_beat;
-		int dir = 0; // 1 = L, 2 = U, 3 = R, 4 = D
-		float pX = ((64.f + (float)curBeat->x) / 640.f);
-		float pY = ((48.f + (float)curBeat->y) / 480.f);
-		float dA = pX - pY;
-		float dB = -1 * (pX + pY) + 1;
-		if (dA == 0 && dB == 0)
-			dir = 1;
-		else if (dA < 0 && dB >= 0)
-			dir = 1;
-		else if (dA >= 0 && dB >= 0)
-			dir = 2;
-		else if (dA >= 0 && dB < 0)
-			dir = 3;
-		else if (dA < 0 && dB < 0)
-			dir = 4;
 
 		// We should spawn a beat circle such that when the beat circle gets to the
 		// center circle, this event coincides with
 		// curBeat->offset <= remaining_offset
-		float some_fixed_spawn_distance = 300.0f;
-		float beat_spawn_time = speed / some_fixed_spawn_distance;
-		if (curBeat->relativeOffset - remaining_offset <= beat_spawn_time) {
-			float pos = some_fixed_spawn_distance;
-			spawn_beat_circle(dir, pos, speed);
-		}
-		// time_until_next_beat <= elapsed_ms
-		if (curBeat->relativeOffset <= remaining_offset) {
-			handle_beat(remaining_offset, curBeat, screen);
-			//spawn_enemy({ (float)curBeat->x*2.2f, 0.f });
+		float some_fixed_spawn_distance = 500.0f;
+		float beat_spawn_time = 1668.f;
+		float speed = some_fixed_spawn_distance / beat_spawn_time;
+		if (curBeat->absoluteOffset <= m_current_time + beat_spawn_time && !curBeat->spawned) {
+			float delta = m_current_time - curBeat->absoluteOffset + beat_spawn_time;
+			float pos = some_fixed_spawn_distance - speed * delta;
+			float scale = 1.5 - delta / 1500;
+			curBeat->spawned = true;
+			spawn_beat_circle(curBeat->dir, pos, speed, scale, curBeat->absoluteOffset);
 		}
 		else {
 			curBeat->relativeOffset -= remaining_offset;
 			//printf("offset: %f\n", curBeat->offset);
+			break;
+		}
+		beatPos++;
+	}
+
+	while (lastBeat < beatlist->beats.size()) {
+		Beat* b = &beatlist->beats.at(lastBeat);
+		if (b->absoluteOffset <= m_current_time) {
+			handle_beat(remaining_offset, curBeat, screen);
+			lastBeat++;
+		}
+		else {
 			break;
 		}
 	}
@@ -290,8 +285,8 @@ bool Level::update(float elapsed_ms)
 	vec2 mov_dir;
 	vec2 bc_player;
 	while (beatcircle_it != m_beatcircles.end()) {
-		bad = length(beatcircle_it->get_local_position()) <= 10;
-		if (bad) {
+		float delta = m_current_time - beatcircle_it->get_offset();
+		if (delta > bad_timing) {
 			beatcircle_it = m_beatcircles.erase(beatcircle_it);
 		}
 		else {
@@ -341,7 +336,7 @@ bool Level::update(float elapsed_ms)
 	for (auto little_enemy_it = m_little_enemies.begin(); little_enemy_it != m_little_enemies.end();) {
 		if (m_player.collides_with(*little_enemy_it)) {
 			little_enemy_it = m_little_enemies.erase(little_enemy_it);
-			m_player.set_health(-1);
+			//m_player.set_health(-1);
 			printf("%f\n", m_player.get_health());
 			float percent_health = m_player.get_health()/5.0f;
 			healthbar.set_scale({percent_health, 1.5f});
@@ -484,16 +479,14 @@ bool Level::spawn_little_enemy() {
 	return false;
 }
 
-bool Level::spawn_beat_circle(int dir, float pos, float speed) {
-	BeatCircle beat_circle(&m_player, speed);
+bool Level::spawn_beat_circle(int dir, float pos, float speed, float scale, float abs_offset) {
+	BeatCircle beat_circle(&m_player, speed, abs_offset);
     bool type = ((dir % 2) == 1);
     beat_circle.set_texture(m_textures[type ? "orange_moving_beat" : "blue_moving_beat"]);
     if (beat_circle.init()) {
-        beat_circle.set_dir(dir);
+        beat_circle.set_dir(dir, pos);
         float angle = m_player.get_rotation();
-        vec2 spawn_pos = -1*pos * beat_circle.get_movement_dir();
-        beat_circle.set_position(spawn_pos);
-        beat_circle.set_scale({1.5,1.5});
+        beat_circle.set_scale({scale, scale});
         m_beatcircles.emplace_back(beat_circle);
         return true;
     }
@@ -543,26 +536,15 @@ void Level::on_key(int key, int action, int mod)
 		case GLFW_KEY_H:
 			finished = 1;
 			break;
-		case GLFW_KEY_RIGHT:
 		case GLFW_KEY_D:
 			m_player.add_movement_dir({ 1.f, 0.f });
 			break;
-		case GLFW_KEY_LEFT:
 		case GLFW_KEY_A:
 			m_player.add_movement_dir({ -1.f, 0.f });
 			break;
-			//case GLFW_KEY_UP:
-			//case GLFW_KEY_W:
-			//	m_player.add_movement_dir({ 0.f, -1.f });
-			//	break;
-			//case GLFW_KEY_DOWN:
-			//case GLFW_KEY_S:
-			//	m_player.add_movement_dir({ 0.f, 1.f });
-			//	break;
 		case GLFW_KEY_LEFT_SHIFT:
 			m_player.dash();
 			break;
-
 		case GLFW_KEY_U:
 			m_player.exploding_timer = 1;
 			break;
