@@ -26,7 +26,7 @@ BeatList::BeatList(OsuBeatmap beatmap)
 			duration = tps[tps_index].millisecondsPerBeat;
 			last_duration = duration;
 		}
-		beats.push_back(Beat(delta, hitObject.x, hitObject.y, duration));
+		beats.push_back(Beat(hitObject.time, delta, hitObject.x, hitObject.y, duration));
 	}
 }
 

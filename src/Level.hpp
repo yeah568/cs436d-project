@@ -104,6 +104,8 @@ protected:
 	float m_current_speed;
 	float m_next_little_enemies_spawn;
 
+	float m_current_time;
+
 	Mix_Music* m_background_music;
 	Mix_Chunk* m_player_dead_sound;
 	Mix_Chunk* m_player_eat_sound;

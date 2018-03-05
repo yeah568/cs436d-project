@@ -46,6 +46,7 @@ Level::Level(int width, int height)  : m_points(0), m_next_little_enemies_spawn(
 	m_player.set_texture(m_textures["character"]);
 	m_boss.set_texture(m_textures["boss0"]);
 	m_points = 0;
+	m_current_time = 0;
 	}
 
 Level::~Level()
@@ -209,7 +210,7 @@ void Level::destroy()
 
 
 void Level::handle_beat(float remaining_offset, Beat* curBeat, vec2 screen) {
-	remaining_offset -= curBeat->offset;
+	remaining_offset -= curBeat->relativeOffset;
 	beatPos++;
 	// do beat things
 	// spawn thing
@@ -231,6 +232,9 @@ bool Level::update(float elapsed_ms)
 {
 	if (!Mix_PlayingMusic()) {
 		Mix_PlayMusic(m_background_music, 1);
+	}
+	else {
+		m_current_time += elapsed_ms;
 	}
 
 	float remaining_offset = elapsed_ms;
@@ -263,17 +267,17 @@ bool Level::update(float elapsed_ms)
 		// curBeat->offset <= remaining_offset
 		float some_fixed_spawn_distance = 300.0f;
 		float beat_spawn_time = speed / some_fixed_spawn_distance;
-		if (curBeat->offset - remaining_offset <= beat_spawn_time) {
+		if (curBeat->relativeOffset - remaining_offset <= beat_spawn_time) {
 			float pos = some_fixed_spawn_distance;
 			spawn_beat_circle(dir, pos, speed);
 		}
 		// time_until_next_beat <= elapsed_ms
-		if (curBeat->offset <= remaining_offset) {
+		if (curBeat->relativeOffset <= remaining_offset) {
 			handle_beat(remaining_offset, curBeat, screen);
 			//spawn_enemy({ (float)curBeat->x*2.2f, 0.f });
 		}
 		else {
-			curBeat->offset -= remaining_offset;
+			curBeat->relativeOffset -= remaining_offset;
 			//printf("offset: %f\n", curBeat->offset);
 			break;
 		}
