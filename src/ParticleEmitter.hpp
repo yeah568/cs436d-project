@@ -2,7 +2,7 @@
 
 #include "Particle.hpp"
 
-class ParticleEmitter
+class ParticleEmitter : public Renderable
 {
 public:
 	ParticleEmitter(vec2 position, int max_particles, bool continuous_repeat);
