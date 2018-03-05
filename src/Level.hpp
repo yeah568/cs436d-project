@@ -14,6 +14,7 @@
 #include "SpriteSheet.hpp"
 #include "Enemy.hpp"
 #include "BossHealthBar.hpp"
+#include "Structure.hpp"
 
 // stlib
 #include <vector>
@@ -115,7 +116,7 @@ protected:
 	Mix_Chunk* m_player_eat_sound;
 	
 	std::vector <LittleEnemy> m_little_enemies;
-	
+	std::vector<Structure> m_structures;
 	Boss m_boss;
 };
 

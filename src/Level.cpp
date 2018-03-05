@@ -106,7 +106,7 @@ bool Level::init(std::string song_path, std::string osu_path, float boss_health)
 		return false;
 	}
 	m_player.set_health(5);
-	if (m_boss.init(boss_health, &m_little_enemies)) {
+	if (m_boss.init(boss_health, &m_little_enemies, &m_textures, &m_structures)) {
 		m_boss_health_bar.init();
 		m_boss_health_bar.set_rotation(0);
 		bbox bhp_bbox = m_boss_health_bar.get_bounding_box();
@@ -158,12 +158,15 @@ void Level::destroy()
 		beatcircle.destroy();
 	for (auto& enemy : m_little_enemies)
 		enemy.destroy();
+	for (auto& structure : m_structures)
+		structure.destroy();
 	orange_center_beat_circle.destroy();
 	blue_center_beat_circle.destroy();
 	healthbar.destroy();
 	m_boss_health_bar.destroy();
 	m_bullets.clear();
 	m_little_enemies.clear();
+	m_structures.clear();
 	m_beatcircles.clear();
 }
 
@@ -183,7 +186,7 @@ void Level::handle_beat(float remaining_offset, Beat* curBeat, vec2 screen) {
 	//new_turtle.set_position({ ((64.f + (float)curBeat->x) / 640.f)*screen.x, ((48.f + (float)curBeat->y) / 480.f)*screen.y });
 
 	m_player.scale_by(1.3f);
-	m_boss.on_beat(curBeat, screen, m_textures["enemy0"]);
+	m_boss.on_beat(curBeat, screen);
 }
 
 // Update our game world
@@ -295,6 +298,9 @@ bool Level::update(float elapsed_ms)
 		beatcircle.update(elapsed_modified_ms);
 	for (auto& enemy : m_little_enemies)
 		enemy.update(elapsed_modified_ms);
+	//printf("Level structures: %d\n", m_structures.size());
+	for (auto& structure : m_structures)
+		structure.update(elapsed_modified_ms);
 	for (auto little_enemy_it = m_little_enemies.begin(); little_enemy_it != m_little_enemies.end();) {
 		if (m_player.collides_with(*little_enemy_it)) {
 			healthbar.update();
@@ -366,6 +372,8 @@ void Level::draw()
 	
 	for (auto& enemy : m_little_enemies)
 		enemy.draw(projection_2D); 
+	for (auto& structure : m_structures)
+		structure.draw(projection_2D);
 	m_boss.draw(projection_2D);
 	m_boss_health_bar.draw(projection_2D);
 	//healthbar.draw(projection_2D);
