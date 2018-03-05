@@ -518,6 +518,9 @@
     <ClCompile Include="$(ProjectDir)..\src\OsuParser.cpp" />
     <ClCompile Include="$(ProjectDir)..\src\utils\StringUtils.cpp" />
     <ClCompile Include="$(ProjectDir)..\src\BeatList.cpp" />
+    <ClCompile Include="$(ProjectDir)..\src\Particle.cpp" />
+    <ClCompile Include="$(ProjectDir)..\src\ParticleEmitter.cpp" />
+    <ClCompile Include="$(ProjectDir)..\src\ParticleSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(ProjectDir)..\src\Sprite.hpp" />
@@ -533,6 +536,9 @@
     <ClInclude Include="..\src\Boss.hpp" />
     <ClInclude Include="..\src\Enemy.hpp" />
     <ClInclude Include="..\src\Bullet.hpp" />
+    <ClCompile Include="$(ProjectDir)..\src\Particle.hpp" />
+    <ClCompile Include="$(ProjectDir)..\src\ParticleEmitter.hpp" />
+    <ClCompile Include="$(ProjectDir)..\src\ParticleSystem.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

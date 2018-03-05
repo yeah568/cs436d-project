@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Particle.hpp"
+#include "ParticleEmitter.hpp"
 
 class ParticleSystem
 {
