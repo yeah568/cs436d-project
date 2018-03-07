@@ -10,6 +10,8 @@ public:
 
 	void copy_from(Particle & particle);
 
+	vec2 getPosition();
+
 	bool is_alive;
 private:
 	vec2 m_position;

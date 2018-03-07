@@ -36,3 +36,7 @@ void Particle::copy_from(Particle& particle) {
 	is_alive = particle.is_alive;
 	m_lifespan = particle.m_lifespan;
 }
+
+vec2 Particle::getPosition() {
+	return m_position;
+}

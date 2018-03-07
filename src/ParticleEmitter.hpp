@@ -10,6 +10,7 @@ public:
 	~ParticleEmitter();
 
 	void update(int elapsed_ms);
+	bool init();
 private:
 	Particle * m_particle_pool;
 	int m_max_particles;
