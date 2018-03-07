@@ -67,7 +67,7 @@ private:
 
 	
 	// Generates a new fish
-	bool spawn_bullet(vec2 position, float angle, bool bullet_type, bool on_beat);
+	bool spawn_bullet(vec2 position, float angle, vec2 scale, bool bullet_type, float dmg, float spd);
 
 	bool spawn_beat_circle(int dir, float pos, float speed, float scale, float abs_offset);
 	
@@ -76,6 +76,8 @@ private:
 	//bool spawn_enemy(vec2 position);
 
 	bool spawn_little_enemy();
+
+	void on_arrow_key(Dir dir);
 
 protected:
 	static Texture background_texture;

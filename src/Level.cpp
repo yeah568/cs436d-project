@@ -287,6 +287,7 @@ bool Level::update(float elapsed_ms)
 	while (beatcircle_it != m_beatcircles.end()) {
 		float delta = m_current_time - beatcircle_it->get_offset();
 		if (delta > bad_timing) {
+			printf("MISS\n");
 			beatcircle_it = m_beatcircles.erase(beatcircle_it);
 		}
 		else {
@@ -429,21 +430,19 @@ bool Level::is_over()const
 
 
 // Creates a new fish and if successfull adds it to the list of fish
-bool Level::spawn_bullet(vec2 position, float angle, bool bullet_type, bool on_beat)
+bool Level::spawn_bullet(vec2 position, float angle, vec2 scale, bool bullet_type, float dmg, float spd)
 {
 	Bullet bullet;
 	bullet.set_texture(m_textures[bullet_type ? "bullet_1" : "bullet_2"]);
-	if (bullet.init())
+	if (bullet.init(dmg, spd))
 	{
 		
 		bullet.set_position(position);
 		bullet.set_rotation(angle);
-		if (on_beat) {
-			bullet.set_scale({ 0.5,0.5 });
-		}
-		bullet.set_on_beat(on_beat);
+		bullet.set_scale(scale);
 		bullet.m_movement_dir = { (float)cos(angle), (float)-sin(angle) };
 		m_bullets.emplace_back(bullet);
+		m_player.bullet_type = !bullet_type;
 
 		return true;
 	}
@@ -504,33 +503,6 @@ void Level::on_key(int key, int action, int mod)
 	// action can be GLFW_PRESS GLFW_RELEASE GLFW_REPEAT
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-
-	if (action == GLFW_PRESS && key == GLFW_KEY_SPACE) {
-		bool on_beat = false;
-		if (m_beatcircles.size() > 0) {
-			BeatCircle closest = m_beatcircles[0];
-			float on_beat_radius = 20;
-			switch (closest.get_dir()) {
-			case 1:
-			case 3:
-				on_beat_radius = 100;
-				break;
-			case 2:
-			case 4:
-				on_beat_radius = 50;
-				break;
-			}
-			on_beat = length(m_beatcircles[0].get_local_position()) <= on_beat_radius;
-			m_beatcircles.erase(m_beatcircles.begin());
-		}
-
-		float player_angle = m_player.get_rotation() + 1.57;
-		vec2 salmon_pos = m_player.get_position();
-		spawn_bullet(salmon_pos, player_angle, m_player.bullet_type, on_beat);
-		m_player.bullet_type = !m_player.bullet_type;
-
-	}
-
 	if (action == GLFW_PRESS) {
 		switch (key) {
 		case GLFW_KEY_H:
@@ -548,16 +520,26 @@ void Level::on_key(int key, int action, int mod)
 		case GLFW_KEY_U:
 			m_player.exploding_timer = 1;
 			break;
+		case GLFW_KEY_UP:
+			on_arrow_key(up);
+			break;
+		case GLFW_KEY_DOWN:
+			on_arrow_key(down);
+			break;
+		case GLFW_KEY_LEFT:
+			on_arrow_key(left);
+			break;
+		case GLFW_KEY_RIGHT:
+			on_arrow_key(right);
+			break;
 		}
 	}
 
 	if (action == GLFW_RELEASE) {
 		switch (key) {
-		case GLFW_KEY_RIGHT:
 		case GLFW_KEY_D:
 			m_player.add_movement_dir({ -1.f, 0.f });
 			break;
-		case GLFW_KEY_LEFT:
 		case GLFW_KEY_A:
 			m_player.add_movement_dir({ 1.f, 0.f });
 			break;
@@ -591,6 +573,45 @@ void Level::on_key(int key, int action, int mod)
 		m_current_speed += 0.1f;
 
 	m_current_speed = fmax(0.f, m_current_speed);
+}
+
+void Level::on_arrow_key(Dir dir)
+{
+	float player_angle = m_player.get_rotation() + 1.57;
+	vec2 salmon_pos = m_player.get_position();
+	auto beatcircle_it = m_beatcircles.begin();
+	while (beatcircle_it != m_beatcircles.end()) {
+		float abs_offset = beatcircle_it->get_offset();
+		float delta = abs(m_current_time - abs_offset);
+		if (delta > bad_timing) {
+			break;
+		}
+
+		if (dir != beatcircle_it->get_dir()) {
+			beatcircle_it++;
+			continue;
+		}
+
+		if (delta <= perfect_timing) {
+			printf("PERFECT with delta %f\n", delta);
+			spawn_bullet(salmon_pos, player_angle, { 0.5, 0.5 }, m_player.bullet_type, 10.f, 5000.f);
+			m_beatcircles.erase(beatcircle_it);
+			break;
+		}
+		else if (delta <= good_timing) {
+			printf("GOOD with delta %f\n", delta);
+			spawn_bullet(salmon_pos, player_angle, { 0.5, 0.5 }, m_player.bullet_type, 5.f, 1500.f);
+			m_beatcircles.erase(beatcircle_it);
+			break;
+		}
+		else if (delta <= bad_timing) {
+			printf("BAD with delta %f\n", delta);
+			spawn_bullet(salmon_pos, player_angle, { 1.f, 1.f }, m_player.bullet_type, 2.f, 800.f);
+			m_beatcircles.erase(beatcircle_it);
+			break;
+		}
+		beatcircle_it++;
+	}
 }
 
 void Level::on_mouse_move(double xpos, double ypos)

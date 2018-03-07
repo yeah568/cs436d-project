@@ -22,9 +22,9 @@ void BeatCircle::set_dir(int direction, float pos) {
 			m_local_position.y = 0.0f;
 			break;
 		case 2:
-			m_movement_dir = {0.0f, -1.0f};
+			m_movement_dir = { 0.0f, 1.0f };
 			m_local_position.x = 0.0f;
-			m_local_position.y = pos+90.f;
+			m_local_position.y = -pos - 90.f;
 			break;
 		case 3:
 			m_movement_dir = {-1.0f, 0.0f};
@@ -32,9 +32,9 @@ void BeatCircle::set_dir(int direction, float pos) {
 			m_local_position.y = 0.0f;
 			break;
 		case 4:
-			m_movement_dir = {0.0f, 1.0f};
+			m_movement_dir = { 0.0f, -1.0f };
 			m_local_position.x = 0.0f;
-			m_local_position.y = -pos-90.f;
+			m_local_position.y = pos + 90.f;
 			break;
 	}
 

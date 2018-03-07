@@ -18,8 +18,8 @@ using Clock = std::chrono::high_resolution_clock;
 
 // Global 
 World world;
-int width = 1200;
-int height = 800;
+int width = 1920;
+int height = 1080;
 const char* title = "Your Title Here";
 
 

@@ -9,7 +9,7 @@ class Bullet : public Sprite
 public:
 	Bullet();
 
-	void set_on_beat(bool was_created_on_beat){created_on_beat = was_created_on_beat;};
+	bool init(float dmg, float spd);
 
 	// Update fish due to current
 	// ms represents the number of milliseconds elapsed from the previous update() call
@@ -17,9 +17,15 @@ public:
 
 	vec2 m_movement_dir;
 	
-	float get_damage(){return (created_on_beat ? bullet_damage * 4 : bullet_damage);};
+	float get_damage();
+
+	void set_damage(float dmg);
+
+	float get_speed();
+	
+	void set_speed(float spd);
 
 private:
-	float bullet_damage = 25.0f;
-	bool created_on_beat;
+	float m_damage = 25.0f;
+	float m_speed = 800.f;
 };
