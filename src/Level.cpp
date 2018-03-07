@@ -73,7 +73,7 @@ bool Level2::init() {
 	}
 
 	m_background_music = Mix_LoadMUS(song_path("598830 Shawn Wasabi - Marble Soda/Marble Soda.wav"));
-	parser = new OsuParser(song_path("598830 Shawn Wasabi - Marble Soda/Shawn Wasabi - Marble Soda (Exa) [Insane].osu"));
+	parser = new OsuParser(song_path("598830 Shawn Wasabi - Marble Soda/Shawn Wasabi - Marble Soda (Exa) [Normal].osu"));
 
 	OsuBeatmap beatmap = parser->parse();
 	beatlist = new BeatList(beatmap);
@@ -270,7 +270,7 @@ bool Level::update(float elapsed_ms)
 	while (lastBeat < beatlist->beats.size()) {
 		Beat* b = &beatlist->beats.at(lastBeat);
 		if (b->absoluteOffset <= m_current_time) {
-			handle_beat(remaining_offset, curBeat, screen);
+			handle_beat(remaining_offset, b, screen);
 			lastBeat++;
 		}
 		else {
@@ -521,15 +521,19 @@ void Level::on_key(int key, int action, int mod)
 			m_player.exploding_timer = 1;
 			break;
 		case GLFW_KEY_UP:
+		case GLFW_KEY_I:
 			on_arrow_key(up);
 			break;
 		case GLFW_KEY_DOWN:
+		case GLFW_KEY_K:
 			on_arrow_key(down);
 			break;
 		case GLFW_KEY_LEFT:
+		case GLFW_KEY_J:
 			on_arrow_key(left);
 			break;
 		case GLFW_KEY_RIGHT:
+		case GLFW_KEY_L:
 			on_arrow_key(right);
 			break;
 		}
