@@ -21,7 +21,7 @@ class Boss : public Sprite
 public:
 	Boss();
 	// Creates all the associated render resources and default transform
-	bool init(float health, std::vector<LittleEnemy>* little_enemies, std::unordered_map<std::string, Texture*>* textures, std::vector<Structure>* structures);
+	bool init(float health, std::vector<LittleEnemy>* little_enemies, std::unordered_map<std::string, Texture*>* textures, std::vector<Structure*>* structures);
 
 	// ms represents the number of milliseconds elapsed from the previous update() call
 	void update(float ms, vec2 screen, std::vector<Bullet>* bullets);
@@ -43,7 +43,7 @@ private:
 	float total_health;
 	
 	std::vector<LittleEnemy>* m_little_enemies;
-	std::vector<Structure>* m_structures;
+	std::vector<Structure*>* m_structures;
 
 	std::unordered_map<std::string, Texture*>* m_textures;
 };

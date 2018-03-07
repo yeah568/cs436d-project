@@ -116,7 +116,7 @@ protected:
 	Mix_Chunk* m_player_eat_sound;
 	
 	std::vector <LittleEnemy> m_little_enemies;
-	std::vector<Structure> m_structures;
+	std::vector<Structure*> m_structures;
 	Boss m_boss;
 };
 

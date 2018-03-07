@@ -18,7 +18,7 @@ Boss::Boss()
 	m_rotation = 0.f;
 }
 
-bool Boss::init(float health, std::vector<LittleEnemy>* little_enemies, std::unordered_map<std::string, Texture*>* textures, std::vector<Structure>* structures)
+bool Boss::init(float health, std::vector<LittleEnemy>* little_enemies, std::unordered_map<std::string, Texture*>* textures, std::vector<Structure*>* structures)
 {
 	m_health = health;
 	total_health = health;
@@ -85,16 +85,16 @@ void Boss::on_beat(Beat* beat, vec2 screen) {
 	case 3: {
 		// TODO: Make structures spawn in different places, right now they overlap each other
 		printf("Size: %d\n", m_structures->size());
-		Healing_Structure new_structure;
-		new_structure.set_texture((*m_textures)["enemy0"]);
-		if (!(new_structure.init())) {
+		Healing_Structure* new_structure = new Healing_Structure();
+		new_structure->set_texture((*m_textures)["enemy0"]);
+		if (!(new_structure->init())) {
 			printf("Issues\n");
 			return;
 		}
-		new_structure.set_position({300.f, 300.f});
-		new_structure.set_scale({1.f, 1.f});
-		new_structure.set_rotation(0.f);
-		new_structure.set_boss(this);
+		new_structure->set_position({screen.x/4.f*(1+m_structures->size()), 300.f});
+		new_structure->set_scale({1.f, 1.f});
+		new_structure->set_rotation(0.f);
+		new_structure->set_boss(this);
 		m_structures->emplace_back(new_structure);
 	}
 		break;
@@ -120,6 +120,7 @@ float Boss::get_health()const
 }
 
 void Boss::set_health(float delta)
-{
-    m_health += delta;
+{	
+	float rest_of_health = get_total_health() - get_health();
+    m_health += std::min(delta, rest_of_health);
 }

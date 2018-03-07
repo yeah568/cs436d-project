@@ -159,7 +159,7 @@ void Level::destroy()
 	for (auto& enemy : m_little_enemies)
 		enemy.destroy();
 	for (auto& structure : m_structures)
-		structure.destroy();
+		structure->destroy();
 	orange_center_beat_circle.destroy();
 	blue_center_beat_circle.destroy();
 	healthbar.destroy();
@@ -195,9 +195,9 @@ bool Level::update(float elapsed_ms)
 	if (!Mix_PlayingMusic()) {
 		Mix_PlayMusic(m_background_music, 1);
 	}
-
+	m_boss_health_bar.set_health_percentage(m_boss.get_health()/m_boss.get_total_health());
 	float remaining_offset = elapsed_ms;
-
+	
 	Beat* curBeat;
 	while (beatPos < beatlist->beats.size()) {
 		curBeat = &beatlist->beats.at(beatPos);
@@ -299,8 +299,10 @@ bool Level::update(float elapsed_ms)
 	for (auto& enemy : m_little_enemies)
 		enemy.update(elapsed_modified_ms);
 	//printf("Level structures: %d\n", m_structures.size());
-	for (auto& structure : m_structures)
-		structure.update(elapsed_modified_ms);
+	for (auto& structure : m_structures) {
+		structure->update(elapsed_modified_ms);
+		printf("Updated structure\n");
+	}
 	for (auto little_enemy_it = m_little_enemies.begin(); little_enemy_it != m_little_enemies.end();) {
 		if (m_player.collides_with(*little_enemy_it)) {
 			healthbar.update();
@@ -373,7 +375,7 @@ void Level::draw()
 	for (auto& enemy : m_little_enemies)
 		enemy.draw(projection_2D); 
 	for (auto& structure : m_structures)
-		structure.draw(projection_2D);
+		structure->draw(projection_2D);
 	m_boss.draw(projection_2D);
 	m_boss_health_bar.draw(projection_2D);
 	//healthbar.draw(projection_2D);
