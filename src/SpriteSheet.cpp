@@ -58,7 +58,7 @@ void SpriteSheet::update(float ms) {
 	if (time_until_update > 250) {
 		time_until_update = 0;
 		vertices[0].texcoord.x += 1.f / m_pictures;
-		printf("Left Vertex: %f ", vertices[0].texcoord.x);
+		//printf("Left Vertex: %f ", vertices[0].texcoord.x);
 		vertices[1].texcoord.x += 1.f / m_pictures;
 		vertices[2].texcoord.x += 1.f/m_pictures;
 		vertices[3].texcoord.x += 1.f/m_pictures;
@@ -70,7 +70,7 @@ void SpriteSheet::update(float ms) {
 }
 void SpriteSheet::update() {
 	vertices[0].texcoord.x += 1.f / m_pictures;
-	printf("Left Vertex: %f ", vertices[0].texcoord.x);
+	//printf("Left Vertex: %f ", vertices[0].texcoord.x);
 	vertices[1].texcoord.x += 1.f / m_pictures;
 	vertices[2].texcoord.x += 1.f / m_pictures;
 	vertices[3].texcoord.x += 1.f / m_pictures;

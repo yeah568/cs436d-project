@@ -65,7 +65,7 @@ bool World::init(vec2 screen)
     // Input is handled using GLFW, for more info see
     // http://www.glfw.org/docs/latest/input_guide.html
     glfwSetWindowUserPointer(m_window, this);
-    auto key_redirect = [](GLFWwindow *wnd, int _0, int _1, int _2, int _3) {
+	auto key_redirect = [](GLFWwindow *wnd, int _0, int _1, int _2, int _3) {
         ((World *) glfwGetWindowUserPointer(wnd))->on_key(wnd, _0, _1, _2, _3);
     };
     auto cursor_pos_redirect = [](GLFWwindow *wnd, double _0, double _1) {
