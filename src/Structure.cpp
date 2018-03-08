@@ -8,7 +8,9 @@ std::vector<PlayerBullet>* Structure::player_bullets;
 std::vector<EnemyBullet>* Structure::enemy_bullets;
 Player* Structure::player;
 
-Structure::Structure() : Sprite(nullptr) {}
+Structure::Structure() : Sprite(nullptr) {
+	health = 5;
+}
 
 void Healing_Structure::update(float ms) {
 	// Move fish along -X based on how much time has passed, this is to (partially) avoid
@@ -67,10 +69,12 @@ void Black_Hole_Structure::update(float ms) {
 	//auto little_enemy_it = m_little_enemies.begin(); little_enemy_it != m_little_enemies.end();
 	for (auto bullet_it = (*player_bullets).begin(); bullet_it != (*player_bullets).end();) {
 		//printf("these are the player bullets");
-		b_g_force.dir = normalize(m_position - bullet_it->get_position());
+		vec2 diff = m_position - bullet_it->get_position();
+		b_g_force.dir = normalize(diff);
+	
 		b_g_force.mag = numerator / std::pow(length(m_position - bullet_it->get_position()), 2.0);
 		bullet_it->addForce(b_g_force);
-		//printf("Force bullet: %f\n", b_g_force.dir.x);
+		//printf("Force bullet: %f\n", b_g_force.dir.y);
 		bullet_it++;
 	}
 }

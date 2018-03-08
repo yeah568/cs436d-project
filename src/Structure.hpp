@@ -28,8 +28,12 @@ public:
 	bool collides_with(const Bullet &bullet);
 
 	void scale_by(float scale);
+	
+	int health;
+
 
 private:
+	
 };
 
 class Healing_Structure : public Structure {
@@ -56,6 +60,7 @@ private:
 
 class Black_Hole_Structure : public Structure {
 public:
+	
 	bool init();
 	void update(float ms);
 	float get_time_until_expiry() {return time_until_expiry;};
