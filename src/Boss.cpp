@@ -61,7 +61,7 @@ void Boss::update(float ms, vec2 screen, std::vector<Bullet>* bullets)
 
 void Boss::on_beat(Beat* beat, vec2 screen) {
 	int action;
-	if (m_structures->size() < 3)
+	if (m_structures->size() < 1)
 		action = rand() % 5;
 	else
 		action = rand() % 3;
