@@ -15,6 +15,7 @@
 #include "Enemy.hpp"
 #include "BossHealthBar.hpp"
 #include "Structure.hpp"
+#include "TextureManager.hpp"
 
 // stlib
 #include <vector>
@@ -38,9 +39,7 @@ public:
 	Level(int width, int height);
 	~Level();
 	// Creates a window, sets up events and begins the game
-	virtual bool init() = 0;
-
-	bool init(std::string song_path, std::string osu_path, float boss_health);
+	virtual bool init()=0;
 
 	// Releases all associated resources
 	void destroy();
@@ -60,11 +59,7 @@ public:
 	void on_key(int key, int action, int mod);
 	void on_mouse_move(double xpos, double ypos);
 
-	void load_textures();
-
 	int new_points;
-
-	std::unordered_map<std::string, Texture*> m_textures;
 
 private:
 	// Generates a new turtle
@@ -72,17 +67,20 @@ private:
 
 	
 	// Generates a new fish
-	bool spawn_bullet(vec2 position, float angle, bool bullet_type, bool on_beat);
+	//bool spawn_bullet(vec2 position, float angle, bool bullet_type, bool on_beat);
 
-	bool spawn_beat_circle(int dir, float pos, float speed);
+	//bool spawn_beat_circle(int dir, float pos, float speed);
 	
 	void handle_beat(float remaining_offset, Beat* curBeat, vec2 screen);
 
 	//bool spawn_enemy(vec2 position);
 
-	bool spawn_little_enemy();
+	//bool spawn_little_enemy();
 
 protected:
+
+	bool init(std::string song_path, std::string osu_path, float boss_health);
+	TextureManager* tm;
 	static Texture background_texture;
 	
 	static CenterBeatCircle blue_center_beat_circle;
@@ -103,7 +101,8 @@ protected:
 	int m_song;
 	GLFWwindow* window;
 	// Game entities
-	std::vector<Bullet> m_bullets;
+	std::vector<PlayerBullet> m_bullets;
+	std::vector<EnemyBullet> m_enemy_bullets;
 	Background m_background;
 	vec2 screen;
 	std::vector<BeatCircle> m_beatcircles;

@@ -15,9 +15,11 @@ else
 endif
 
 BIN=beatcoin
-OBJ=$(BIN).o common.o Sprite.o Player.o Turtle.o World.o Bullet.o Background.o BeatCircle.o BeatList.o OsuParser.o CenterBeatCircle.o Level.o HealthBar.o LevelList.o Boss.o Enemy.o SpriteSheet.o BossHealthBar.o Structure.o
-
-
+OBJ=$(BIN).o common.o Sprite.o Player.o Turtle.o World.o Bullet.o Background.o
+OBJ2=BeatCircle.o BeatList.o OsuParser.o CenterBeatCircle.o Level.o
+OBJ3=HealthBar.o LevelList.o Boss.o Enemy.o SpriteSheet.o BossHealthBar.o Structure.o
+OBJ4=Spawner.o TextureManager.o
+ALL_OBJ=$(OBJ) $(OBJ2) $(OBJ3) $(OBJ4)
 SUBDIRS = src/utils
 
 default:; @$(MAKE) _all $(MAKEFLAGS)
@@ -37,8 +39,8 @@ test: build
 %.o: src/%.cpp
 	$(CXX) -c $(CXXFLAGS) -o $@ $< 
 
-$(BIN): $(SUBDIRS) $(OBJ)
-	$(CXX) -o $@ $(OBJ) $(wildcard $(addsuffix /*.o,$(SUBDIRS))) $(LIB)
+$(BIN): $(SUBDIRS) $(ALL_OBJ) 
+	$(CXX) -o $@ $(ALL_OBJ) $(wildcard $(addsuffix /*.o,$(SUBDIRS))) $(LIB)
 
 clean:
-	- rm -f $(BIN) $(OBJ)
+	- rm -f $(BIN) $(ALL_OBJ)

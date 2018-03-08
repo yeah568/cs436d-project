@@ -15,7 +15,7 @@ LittleEnemy::LittleEnemy() : Sprite(nullptr) {
 void LittleEnemy::update(float ms) {
 	// Move fish along -X based on how much time has passed, this is to (partially) avoid
 	// having entities move at different speed based on the machine.
-	const float enemy_speed = 200.f;
+	const float enemy_speed = 100.f;
 	float step = enemy_speed * (ms / 1000);
 	vec2 to_player = normalize(player->get_position() - get_position());
 	m_position.y += to_player.y*step;

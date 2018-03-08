@@ -1,8 +1,12 @@
 #include "Structure.hpp"
+#include "Spawner.hpp"
+#include "TextureManager.hpp"
 
 #include <cmath>
 
-std::vector<Bullet>* Structure::player_bullets;
+std::vector<PlayerBullet>* Structure::player_bullets;
+std::vector<EnemyBullet>* Structure::enemy_bullets;
+Player* Structure::player;
 
 Structure::Structure() : Sprite(nullptr) {}
 
@@ -40,7 +44,9 @@ void Shooting_Structure::update(float ms) {
 }
 
 void Shooting_Structure::shoot() {
-	// TODO:
+	// vec2 position, vec2 movement_dir, Texture* texture,
+	TextureManager* tm = TextureManager::get_instance();
+	spawn_enemy_bullet(m_position, player->get_position() - m_position, tm->get_texture("enemy0"), enemy_bullets);
 }
 
 bool Black_Hole_Structure::init() {

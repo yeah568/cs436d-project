@@ -1,4 +1,5 @@
 #include "Boss.hpp"
+#include "Spawner.hpp"
 
 #include <cmath>
 #include <vector>
@@ -18,19 +19,17 @@ Boss::Boss()
 	m_rotation = 0.f;
 }
 
-bool Boss::init(float health, std::vector<LittleEnemy>* little_enemies,
-std::unordered_map<std::string, Texture*>* textures, std::vector<Structure*>* structures) 
+bool Boss::init(float health, std::vector<LittleEnemy>* little_enemies, std::vector<Structure*>* structures) 
 {
 	m_health = health;
 	total_health = health;
 	m_little_enemies = little_enemies;
-	m_textures = textures;
 	m_structures = structures;
-
+	tm = TextureManager::get_instance();
 	return Sprite::init();
 }
 
-void Boss::update(float ms, vec2 screen, std::vector<Bullet>* bullets)
+void Boss::update(float ms, vec2 screen, std::vector<PlayerBullet>* bullets)
 {
 	// Very naive bullet avoidance algorithm.
 	// On each update, get the highest up bullet (oldest on bullet array)
@@ -62,7 +61,7 @@ void Boss::update(float ms, vec2 screen, std::vector<Bullet>* bullets)
 void Boss::on_beat(Beat* beat, vec2 screen) {
 	int action;
 	if (m_structures->size() < 3)
-		action = rand() % 5;
+		action = rand() % 6;
 	else
 		action = rand() % 3;
 
@@ -74,47 +73,31 @@ void Boss::on_beat(Beat* beat, vec2 screen) {
 		move({ 10.f, 0.f });
 		break;
 	case 2: {
-		LittleEnemy little_enemy;
-		little_enemy.set_texture((*m_textures)["enemy0"]);
-		if (little_enemy.init()) {
-			little_enemy.set_position(
-				{ ((64.f + (float)beat->x) / 640.f) * screen.x, ((48.f + (float)beat->y) / 480.f) * screen.y * 0.67f });
-			m_little_enemies->emplace_back(little_enemy);
-		}
+		vec2 position = { ((64.f + (float)beat->x) / 640.f) * screen.x,
+			((48.f + (float)beat->y) / 480.f) * screen.y * 0.67f };
+		spawn_little_enemy(position, tm->get_texture("enemy0"), m_little_enemies);
 	}
 		break;
 	case 3: {
-		return;
-		Healing_Structure* new_structure = new Healing_Structure();
-		new_structure->set_texture((*m_textures)["enemy0"]);
-		if (!(new_structure->init())) {
-			printf("Issues\n");
-			return;
-		}
-		new_structure->set_position({screen.x/4.f*(1+m_structures->size()), 300.f});
-		new_structure->set_scale({1.f, 1.f});
-		new_structure->set_rotation(0.f);
-		new_structure->set_boss(this);
-		m_structures->emplace_back(new_structure);
+		vec2 position = {screen.x/4.f*(1+m_structures->size()), 300.f};
+		spawn_structure(0, this, position, tm->get_texture("enemy0"), m_structures);
 	}
 		break;
 	case 4: {
-		Black_Hole_Structure* new_structure = new Black_Hole_Structure();
-		new_structure->set_texture((*m_textures)["enemy0"]);
-		if (!(new_structure->init())) {
-			printf("Issues\n");
-			return;
-		}
-		new_structure->set_position({screen.x/4.f*(1+m_structures->size()), 300.f});
-		new_structure->set_scale({0.5f, 0.5f});
-		new_structure->set_rotation(0.f);
-		m_structures->emplace_back(new_structure);
+		vec2 position = {screen.x/4.f*(1+m_structures->size()), 300.f};
+		spawn_structure(1, this, position, tm->get_texture("enemy0"), m_structures);
 	}
+		break;
+	case 5: {
+		vec2 position = {screen.x/4.f*(1+m_structures->size()), 300.f};
+		spawn_structure(2, this, position, tm->get_texture("enemy0"), m_structures);
+	}
+		printf("Finished boss spawning structure\n");
 		break;
 	}
 }
 
-bool Boss::collides_with(const Bullet& bullet)
+bool Boss::collides_with(const PlayerBullet& bullet)
 {
 	bbox boss_bbox = get_bounding_box();
 	bbox bullet_bbox = bullet.get_bounding_box();

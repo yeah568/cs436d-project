@@ -507,10 +507,13 @@
     <ClCompile Include="$(ProjectDir)..\src\common.cpp" />
     <ClCompile Include="$(ProjectDir)..\src\World.cpp" />
     <ClCompile Include="..\src\Background.cpp" />
+    <ClCompile Include="..\src\Spawner.cpp" />
     <ClCompile Include="..\src\BossHealthBar.cpp" />
     <ClCompile Include="..\src\HealthBar.cpp" />
     <ClCompile Include="..\src\Level.cpp" />
+    <ClCompile Include="..\src\TextureManager.cpp" />
     <ClCompile Include="..\src\LevelList.cpp" />
+
     <ClCompile Include="..\src\Player.cpp" />
     <ClCompile Include="..\src\Bullet.cpp" />
     <ClCompile Include="..\src\Enemy.cpp" />

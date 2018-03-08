@@ -13,7 +13,7 @@ Bullet::Bullet()
   m_position.y = 50;
 }
 
-void Bullet::update(float ms)
+void PlayerBullet::update(float ms)
 {
 	// Move fish along -X based on how much time has passed, this is to (partially) avoid
 	// having entities move at different speed based on the machine.
@@ -38,7 +38,13 @@ void Bullet::update(float ms)
 	added_forces.clear();
 }
 
-force Bullet::get_net_force() {
+void EnemyBullet::update(float ms)
+{
+	float step =  (ms / 1000);
+	m_position = m_position + 200*step * m_movement_dir;
+}
+
+force PlayerBullet::get_net_force() {
 	force nf;
 	vec2 weighted_vec_sum = { 0,0 };
 	for (auto& f : added_forces) {

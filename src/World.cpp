@@ -1,6 +1,7 @@
 #include "World.hpp"
 #include "common.hpp"
 #include "Level.hpp"
+#include "TextureManager.hpp"
 
 #include <string.h>
 #include <cassert>
@@ -73,7 +74,7 @@ bool World::init(vec2 screen)
     };
     glfwSetKeyCallback(m_window, key_redirect);
     glfwSetCursorPosCallback(m_window, cursor_pos_redirect);
-
+	TextureManager* tm = TextureManager::get_instance();
 	//return levelList[levelCounter].init
 	//Level1* level = new Level1(screen.x, screen.y);
 	levelList.emplace_back(new Level1(screen.x, screen.y));

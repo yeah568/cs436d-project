@@ -6,6 +6,8 @@
 #include "Bullet.hpp"
 #include "SpriteSheet.hpp"
 #include "Structure.hpp"
+#include "Spawner.hpp"
+#include "TextureManager.hpp"
 
 // stlib
 #include <string.h>
@@ -44,10 +46,10 @@ Level::Level(int width, int height)  : m_points(0), m_next_little_enemies_spawn(
 	screen.x = width;
 	screen.y = height;
 	m_rng = std::default_random_engine(std::random_device()());
-	load_textures();
-	m_player.set_texture(m_textures["character"]);
-	m_boss.set_texture(m_textures["boss0"]);
-	m_boss_health_bar.set_texture(m_textures["boss_health_bar"]);
+	tm = TextureManager::get_instance();
+	m_player.set_texture(tm->get_texture("character"));
+	m_boss.set_texture(tm->get_texture("boss0"));
+	m_boss_health_bar.set_texture(tm->get_texture("boss_health_bar"));
 	m_points = 0;
 	}
 
@@ -94,7 +96,7 @@ bool Level::init(std::string song_path, std::string osu_path, float boss_health)
 	m_background.init();
 
 
-	healthbar.set_texture(m_textures["healthbar"]);
+	healthbar.set_texture(tm->get_texture("healthbar"));
 	healthbar.init(5);
 	
 	healthbar.set_scale({ 0.6f,0.7f });
@@ -107,8 +109,10 @@ bool Level::init(std::string song_path, std::string osu_path, float boss_health)
 		return false;
 	}
 	m_player.set_health(5);
-	if (m_boss.init(boss_health, &m_little_enemies, &m_textures, &m_structures)) {
+	if (m_boss.init(boss_health, &m_little_enemies, &m_structures)) {
 		Structure::player_bullets = &m_bullets;
+		Structure::enemy_bullets = &m_enemy_bullets;
+		Structure::player = &m_player;
 		m_boss_health_bar.init();
 		m_boss_health_bar.set_rotation(0);
 		bbox bhp_bbox = m_boss_health_bar.get_bounding_box();
@@ -162,6 +166,9 @@ void Level::destroy()
 		enemy.destroy();
 	for (auto& structure : m_structures)
 		structure->destroy();
+	for (auto& bullet : m_enemy_bullets)
+		bullet.destroy();
+	m_enemy_bullets.clear();
 	orange_center_beat_circle.destroy();
 	blue_center_beat_circle.destroy();
 	healthbar.destroy();
@@ -230,7 +237,9 @@ bool Level::update(float elapsed_ms)
 		float beat_spawn_time = speed / some_fixed_spawn_distance;
 		if (curBeat->offset - remaining_offset <= beat_spawn_time) {
 			float pos = some_fixed_spawn_distance;
-			spawn_beat_circle(dir, pos, speed);
+			spawn_beat_circle(dir, pos,
+				speed, &m_player,
+				tm->get_texture(((dir % 2) == 1) ? "orange_moving_beat" : "blue_moving_beat"), &m_beatcircles);
 		}
 		// time_until_next_beat <= elapsed_ms
 		if (curBeat->offset <= remaining_offset) {
@@ -262,7 +271,7 @@ bool Level::update(float elapsed_ms)
 
 	// Updating all entities, making the turtle and fish
 	// faster based on current
-	
+
 	auto bullet_it = m_bullets.begin();
 	while (bullet_it != m_bullets.end())
 	{
@@ -302,6 +311,8 @@ bool Level::update(float elapsed_ms)
 		enemy.update(elapsed_modified_ms);
 	for (auto& structure : m_structures) {
 		structure->update(elapsed_modified_ms);
+	for (auto& bullet : m_enemy_bullets)
+		bullet.update(elapsed_modified_ms);
 	//printf("Level structures: %d\n", m_structures.size());ctv
 	
 		//printf("Updated structure\n");
@@ -372,13 +383,17 @@ void Level::draw()
 
 	for (auto& bullet : m_bullets)
 		bullet.draw(projection_2D);
+	for (auto& bullet : m_enemy_bullets)
+		bullet.draw(projection_2D);
 	for (auto& beatcircle : m_beatcircles)
 		beatcircle.draw(projection_2D);
 	
 	for (auto& enemy : m_little_enemies)
 		enemy.draw(projection_2D); 
-	for (auto& structure : m_structures)
+	for (auto& structure : m_structures) {
+		//printf("Drawing: %f\n", structure->get_position().x);
 		structure->draw(projection_2D);
+	}
 	m_boss.draw(projection_2D);
 	m_boss_health_bar.draw(projection_2D);
 	//healthbar.draw(projection_2D);
@@ -394,78 +409,6 @@ bool Level::is_over()const
 	// TODO: Implement Me
 	return finished;
 }
-
-// Creates a new turtle and if successfull adds it to the list of turtles
-
-
-// Creates a new fish and if successfull adds it to the list of fish
-bool Level::spawn_bullet(vec2 position, float angle, bool bullet_type, bool on_beat)
-{
-	Bullet bullet;
-	bullet.set_texture(m_textures[bullet_type ? "bullet_1" : "bullet_2"]);
-	if (bullet.init())
-	{
-		
-		bullet.set_position(position);
-		bullet.set_rotation(angle);
-		if (on_beat) {
-			bullet.set_scale({ 0.9f,0.9f });
-		}
-		bullet.set_on_beat(on_beat);
-		bullet.m_movement_dir = normalize({ (float)cos(angle), (float)-sin(angle) });
-		m_bullets.emplace_back(bullet);
-
-		return true;
-	}
-	fprintf(stderr, "Failed to spawn fish");
-	return false;
-}
-/*
-bool Level::spawn_enemy(vec2 position)
-{
-	Enemy enemy;
-	if (enemy.init())
-	{
-		enemy.set_position(position);
-	
-		
-		m_enemies.emplace_back(enemy);
-
-		return true;
-	}
-	fprintf(stderr, "Failed to spawn enemy");
-	return false;
-}
-*/
-
-bool Level::spawn_little_enemy() {
-	LittleEnemy littleEnemy;
-	littleEnemy.set_texture(m_textures["enemy0"]);
-	if (littleEnemy.init()) {
-		m_little_enemies.emplace_back(littleEnemy);
-		return true;
-	}
-	fprintf(stderr, "Failed to spawn little enemy");
-	return false;
-}
-
-bool Level::spawn_beat_circle(int dir, float pos, float speed) {
-	BeatCircle beat_circle(&m_player, speed);
-    bool type = ((dir % 2) == 1);
-    beat_circle.set_texture(m_textures[type ? "orange_moving_beat" : "blue_moving_beat"]);
-    if (beat_circle.init()) {
-        beat_circle.set_dir(dir);
-        float angle = m_player.get_rotation();
-        vec2 spawn_pos = -1*pos * beat_circle.get_movement_dir();
-        beat_circle.set_position(spawn_pos);
-        beat_circle.set_scale({1.5,1.5});
-        m_beatcircles.emplace_back(beat_circle);
-        return true;
-    }
-    fprintf(stderr, "Failed to spawn beat circle");
-    return false;
-}
-
 
 // On key callback
 void Level::on_key(int key, int action, int mod)
@@ -500,7 +443,9 @@ void Level::on_key(int key, int action, int mod)
 
 		float player_angle = m_player.get_rotation() + 1.57;
 		vec2 salmon_pos = m_player.get_position();
-		spawn_bullet(salmon_pos, player_angle, m_player.bullet_type, on_beat);
+		//spawn_player_bullet(vec2 position, bool on_beat, Texture* texture, std::vector<Bullet>* bullets)
+		spawn_player_bullet(salmon_pos, on_beat,
+			tm->get_texture(m_player.bullet_type ? "bullet_1" : "bullet_2"), &m_bullets);
 		m_player.bullet_type = !m_player.bullet_type;
 
 	}
@@ -587,33 +532,6 @@ void Level::on_mouse_move(double xpos, double ypos)
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 	m_player.set_mouse((float)xpos, (float)ypos);
-}
-
-void Level::load_textures() {
-  std::vector<std::string> texture_names{
-    "character",
-	"boss0",
-    "bullet_1",
-    "bullet_2",
-    "orange_moving_beat",
-    "blue_moving_beat",
-	"healthbar",
-	"enemy0",
-	"boss_health_bar"
-  };
-
-  for (const auto& texture_name : texture_names)
-  {
-    Texture* texture = new Texture(); 
-    // TODO: fix the macro
-    auto texture_path = textures_path("") + texture_name + ".png";
-    std::cout << texture_path << std::endl;
-    if (!texture->load_from_file(texture_path.c_str()))
-    {
-      fprintf(stderr, "Failed to load texture!");
-    }
-    m_textures[texture_name] = texture;
-  }
 }
 
 int Level::getBossHealth() {

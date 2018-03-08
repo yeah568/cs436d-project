@@ -14,10 +14,14 @@ class Structure : public Sprite {
 
 public:
 	static Player* player;
-	static std::vector<Bullet>* player_bullets;
+	static std::vector<PlayerBullet>* player_bullets;
+	static std::vector<EnemyBullet>* enemy_bullets;
 
 	Structure();
 	
+	bool init(vec2 position, vec2 scale, float rotation) {m_position = position; m_scale = scale; m_rotation = rotation; return true;};
+	bool init() {return Sprite::init();};
+
 	// ms represents the number of milliseconds elapsed from the previous update() call
 	virtual void update(float ms);
 
