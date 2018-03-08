@@ -1,6 +1,7 @@
 #pragma once
 
 #include "common.hpp"
+#include <vector>
 #include "Sprite.hpp"
 
 // Salmon food
@@ -19,7 +20,11 @@ public:
 	
 	float get_damage(){return (created_on_beat ? bullet_damage * 4 : bullet_damage);};
 
+	void addForce(force delta) {added_forces.emplace_back(delta);};
 private:
 	float bullet_damage = 25.0f;
 	bool created_on_beat;
+	std::vector<force> added_forces;
+
+	force get_net_force();
 };

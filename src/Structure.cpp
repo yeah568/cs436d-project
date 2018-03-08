@@ -2,6 +2,7 @@
 
 #include <cmath>
 
+std::vector<Bullet>* Structure::player_bullets;
 
 Structure::Structure() : Sprite(nullptr) {}
 
@@ -29,3 +30,31 @@ void Healing_Structure::heal_boss(float ms) {
 }
 
 void Structure::update(float ms) {}
+
+void Shooting_Structure::update(float ms) {
+	time_until_shoot -= ms;
+	if (time_until_shoot <= 0) {
+		shoot();
+		time_until_shoot = 2000;
+	}
+}
+
+void Shooting_Structure::shoot() {
+	// TODO:
+}
+
+void Black_Hole_Structure::update(float ms) {
+	time_until_expiry -= ms;
+	if (time_until_expiry <= 0) {
+		return;
+	}
+	float mass = 10000000000.f;
+	float bullet_mass = 1000.f;
+	float numerator = GRAVITY_CONST * mass * bullet_mass;
+	force b_g_force;
+	for (auto bullet : *player_bullets) {
+		b_g_force.dir = normalize(m_position - bullet.get_position());
+		b_g_force.mag = numerator / std::pow(length(m_position - bullet.get_position()), 2.0);
+		bullet.addForce(b_g_force);
+	}
+}

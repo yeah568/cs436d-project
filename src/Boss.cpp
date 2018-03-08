@@ -18,7 +18,8 @@ Boss::Boss()
 	m_rotation = 0.f;
 }
 
-bool Boss::init(float health, std::vector<LittleEnemy>* little_enemies, std::unordered_map<std::string, Texture*>* textures, std::vector<Structure*>* structures)
+bool Boss::init(float health, std::vector<LittleEnemy>* little_enemies,
+std::unordered_map<std::string, Texture*>* textures, std::vector<Structure*>* structures) 
 {
 	m_health = health;
 	total_health = health;
@@ -61,7 +62,7 @@ void Boss::update(float ms, vec2 screen, std::vector<Bullet>* bullets)
 void Boss::on_beat(Beat* beat, vec2 screen) {
 	int action;
 	if (m_structures->size() < 3)
-		action = rand() % 4;
+		action = rand() % 5;
 	else
 		action = rand() % 3;
 
@@ -83,6 +84,7 @@ void Boss::on_beat(Beat* beat, vec2 screen) {
 	}
 		break;
 	case 3: {
+		return;
 		// TODO: Make structures spawn in different places, right now they overlap each other
 		printf("Size: %d\n", m_structures->size());
 		Healing_Structure* new_structure = new Healing_Structure();
@@ -95,6 +97,19 @@ void Boss::on_beat(Beat* beat, vec2 screen) {
 		new_structure->set_scale({1.f, 1.f});
 		new_structure->set_rotation(0.f);
 		new_structure->set_boss(this);
+		m_structures->emplace_back(new_structure);
+	}
+		break;
+	case 4: {
+		Black_Hole_Structure* new_structure = new Black_Hole_Structure();
+		new_structure->set_texture((*m_textures)["enemy0"]);
+		if (!(new_structure->init())) {
+			printf("Issues\n");
+			return;
+		}
+		new_structure->set_position({screen.x/4.f*(1+m_structures->size()), 300.f});
+		new_structure->set_scale({0.5f, 0.5f});
+		new_structure->set_rotation(0.f);
 		m_structures->emplace_back(new_structure);
 	}
 		break;

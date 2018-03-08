@@ -14,6 +14,7 @@ class Structure : public Sprite {
 
 public:
 	static Player* player;
+	static std::vector<Bullet>* player_bullets;
 
 	Structure();
 	
@@ -42,10 +43,17 @@ private:
 class Shooting_Structure : public Structure {
 public:
 	void update(float ms);
+private:
+	void shoot();
+	float time_until_shoot;
 };
 
 class Black_Hole_Structure : public Structure {
 public:
 	void update(float ms);
+	float get_time_until_expiry() {return time_until_expiry;};
+private:
+	float time_until_expiry;
+	float const GRAVITY_CONST = 1.f;
 };
 #endif

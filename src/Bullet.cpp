@@ -23,7 +23,28 @@ void Bullet::update(float ms)
 	else
 		BULLET_SPEED = 800.f;
 	float step = BULLET_SPEED * (ms / 1000);
-	
-	m_position.x += m_movement_dir.x*step;
-	m_position.y += m_movement_dir.y*step;
+	force nf;
+	if (added_forces.size() > 0)
+		nf = get_net_force();
+	else {
+		nf.dir = {0,0};
+		nf.mag = 0;
+	}
+	vec2 full_force = nf.mag * nf.dir;
+	printf("%f, %f\n", m_movement_dir.x, full_force.x);
+	m_position.x += (m_movement_dir.x + full_force.x)*step;
+	m_position.y += (m_movement_dir.y + full_force.y)*step;
+	added_forces.clear();
+}
+
+force Bullet::get_net_force() {
+	force nf;
+	vec2 weighted_vec_sum;
+	for (auto& f : added_forces) {
+		printf("Mag: %f\n",f.mag);
+		weighted_vec_sum = weighted_vec_sum + f.mag * f.dir;
+	}
+	nf.dir = normalize(weighted_vec_sum);
+	nf.mag = length(weighted_vec_sum);
+	return nf;
 }

@@ -28,6 +28,7 @@ struct vec2 { float x, y; };
 struct vec3 { float x, y, z; };
 struct mat3 { vec3 c0, c1, c2; };
 struct bbox { float min_x, min_y, max_x, max_y; };
+struct force {vec2 dir; float mag;};
 
 vec2 operator/(const vec2& lhs, const vec2& rhs);
 vec2 operator-(const vec2& lhs, const vec2& rhs);

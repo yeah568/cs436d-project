@@ -3,6 +3,7 @@
 #include "common.hpp"
 #include "Enemy.hpp"
 #include "Sprite.hpp"
+#include <algorithm>
 
 class Turtle;
 class Bullet;

@@ -5,6 +5,7 @@
 #include "BeatCircle.hpp"
 #include "Bullet.hpp"
 #include "SpriteSheet.hpp"
+#include "Structure.hpp"
 
 // stlib
 #include <string.h>
@@ -107,6 +108,7 @@ bool Level::init(std::string song_path, std::string osu_path, float boss_health)
 	}
 	m_player.set_health(5);
 	if (m_boss.init(boss_health, &m_little_enemies, &m_textures, &m_structures)) {
+		Structure::player_bullets = &m_bullets;
 		m_boss_health_bar.init();
 		m_boss_health_bar.set_rotation(0);
 		bbox bhp_bbox = m_boss_health_bar.get_bounding_box();
