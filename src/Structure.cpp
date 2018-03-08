@@ -43,18 +43,28 @@ void Shooting_Structure::shoot() {
 	// TODO:
 }
 
+bool Black_Hole_Structure::init() {
+	time_until_expiry = 3000;
+	return Structure::init();
+}
+
 void Black_Hole_Structure::update(float ms) {
-	time_until_expiry -= ms;
+	//printf("update blackhole\n");
+	//time_until_expiry -= ms;
 	if (time_until_expiry <= 0) {
 		return;
 	}
-	float mass = 10000000000.f;
-	float bullet_mass = 1000.f;
+	float mass = 10.f;
+	float bullet_mass = 1.f;
 	float numerator = GRAVITY_CONST * mass * bullet_mass;
 	force b_g_force;
-	for (auto bullet : *player_bullets) {
-		b_g_force.dir = normalize(m_position - bullet.get_position());
-		b_g_force.mag = numerator / std::pow(length(m_position - bullet.get_position()), 2.0);
-		bullet.addForce(b_g_force);
+	//auto little_enemy_it = m_little_enemies.begin(); little_enemy_it != m_little_enemies.end();
+	for (auto bullet_it = (*player_bullets).begin(); bullet_it != (*player_bullets).end();) {
+		//printf("these are the player bullets");
+		b_g_force.dir = normalize(m_position - bullet_it->get_position());
+		b_g_force.mag = numerator / std::pow(length(m_position - bullet_it->get_position()), 2.0);
+		bullet_it->addForce(b_g_force);
+		//printf("Force bullet: %f\n", b_g_force.dir.x);
+		bullet_it++;
 	}
 }

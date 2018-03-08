@@ -300,9 +300,10 @@ bool Level::update(float elapsed_ms)
 		beatcircle.update(elapsed_modified_ms);
 	for (auto& enemy : m_little_enemies)
 		enemy.update(elapsed_modified_ms);
-	//printf("Level structures: %d\n", m_structures.size());ctv
 	for (auto& structure : m_structures) {
 		structure->update(elapsed_modified_ms);
+	//printf("Level structures: %d\n", m_structures.size());ctv
+	
 		//printf("Updated structure\n");
 	}
 	for (auto little_enemy_it = m_little_enemies.begin(); little_enemy_it != m_little_enemies.end();) {
@@ -411,7 +412,7 @@ bool Level::spawn_bullet(vec2 position, float angle, bool bullet_type, bool on_b
 			bullet.set_scale({ 0.9f,0.9f });
 		}
 		bullet.set_on_beat(on_beat);
-		bullet.m_movement_dir = { (float)cos(angle), (float)-sin(angle) };
+		bullet.m_movement_dir = normalize({ (float)cos(angle), (float)-sin(angle) });
 		m_bullets.emplace_back(bullet);
 
 		return true;

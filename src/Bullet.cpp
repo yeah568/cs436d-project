@@ -30,21 +30,24 @@ void Bullet::update(float ms)
 		nf.dir = {0,0};
 		nf.mag = 0;
 	}
-	vec2 full_force = nf.mag * nf.dir;
-	printf("%f, %f\n", m_movement_dir.x, full_force.x);
-	m_position.x += (m_movement_dir.x + full_force.x)*step;
+	vec2 full_force = 1 * nf.dir;
+	//printf("Fullforce x: %f y: %f", full_force.x, full_force.y);
+	//printf("%f, %f\n", m_movement_dir.x, full_force.x);
+	m_position.x += (full_force.x)*step;
 	m_position.y += (m_movement_dir.y + full_force.y)*step;
 	added_forces.clear();
 }
 
 force Bullet::get_net_force() {
 	force nf;
-	vec2 weighted_vec_sum;
+	vec2 weighted_vec_sum = { 0,0 };
 	for (auto& f : added_forces) {
-		printf("Mag: %f\n",f.mag);
-		weighted_vec_sum = weighted_vec_sum + f.mag * f.dir;
+		//printf("Direction: %f\n",f.dir.x);
+		weighted_vec_sum = weighted_vec_sum + (1 * f.dir);
 	}
-	nf.dir = normalize(weighted_vec_sum);
+	
+	nf.dir =(weighted_vec_sum);
+	printf("Normalized force direction %f",nf.dir.x);
 	nf.mag = length(weighted_vec_sum);
 	return nf;
 }

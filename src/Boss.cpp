@@ -84,14 +84,7 @@ void Boss::on_beat(Beat* beat, vec2 screen) {
 	}
 		break;
 	case 3: {
-<<<<<<< Updated upstream
 		return;
-		// TODO: Make structures spawn in different places, right now they overlap each other
-		printf("Size: %d\n", m_structures->size());
-=======
-		
-		//printf("Size: %d\n", m_structures->size());
->>>>>>> Stashed changes
 		Healing_Structure* new_structure = new Healing_Structure();
 		new_structure->set_texture((*m_textures)["enemy0"]);
 		if (!(new_structure->init())) {
