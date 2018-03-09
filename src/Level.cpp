@@ -157,6 +157,7 @@ void Level::destroy()
 	Mix_CloseAudio();
 
 	m_player.destroy();
+	m_boss.destroy();
 	
 	for (auto& bullet : m_bullets)
 		bullet.destroy();
@@ -281,7 +282,7 @@ bool Level::update(float elapsed_ms)
 			//printf("Boss hit by bullet\n");
 			m_boss.set_health(-bullet_it->get_damage());
 			m_boss_health_bar.set_health_percentage(m_boss.get_health()/m_boss.get_total_health());
-			m_bullets.erase(bullet_it);
+			bullet_it = m_bullets.erase(bullet_it);
 			if (m_boss.get_health() <= 0) {
 				finished = 1;
 				new_points += 100;
@@ -290,7 +291,7 @@ bool Level::update(float elapsed_ms)
 			break;
 		}
 		if (bullet_it->get_bounding_box().max_y < 0) {
-			m_bullets.erase(bullet_it);
+			bullet_it = m_bullets.erase(bullet_it);
 			break;
 		}
 		++bullet_it;

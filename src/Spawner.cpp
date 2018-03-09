@@ -91,7 +91,7 @@ Structure* spawn_structure(int type, Boss* boss, vec2 position, Texture* texture
         return nullptr;
     }
     switch (type) {
-        case 1:
+        case 0:
             ((Healing_Structure*) new_structure)->set_boss(boss);
             break;
     }
