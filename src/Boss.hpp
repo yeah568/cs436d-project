@@ -16,6 +16,12 @@
 
 class Structure;
 
+struct StructureSlots {
+	Structure* left;
+	Structure* center;
+	Structure* right;
+};
+
 class Boss : public Sprite
 {
 
@@ -40,6 +46,8 @@ public:
 
 	float get_total_health() {return total_health;};
 
+	StructureSlots structure_slots;
+
 private:
 	float m_health;
 	float total_health;
@@ -48,5 +56,7 @@ private:
 	std::vector<Structure*>* m_structures;
 
 	TextureManager* tm;
+
+	void set_slot(vec2 screen, Structure *structure);
 };
 #endif

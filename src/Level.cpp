@@ -361,6 +361,13 @@ bool Level::update(float elapsed_ms)
 					(*structure_it)->health--;
 
 					if ((*structure_it)->health < 1) {
+						if ((*structure_it) == m_boss.structure_slots.left) {
+							m_boss.structure_slots.left = nullptr;
+						} else if ((*structure_it) == m_boss.structure_slots.center) {
+							m_boss.structure_slots.center = nullptr;
+						} else {
+							m_boss.structure_slots.right = nullptr;
+						}
 						structure_it = m_structures.erase(structure_it);
 					}
 					break;
