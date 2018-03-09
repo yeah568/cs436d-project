@@ -15,6 +15,9 @@ public:
 
 	vec2 m_movement_dir;
 private:
+
+protected:
+	vec2 velocity;
 };
 
 class PlayerBullet : public Bullet

@@ -11,6 +11,7 @@ Bullet::Bullet()
   m_scale.y = 0.5f;
   m_position.x = -50;
   m_position.y = 50;
+  velocity = {0,-1};
 }
 
 void PlayerBullet::update(float ms)
@@ -30,15 +31,15 @@ void PlayerBullet::update(float ms)
 		nf.dir = {0,0};
 		nf.mag = 0;
 	}
-	vec2 full_force = 1 * nf.dir;
+	velocity = velocity + step * nf.mag  * nf.dir;
 	//printf("Fullforce x: %f y: %f", full_force.x, full_force.y);
 	//printf("%f, %f\n", m_movement_dir.x, full_force.x);
 	
-	m_rotation = -(float)atan2(m_movement_dir.x + full_force.x, m_movement_dir.y + 2*full_force.y) + 3.14/2;
+	m_rotation = -(float)atan2(m_movement_dir.x + velocity.x, m_movement_dir.y + 2*velocity.y) + 3.14/2;
 	//printf("\n rotation: %f %f", m_movement_dir.x, m_movement_dir.y);
-	m_position.x += (full_force.x)*step;
+	m_position.x += (velocity.x)*step;
 	// TODO: when the bullet was above the BH the fullforce was equal to the movement_dir so i added a 2 for no so that they don't just stop
-	m_position.y += (m_movement_dir.y + 2*full_force.y)*step;
+	m_position.y += (0*m_movement_dir.y + velocity.y)*step;
 	added_forces.clear();
 }
 
@@ -53,10 +54,10 @@ force PlayerBullet::get_net_force() {
 	vec2 weighted_vec_sum = { 0,0 };
 	for (auto& f : added_forces) {
 		//printf("Direction: %f\n",f.dir.x);
-		weighted_vec_sum = weighted_vec_sum + (1 * f.dir);
+		weighted_vec_sum = weighted_vec_sum + (f.mag * f.dir);
 	}
 	
-	nf.dir =(weighted_vec_sum);
+	nf.dir = normalize(weighted_vec_sum);
 	//printf("Normalized force direction %f",nf.dir.x);
 	nf.mag = length(weighted_vec_sum);
 	return nf;

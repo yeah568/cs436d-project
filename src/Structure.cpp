@@ -62,7 +62,7 @@ void Black_Hole_Structure::update(float ms) {
 	if (time_until_expiry <= 0) {
 		return;
 	}
-	float mass = 10.f;
+	float mass = 100.f;
 	float bullet_mass = 1.f;
 	float numerator = GRAVITY_CONST * mass * bullet_mass;
 	force b_g_force;
@@ -72,7 +72,7 @@ void Black_Hole_Structure::update(float ms) {
 		vec2 diff = m_position - bullet_it->get_position();
 		b_g_force.dir = normalize(diff);
 	
-		b_g_force.mag = numerator / std::pow(length(m_position - bullet_it->get_position()), 2.0);
+		b_g_force.mag = numerator / std::pow(length(diff), 2.0);
 		bullet_it->addForce(b_g_force);
 		//printf("Force bullet: %f\n", b_g_force.dir.y);
 		bullet_it++;
