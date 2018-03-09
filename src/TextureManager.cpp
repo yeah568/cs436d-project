@@ -4,6 +4,7 @@
 #include <string.h>
 #include <vector>
 #include <iostream>
+#include <sstream>
 TextureManager* TextureManager::instance = nullptr;
 TextureManager* TextureManager::get_instance() {
     if (instance == nullptr)
