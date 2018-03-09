@@ -22,6 +22,10 @@
 #define mesh_path(name) data_path "/meshes/" name
 #define song_path(name) data_path "/songs/" name
 
+static const int HEALING_STRUCTURE = 0;
+static const int BLACK_HOLE_STRUCTURE = 1;
+static const int SHOOTING_STRUCTURE = 2;
+
 // Not much math is needed and there are already way too many libraries linked (:
 // If you want to do some overloads..
 struct vec2 { float x, y; };

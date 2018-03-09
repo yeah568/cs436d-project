@@ -1,5 +1,6 @@
 #include "Boss.hpp"
 #include "Spawner.hpp"
+#include "common.hpp"
 
 #include <cmath>
 #include <vector>
@@ -80,17 +81,17 @@ void Boss::on_beat(Beat* beat, vec2 screen) {
 		break;
 	case 3: {
 		vec2 position = {screen.x/4.f*(1+m_structures->size()), 300.f};
-		spawn_structure(0, this, position, tm->get_texture("enemy0"), m_structures);
+		spawn_structure(HEALING_STRUCTURE, this, position, tm->get_texture("enemy0"), m_structures);
 	}
 		break;
 	case 4: {
 		vec2 position = {screen.x/4.f*(1+m_structures->size()), 300.f};
-		spawn_structure(1, this, position, tm->get_texture("enemy0"), m_structures);
+		spawn_structure(BLACK_HOLE_STRUCTURE, this, position, tm->get_texture("enemy0"), m_structures);
 	}
 		break;
 	case 5: {
 		vec2 position = {screen.x/4.f*(1+m_structures->size()), 300.f};
-		spawn_structure(2, this, position, tm->get_texture("enemy0"), m_structures);
+		spawn_structure(SHOOTING_STRUCTURE, this, position, tm->get_texture("enemy0"), m_structures);
 	}
 		printf("Finished boss spawning structure\n");
 		break;

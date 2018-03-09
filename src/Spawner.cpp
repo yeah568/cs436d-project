@@ -73,14 +73,14 @@ Structure* spawn_structure(int type, Boss* boss, vec2 position, Texture* texture
     Structure* new_structure;
     vec2 scale = {1.f, 1.f};
     switch (type) {
-        case 0:
+        case HEALING_STRUCTURE:
             new_structure = new Healing_Structure;
             break;
-        case 1:
+        case BLACK_HOLE_STRUCTURE:
             new_structure = new Black_Hole_Structure;
             scale = 0.5 * scale;
             break;
-        case 2:
+        case SHOOTING_STRUCTURE:
             new_structure = new Shooting_Structure;
             scale = 3 * scale;
             break;
@@ -91,7 +91,7 @@ Structure* spawn_structure(int type, Boss* boss, vec2 position, Texture* texture
         return nullptr;
     }
     switch (type) {
-        case 0:
+        case HEALING_STRUCTURE:
             ((Healing_Structure*) new_structure)->set_boss(boss);
             break;
     }
