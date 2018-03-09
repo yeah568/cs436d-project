@@ -34,8 +34,7 @@ void PlayerBullet::update(float ms)
 	velocity = velocity + step * nf.mag  * nf.dir;
 	//printf("Fullforce x: %f y: %f", full_force.x, full_force.y);
 	//printf("%f, %f\n", m_movement_dir.x, full_force.x);
-	
-	m_rotation = -(float)atan2(m_movement_dir.x + velocity.x, m_movement_dir.y + 2*velocity.y) + 3.14/2;
+	m_rotation = -(float)atan2(m_movement_dir.x + velocity.x, m_movement_dir.y + velocity.y) + 3.14/2;
 	//printf("\n rotation: %f %f", m_movement_dir.x, m_movement_dir.y);
 	m_position.x += (velocity.x)*step;
 	// TODO: when the bullet was above the BH the fullforce was equal to the movement_dir so i added a 2 for no so that they don't just stop

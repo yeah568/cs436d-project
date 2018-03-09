@@ -334,48 +334,52 @@ bool Level::update(float elapsed_ms)
 	}
 
 
-	if (m_bullets.size() > 0 && m_little_enemies.size() > 0) {
+	if (m_bullets.size() > 0) {
 		for (auto bullet_it = m_bullets.begin(); bullet_it != m_bullets.end();) {
 			bool removed_enemy = false;
 			bool hit_structure = false;
-			for (auto little_enemy_it = m_little_enemies.begin(); little_enemy_it != m_little_enemies.end();) {
-				if (little_enemy_it->collides_with(*bullet_it)) {
-					new_points += (bullet_it->get_damage() == 100 ? 15 : 10);
-					little_enemy_it = m_little_enemies.erase(little_enemy_it);
-					bullet_it = m_bullets.erase(bullet_it);
-					removed_enemy = true;
-					
-					break;
-				}
-				else {
-					++little_enemy_it;
+			if (m_little_enemies.size() > 0){
+				for (auto little_enemy_it = m_little_enemies.begin(); little_enemy_it != m_little_enemies.end();) {
+					if (little_enemy_it->collides_with(*bullet_it)) {
+						new_points += (bullet_it->get_damage() == 100 ? 15 : 10);
+						little_enemy_it = m_little_enemies.erase(little_enemy_it);
+						bullet_it = m_bullets.erase(bullet_it);
+						removed_enemy = true;
+						
+						break;
+					}
+					else {
+						++little_enemy_it;
+					}
 				}
 			}
 			if (removed_enemy) {
 				continue;
 			}
-			for (auto structure_it = m_structures.begin(); structure_it != m_structures.end();) {
-				if ((*structure_it)->collides_with(*bullet_it)) {
-					bullet_it = m_bullets.erase(bullet_it);
-					hit_structure = true;
-					(*structure_it)->health--;
+			if (m_structures.size() > 0) {
+				for (auto structure_it = m_structures.begin(); structure_it != m_structures.end();) {
+					if ((*structure_it)->collides_with(*bullet_it)) {
+						bullet_it = m_bullets.erase(bullet_it);
+						hit_structure = true;
+						(*structure_it)->health--;
 
-					if ((*structure_it)->health < 1) {
-						if ((*structure_it) == m_boss.structure_slots.left) {
-							m_boss.structure_slots.left = nullptr;
-						} else if ((*structure_it) == m_boss.structure_slots.center) {
-							m_boss.structure_slots.center = nullptr;
-						} else {
-							m_boss.structure_slots.right = nullptr;
+						if ((*structure_it)->health < 1) {
+							if ((*structure_it) == m_boss.structure_slots.left) {
+								m_boss.structure_slots.left = nullptr;
+							} else if ((*structure_it) == m_boss.structure_slots.center) {
+								m_boss.structure_slots.center = nullptr;
+							} else {
+								m_boss.structure_slots.right = nullptr;
+							}
+							structure_it = m_structures.erase(structure_it);
 						}
-						structure_it = m_structures.erase(structure_it);
+						break;
+					} 
+					else {
+						++structure_it;
 					}
-					break;
-				} 
-				else {
-					++structure_it;
+					
 				}
-				
 			}
 			if (!hit_structure) { ++bullet_it; };
 		}
