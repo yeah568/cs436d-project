@@ -19,7 +19,7 @@ public:
 
 	Structure();
 	
-	bool init(vec2 position, vec2 scale, float rotation) {m_position = position; m_scale = scale; m_rotation = rotation; return true;};
+	bool init(vec2 position, vec2 scale, float rotation) {m_position = position; m_scale = scale; m_rotation = rotation; return init();};
 	bool init() {return Sprite::init();};
 
 	// ms represents the number of milliseconds elapsed from the previous update() call
