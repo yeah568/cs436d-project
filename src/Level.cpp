@@ -363,11 +363,14 @@ bool Level::update(float elapsed_ms)
 
 			for (auto little_enemy_it = m_little_enemies.begin(); little_enemy_it != m_little_enemies.end();) {
 				if (little_enemy_it->collides_with(*bullet_it)) {
+					m_particle_emitters.emplace_back(ParticleEmitter(
+						little_enemy_it->get_position(),
+						1000,
+						false));
 					new_points += (bullet_it->get_damage() == 100 ? 15 : 10);
 					little_enemy_it = m_little_enemies.erase(little_enemy_it);
 					bullet_it = m_bullets.erase(bullet_it);
 					removed_enemy = true;
-					
 					break;
 				}
 				else {
@@ -412,6 +415,10 @@ void Level::draw()
 	
 	for (auto& enemy : m_little_enemies)
 		enemy.draw(projection_2D); 
+	for (auto& particleEmitter : m_particle_emitters) {
+		particleEmitter.draw(projection_2D);
+	}
+
 	m_boss.draw(projection_2D);
 	healthbar.draw(projection_2D);
 	orange_center_beat_circle.draw(projection_2D);

@@ -6,8 +6,10 @@
 ParticleEmitter::ParticleEmitter(vec2 position, int max_particles, bool continuous_repeat)
 {
 	m_max_particles = max_particles;
+	m_num_alive_particles = 0;
 	m_particle_pool = new Particle[max_particles];
 	m_position = position;
+	m_continuous_repeat = continuous_repeat;
 }
 
 ParticleEmitter::~ParticleEmitter() {
@@ -26,6 +28,7 @@ void ParticleEmitter::update(int elapsed_ms) {
 
 	while (i < m_max_particles) {
 		m_particle_pool[i++].init(m_position, 300, rand() % 359, rand() % 3 + 3);
+		m_num_alive_particles++;
 	}
 }
 
@@ -57,30 +60,29 @@ bool ParticleEmitter::init()
 }
 
 void ParticleEmitter::draw(const mat3& projection) {
-	Vertex* vertices = new Vertex[m_num_alive_particles];
-	uint16_t* indices = new uint16_t[m_num_alive_particles];
+	Vertex* vertices = new Vertex[4 * m_num_alive_particles];
+	uint16_t* indices = new uint16_t[6 * m_num_alive_particles];
 
 	// Reading vertices and colors
-	size_t num_particles;
 	for (size_t i = 0; i < m_num_alive_particles; i++) {
 		vec2 pos = m_particle_pool[i].getPosition();
 		
-		vertices[i * 4].position = { pos.x - 0.5, pos.y - 0.5, -0.01f };
+		vertices[i * 4].position = { pos.x - 0.5f, pos.y - 0.5f, -0.01f };
 		vertices[i * 4].color = { (float)255 / 255, (float)0 / 255, (float)0 / 255 };
 
-		vertices[i * 4 + 1].position = { pos.x - 0.5, pos.y + 0.5, -0.01f };
+		vertices[i * 4 + 1].position = { pos.x - 0.5f, pos.y + 0.5f, -0.01f };
 		vertices[i * 4 + 1].color = { (float)255 / 255, (float)0 / 255, (float)0 / 255 };
 
-		vertices[i * 4 + 2].position = { pos.x + 0.5, pos.y + 0.5, -0.01f };
+		vertices[i * 4 + 2].position = { pos.x + 0.5f, pos.y + 0.5f, -0.01f };
 		vertices[i * 4 + 2].color = { (float)255 / 255, (float)0 / 255, (float)0 / 255 };
 
-		vertices[i * 4 + 3].position = { pos.y + 0.5, pos.y - 0.5, -0.01f };
+		vertices[i * 4 + 3].position = { pos.y + 0.5f, pos.y - 0.5f, -0.01f };
 		vertices[i * 4 + 3].color = { (float)255 / 255, (float)0 / 255, (float)0 / 255 };
 	}
 
 	glBufferData(GL_ARRAY_BUFFER, 4 * sizeof(Vertex) * m_max_particles, vertices, GL_STATIC_DRAW);
 
-	for (size_t i = 0; i < m_max_particles; i++) {
+	for (size_t i = 0; i < m_num_alive_particles; i++) {
 		indices[i * 6] = i * 4;
 		indices[i * 6 + 1] = i * 4 + 1;
 		indices[i * 6 + 2] = i * 4 + 2;
@@ -128,7 +130,7 @@ void ParticleEmitter::draw(const mat3& projection) {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.ibo);
 	
 	// Input data location as in the vertex buffer
-	GLint in_position_loc = glGetAttribLocation(effect.program, "in_position");
+	//GLint in_position_loc = glGetAttribLocation(effect.program, "in_position");
 	GLint in_color_loc = glGetAttribLocation(effect.program, "in_color");
 	glEnableVertexAttribArray(in_position_loc);
 	glEnableVertexAttribArray(in_color_loc);
@@ -145,9 +147,9 @@ void ParticleEmitter::draw(const mat3& projection) {
 	
 	
 	// Drawing!
-	glDrawElements(GL_TRIANGLES, (GLsizei)m_num_indices, GL_UNSIGNED_SHORT, nullptr);
+	glDrawElements(GL_TRIANGLES, (GLsizei)6 * m_num_alive_particles, GL_UNSIGNED_SHORT, nullptr);
 	
 
 	delete[] vertices;
-	delete[] indices[];
+	delete[] indices;
 }

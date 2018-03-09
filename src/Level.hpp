@@ -12,6 +12,7 @@
 #include "Boss.hpp"
 #include "HealthBar.hpp"
 #include "Enemy.hpp"
+#include "ParticleEmitter.hpp"
 
 // stlib
 #include <vector>
@@ -111,6 +112,8 @@ protected:
 	std::vector <LittleEnemy> m_little_enemies;
 	
 	Boss m_boss;
+
+	std::vector<ParticleEmitter> m_particle_emitters;
 };
 
 class Level1 : public Level {

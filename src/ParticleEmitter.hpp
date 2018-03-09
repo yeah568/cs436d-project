@@ -11,10 +11,12 @@ public:
 
 	void update(int elapsed_ms);
 	bool init();
+	void draw(const mat3 & projection);
 private:
 	Particle * m_particle_pool;
 	int m_max_particles;
 	int m_num_alive_particles;
 	vec2 m_position;
+	bool m_continuous_repeat;
 };
 
