@@ -307,3 +307,7 @@ a1
 \.vscode/
 
 beatcoin
+
+cmake-build-debug/
+
+CMakeLists\.txt

@@ -48,8 +48,8 @@ void BeatCircle::update(float ms)
 	m_local_position.x += m_movement_dir.x*step;
 	m_local_position.y += m_movement_dir.y*step;
   m_position = m_player->get_position() + m_local_position;
-	m_scale.x -= ms/1250;
-	m_scale.y -= ms/1250;
+	m_scale.x -= ms/1550;
+	m_scale.y -= ms/1550;
 }
 
 const vec2& BeatCircle::get_local_position() const

@@ -29,7 +29,7 @@ const char* title = "Your Title Here";
 int main(int argc, char* argv[])
 {
 	// Initializing world (after renderer.init().. sorry)
-	printf("HELLO");
+	//printf("HELLO");
 	if (!world.init({ (float)width, (float)height }))
 	{
 		// Time to read the error message

@@ -12,7 +12,7 @@ public:
   Sprite(Texture* texture);
   Sprite(const vec2& position, const vec2& scale, float rotation, Texture* texture);
 
-  bool init();
+  virtual bool init();
   void destroy();
   void draw(const mat3& projection) override;
   void draw_hitboxes(const mat3& projection);

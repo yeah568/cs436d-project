@@ -3,6 +3,7 @@
 #include "common.hpp"
 #include "Enemy.hpp"
 #include "Sprite.hpp"
+#include <algorithm>
 
 class Turtle;
 class Bullet;
@@ -46,7 +47,7 @@ public:
 
 	bool bullet_type;
 
-	void set_health(float delta) {m_health += delta;};
+	void set_health(float delta) {m_health += std::min(5-get_health(),delta);};
 
 	float get_health() {return m_health;};
 
