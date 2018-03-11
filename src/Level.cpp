@@ -337,7 +337,7 @@ bool Level::update(float elapsed_ms)
 	for (auto little_enemy_it = m_little_enemies.begin(); little_enemy_it != m_little_enemies.end();) {
 		if (m_player.collides_with(*little_enemy_it)) {
 			little_enemy_it = m_little_enemies.erase(little_enemy_it);
-			//m_player.set_health(-1);
+			m_player.set_health(-1);
 			printf("%f\n", m_player.get_health());
 			float percent_health = m_player.get_health()/5.0f;
 			healthbar.set_scale({percent_health, 1.5f});
