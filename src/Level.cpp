@@ -52,6 +52,7 @@ Level::Level(int width, int height)  : m_points(0), m_next_little_enemies_spawn(
 	m_boss.set_texture(tm->get_texture("boss0"));
 	m_boss_health_bar.set_texture(tm->get_texture("boss_health_bar"));
 	m_points = 0;
+	m_current_time = 0;
 	}
 
 bool Level::init(std::string song_path, std::string osu_path, float boss_health) {
@@ -135,7 +136,7 @@ Level::~Level()
 }
 bool Level2::init() {
 	return Level::init(song_path("598830 Shawn Wasabi - Marble Soda/Marble Soda.wav"),
-		song_path("598830 Shawn Wasabi - Marble Soda/Shawn Wasabi - Marble Soda (Exa) [Insane].osu"),
+		song_path("598830 Shawn Wasabi - Marble Soda/Shawn Wasabi - Marble Soda (Exa) [Normal].osu"),
 		375.0f);
 }
 // World initialization
@@ -183,8 +184,8 @@ void Level::destroy()
 
 
 void Level::handle_beat(float remaining_offset, Beat* curBeat, vec2 screen) {
-	remaining_offset -= curBeat->offset;
-	beatPos++;
+	remaining_offset -= curBeat->relativeOffset;
+	//beatPos++;
 	// do beat things
 	// spawn thing
 
@@ -206,6 +207,10 @@ bool Level::update(float elapsed_ms)
 	if (!Mix_PlayingMusic()) {
 		Mix_PlayMusic(m_background_music, 1);
 	}
+	else {
+		m_current_time += elapsed_ms;
+	}
+
 	m_boss_health_bar.set_health_percentage(m_boss.get_health()/m_boss.get_total_health());
 	float remaining_offset = elapsed_ms;
 	
@@ -215,42 +220,36 @@ bool Level::update(float elapsed_ms)
 		//printf("remaining offset %f", remaining_offset);
 		float center_radius = 100.0f;  // TODO: use radius of circle around player
 		float ms_per_beat = curBeat->duration;
-		float speed = center_radius / ms_per_beat;
-		int dir = 0; // 1 = L, 2 = U, 3 = R, 4 = D
-		float pX = ((64.f + (float)curBeat->x) / 640.f);
-		float pY = ((48.f + (float)curBeat->y) / 480.f);
-		float dA = pX - pY;
-		float dB = -1 * (pX + pY) + 1;
-		if (dA == 0 && dB == 0)
-			dir = 1;
-		else if (dA < 0 && dB >= 0)
-			dir = 1;
-		else if (dA >= 0 && dB >= 0)
-			dir = 2;
-		else if (dA >= 0 && dB < 0)
-			dir = 3;
-		else if (dA < 0 && dB < 0)
-			dir = 4;
 
 		// We should spawn a beat circle such that when the beat circle gets to the
 		// center circle, this event coincides with
 		// curBeat->offset <= remaining_offset
-		float some_fixed_spawn_distance = 300.0f;
-		float beat_spawn_time = speed / some_fixed_spawn_distance;
-		if (curBeat->offset - remaining_offset <= beat_spawn_time) {
-			float pos = some_fixed_spawn_distance;
-			spawn_beat_circle(dir, pos,
-				speed, &m_player,
-				tm->get_texture(((dir % 2) == 1) ? "orange_moving_beat" : "blue_moving_beat"), &m_beatcircles);
-		}
-		// time_until_next_beat <= elapsed_ms
-		if (curBeat->offset <= remaining_offset) {
-			handle_beat(remaining_offset, curBeat, screen);
-			//spawn_enemy({ (float)curBeat->x*2.2f, 0.f });
+		float some_fixed_spawn_distance = 500.0f;
+		float beat_spawn_time = 1668.f;
+		float speed = some_fixed_spawn_distance / beat_spawn_time;
+		if (curBeat->absoluteOffset <= m_current_time + beat_spawn_time && !curBeat->spawned) {
+			float delta = m_current_time - curBeat->absoluteOffset + beat_spawn_time;
+			float pos = some_fixed_spawn_distance - speed * delta;
+			float scale = 1.5 - delta / 1500;
+			curBeat->spawned = true;
+			Texture* texture = tm->get_texture(((curBeat->dir % 2) == 1) ? "orange_moving_beat" : "blue_moving_beat");
+			spawn_beat_circle(curBeat->dir, pos, speed, scale, curBeat->absoluteOffset, &m_player, texture, &m_beatcircles);
 		}
 		else {
-			curBeat->offset -= remaining_offset;
+			curBeat->relativeOffset -= remaining_offset;
 			//printf("offset: %f\n", curBeat->offset);
+			break;
+		}
+		beatPos++;
+	}
+
+	while (lastBeat < beatlist->beats.size()) {
+		Beat* b = &beatlist->beats.at(lastBeat);
+		if (b->absoluteOffset <= m_current_time) {
+			handle_beat(remaining_offset, b, screen);
+			lastBeat++;
+		}
+		else {
 			break;
 		}
 	}
@@ -262,8 +261,9 @@ bool Level::update(float elapsed_ms)
 	vec2 mov_dir;
 	vec2 bc_player;
 	while (beatcircle_it != m_beatcircles.end()) {
-		bad = length(beatcircle_it->get_local_position()) <= 10;
-		if (bad) {
+		float delta = m_current_time - beatcircle_it->get_offset();
+		if (delta > bad_timing) {
+			printf("MISS\n");
 			beatcircle_it = m_beatcircles.erase(beatcircle_it);
 		}
 		else {
@@ -464,78 +464,51 @@ void Level::on_key(int key, int action, int mod)
 	// action can be GLFW_PRESS GLFW_RELEASE GLFW_REPEAT
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-
-	if (action == GLFW_PRESS && key == GLFW_KEY_SPACE) {
-		bool on_beat = false;
-		if (m_beatcircles.size() > 0) {
-			BeatCircle closest = m_beatcircles[0];
-			float on_beat_radius = 20;
-			switch (closest.get_dir()) {
-			case 1:
-			case 3:
-				on_beat_radius = 100;
-				break;
-			case 2:
-			case 4:
-				on_beat_radius = 50;
-				break;
-			}
-			on_beat = length(m_beatcircles[0].get_local_position()) <= on_beat_radius;
-			if (on_beat) {
-				m_beatcircles.erase(m_beatcircles.begin());
-			}
-		}
-
-		float player_angle = m_player.get_rotation() + 1.57;
-		vec2 salmon_pos = m_player.get_position();
-		//spawn_player_bullet(vec2 position, bool on_beat, Texture* texture, std::vector<Bullet>* bullets)
-		spawn_player_bullet(salmon_pos, on_beat,
-			tm->get_texture(m_player.bullet_type ? "bullet_1" : "bullet_2"), &m_bullets);
-		m_player.bullet_type = !m_player.bullet_type;
-
-	}
-
 	if (action == GLFW_PRESS) {
 		switch (key) {
 		case GLFW_KEY_H:
 			finished = 1;
 			break;
-		case GLFW_KEY_RIGHT:
 		case GLFW_KEY_D:
 			m_player.add_movement_dir({ 1.f, 0.f });
 			break;
-		case GLFW_KEY_LEFT:
 		case GLFW_KEY_A:
 			m_player.add_movement_dir({ -1.f, 0.f });
 			break;
-			//case GLFW_KEY_UP:
-			//case GLFW_KEY_W:
-			//	m_player.add_movement_dir({ 0.f, -1.f });
-			//	break;
-			//case GLFW_KEY_DOWN:
-			//case GLFW_KEY_S:
-			//	m_player.add_movement_dir({ 0.f, 1.f });
-			//	break;
 		case GLFW_KEY_LEFT_SHIFT:
 			m_player.dash();
 			break;
-
 		case GLFW_KEY_U:
 			m_player.exploding_timer = 1;
 			break;
 
 		case GLFW_KEY_P:
 			show_hitboxes = !show_hitboxes;
+			break;
+		case GLFW_KEY_UP:
+		case GLFW_KEY_I:
+			on_arrow_key(up);
+			break;
+		case GLFW_KEY_DOWN:
+		case GLFW_KEY_K:
+			on_arrow_key(down);
+			break;
+		case GLFW_KEY_LEFT:
+		case GLFW_KEY_J:
+			on_arrow_key(left);
+			break;
+		case GLFW_KEY_RIGHT:
+		case GLFW_KEY_L:
+			on_arrow_key(right);
+			break;
 		}
 	}
 
 	if (action == GLFW_RELEASE) {
 		switch (key) {
-		case GLFW_KEY_RIGHT:
 		case GLFW_KEY_D:
 			m_player.add_movement_dir({ -1.f, 0.f });
 			break;
-		case GLFW_KEY_LEFT:
 		case GLFW_KEY_A:
 			m_player.add_movement_dir({ 1.f, 0.f });
 			break;
@@ -569,6 +542,49 @@ void Level::on_key(int key, int action, int mod)
 		m_current_speed += 0.1f;
 
 	m_current_speed = fmax(0.f, m_current_speed);
+}
+
+void Level::on_arrow_key(Dir dir)
+{
+	float player_angle = m_player.get_rotation() + 1.57;
+	vec2 salmon_pos = m_player.get_position();
+	Texture* texture = tm->get_texture(m_player.bullet_type ? "bullet_1" : "bullet_2");
+	auto beatcircle_it = m_beatcircles.begin();
+	while (beatcircle_it != m_beatcircles.end()) {
+		float abs_offset = beatcircle_it->get_offset();
+		float delta = abs(m_current_time - abs_offset);
+		if (delta > bad_timing) {
+			break;
+		}
+
+		if (dir != beatcircle_it->get_dir()) {
+			beatcircle_it++;
+			continue;
+		}
+
+		if (delta <= perfect_timing) {
+			printf("PERFECT with delta %f\n", delta);
+			spawn_player_bullet(salmon_pos, player_angle, { 0.5, 0.5 }, 10.f, 5000.f, texture, &m_bullets);
+			m_beatcircles.erase(beatcircle_it);
+			m_player.bullet_type = !m_player.bullet_type;
+			break;
+		}
+		else if (delta <= good_timing) {
+			printf("GOOD with delta %f\n", delta);
+			spawn_player_bullet(salmon_pos, player_angle, { 0.5, 0.5 }, 5.f, 1500.f, texture, &m_bullets);
+			m_beatcircles.erase(beatcircle_it);
+			m_player.bullet_type = !m_player.bullet_type;
+			break;
+		}
+		else if (delta <= bad_timing) {
+			printf("BAD with delta %f\n", delta);
+			spawn_player_bullet(salmon_pos, player_angle, { 1.f, 1.f }, 3.f, 800.f, texture, &m_bullets);
+			m_beatcircles.erase(beatcircle_it);
+			m_player.bullet_type = !m_player.bullet_type;
+			break;
+		}
+		beatcircle_it++;
+	}
 }
 
 void Level::on_mouse_move(double xpos, double ypos)

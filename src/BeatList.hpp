@@ -2,14 +2,19 @@
 #include "OsuParser.hpp"
 #include <vector>
 
-struct Beat {	
-	float offset;
+enum Dir { left = 1, up, right, down };
+
+struct Beat {
+	float absoluteOffset;
+	float relativeOffset;
 	int x;
 	int y;
 	float duration;
+	bool spawned;
+	Dir dir;
 
-	Beat() : offset(0.f), x(0), y(0), duration(0) {}
-	Beat(float offset, int x, int y, float duration) : offset(offset), x(x), y(y), duration(duration) {}
+	Beat() : absoluteOffset(0.f), relativeOffset(0.f), x(0), y(0), duration(0) {}
+	Beat(float absoluteOffset, float relativeOffset, int x, int y, float duration);
 };
 
 class BeatList

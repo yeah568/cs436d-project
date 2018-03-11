@@ -24,7 +24,7 @@ void Structure::scale_by(float scale) {
 }
 
 void Healing_Structure::heal_boss(float ms) {
-	b->set_health(ms/1000.f*20.f);
+	b->set_health(ms/1000.f*5.f);
 	//printf("Boss health: %f\n", b->get_health());
 }
 

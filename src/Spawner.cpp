@@ -2,25 +2,22 @@
 #include "Bullet.hpp"
 #include <math.h>
 
-void spawn_player_bullet(vec2 position, bool on_beat, Texture* texture, std::vector<PlayerBullet>* bullets) {
-    PlayerBullet* bullet = spawn_player_bullet(position, on_beat, texture);
+void spawn_player_bullet(vec2 position, float angle, vec2 scale, float dmg, float spd, Texture* texture, std::vector<PlayerBullet>* bullets) {
+    PlayerBullet* bullet = spawn_player_bullet(position, angle, scale, dmg, spd, texture);
     if (bullet != nullptr)
         bullets->emplace_back(*bullet);
 }
 
-PlayerBullet* spawn_player_bullet(vec2 position, bool on_beat, Texture* texture) {
+PlayerBullet* spawn_player_bullet(vec2 position, float angle, vec2 scale, float dmg, float spd, Texture* texture) {
     PlayerBullet* bullet = new PlayerBullet;
 	bullet->set_texture(texture);
-	if (bullet->init())
+	if (bullet->init(dmg, spd))
 	{
 		
 		bullet->set_position(position);
-		bullet->set_rotation(1.57f);
-		if (on_beat) {
-			bullet->set_scale({ 0.9f,0.9f });
-		}
-		bullet->set_on_beat(on_beat);
-		bullet->m_movement_dir = normalize({ 0.f, -1.f });
+		bullet->set_rotation(angle);
+		bullet->set_scale(scale);
+		bullet->m_movement_dir = { (float)cos(angle), (float)-sin(angle) };
 
 		return bullet;
 	}
@@ -38,7 +35,7 @@ EnemyBullet* spawn_enemy_bullet(vec2 position, vec2 movement_dir, Texture* textu
     // TODO:
     EnemyBullet* bullet = new EnemyBullet();
     bullet->set_texture(texture);
-	if (bullet->init())
+	if (bullet->init(2.f, 200.f))
 	{
 		
 		bullet->set_position(position);
@@ -105,24 +102,19 @@ void spawn_structure(int type, Boss* boss, vec2 position, Texture* texture, std:
         structures->emplace_back(structure);
 }
 
-void spawn_beat_circle(int dir, float pos,
-float speed, Player* player,
-Texture* texture, std::vector<BeatCircle>* bcs) {
-    BeatCircle* bc = spawn_beat_circle(dir, pos, speed, player, texture);
+void spawn_beat_circle(int dir, float pos, float speed, float scale, float abs_offset, Player* player, Texture* texture, std::vector<BeatCircle>* bcs) {
+    BeatCircle* bc = spawn_beat_circle(dir, pos, speed, scale, abs_offset, player, texture);
     if (bc != nullptr)
         bcs->emplace_back(*bc);
 }
 
-BeatCircle* spawn_beat_circle(int dir, float pos, float speed, Player* player, Texture* texture) {
-    BeatCircle* beat_circle = new BeatCircle(player, speed);
+BeatCircle* spawn_beat_circle(int dir, float pos, float speed, float scale, float abs_offset, Player* player, Texture* texture) {
+    BeatCircle* beat_circle = new BeatCircle(player, speed, abs_offset);
     bool type = ((dir % 2) == 1);
     beat_circle->set_texture(texture);
     if (beat_circle->init()) {
-        beat_circle->set_dir(dir);
-        float angle = 0;
-        vec2 spawn_pos = -1*pos * beat_circle->get_movement_dir();
-        beat_circle->set_position(spawn_pos);
-        beat_circle->set_scale({1.5,1.5});
+        beat_circle->set_dir(dir, pos);
+        beat_circle->set_scale({scale, scale});
         return beat_circle;
     }
     fprintf(stderr, "Failed to spawn beat circle");
