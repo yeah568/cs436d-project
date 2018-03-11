@@ -4,6 +4,10 @@
 #include "OsuParser.hpp"
 #include "BeatCircle.hpp"
 #include "Bullet.hpp"
+#include "SpriteSheet.hpp"
+#include "Structure.hpp"
+#include "Spawner.hpp"
+#include "TextureManager.hpp"
 
 // stlib
 #include <string.h>
@@ -42,81 +46,15 @@ Level::Level(int width, int height)  : m_points(0), m_next_little_enemies_spawn(
 	screen.x = width;
 	screen.y = height;
 	m_rng = std::default_random_engine(std::random_device()());
-	load_textures();
-	m_player.set_texture(m_textures["character"]);
-	m_boss.set_texture(m_textures["boss0"]);
+	tm = TextureManager::get_instance();
+	m_player.set_texture(tm->get_texture("character"));
+	m_boss.set_texture(tm->get_texture("boss0"));
+	m_boss_health_bar.set_texture(tm->get_texture("boss_health_bar"));
 	m_points = 0;
 	m_current_time = 0;
 	}
 
-Level::~Level()
-{
-
-}
-bool Level2::init() {
-	
-	OsuParser* parser;
-	//-------------------------------------------------------------------------
-	
-	//-------------------------------------------------------------------------
-	// Loading music and sounds
-	if (SDL_Init(SDL_INIT_AUDIO) < 0)
-	{
-		fprintf(stderr, "Failed to initialize SDL Audio");
-		return false;
-	}
-
-	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) == -1)
-	{
-		fprintf(stderr, "Failed to open audio device");
-		return false;
-	}
-
-	m_background_music = Mix_LoadMUS(song_path("598830 Shawn Wasabi - Marble Soda/Marble Soda.wav"));
-	parser = new OsuParser(song_path("598830 Shawn Wasabi - Marble Soda/Shawn Wasabi - Marble Soda (Exa) [Normal].osu"));
-
-	OsuBeatmap beatmap = parser->parse();
-	beatlist = new BeatList(beatmap);
-	if (!m_background_music) {
-		printf("Mix_LoadMUS(\"music.mp3\"): %s\n", Mix_GetError());
-		// this might be a critical error...
-	}
-
-	m_player_dead_sound = Mix_LoadWAV(audio_path("salmon_dead.wav"));
-	m_player_eat_sound = Mix_LoadWAV(audio_path("salmon_eat.wav"));
-
-	if (m_background_music == nullptr || m_player_dead_sound == nullptr || m_player_eat_sound == nullptr)
-	{
-		fprintf(stderr, "Failed to load sounds, make sure the data directory is present");
-		return false;
-	}
-
-	fprintf(stderr, "Loaded music");
-
-	m_current_speed = 1.f;
-	healthbar.set_texture(m_textures["healthbar"]);
-	healthbar.init();
-	bbox hp_bbox = healthbar.get_bounding_box();
-	healthbar.set_scale({ 1.0,1.5 });
-	healthbar.set_position({ (hp_bbox.max_x - hp_bbox.min_x)/2.0f,200 });
-	healthbar.set_rotation(0);
-	m_background.init();
-
-	if (m_player.init() && m_boss.init(375.f, &m_little_enemies)) {
-		m_player.set_health(2);
-		blue_center_beat_circle.init(false);
-		orange_center_beat_circle.init(true);
-		CenterBeatCircle::player = &m_player;
-		LittleEnemy::player = &m_player;
-		return true;
-	}
-	
-	
-	return false;
-}
-// World initialization
-bool Level1::init() {
-	printf("in level init");
+bool Level::init(std::string song_path, std::string osu_path, float boss_health) {
 	OsuParser* parser;
 	//-------------------------------------------------------------------------
 	
@@ -133,8 +71,8 @@ bool Level1::init() {
 		fprintf(stderr, "Failed to open audio device");
 		return false;
 	}
-	m_background_music = Mix_LoadMUS(song_path("BlendS/BlendS.wav"));
-	parser = new OsuParser(song_path("BlendS/Blend A - Bon Appetit S (Meg) [Easy].osu"));
+	m_background_music = Mix_LoadMUS(song_path.c_str());
+	parser = new OsuParser(osu_path.c_str());
 
 	OsuBeatmap beatmap = parser->parse();
 	beatlist = new BeatList(beatmap);
@@ -157,18 +95,29 @@ bool Level1::init() {
 	m_current_speed = 1.f;
 
 	m_background.init();
-	healthbar.set_texture(m_textures["healthbar"]);
-	healthbar.init();
-	bbox hp_bbox = healthbar.get_bounding_box();
-	healthbar.set_scale({ 1.0,1.5 });
-	healthbar.set_position({ (hp_bbox.max_x - hp_bbox.min_x)/2.0f,200 });
+
+
+	healthbar.set_texture(tm->get_texture("healthbar"));
+	healthbar.init(5);
+	
+	healthbar.set_scale({ 0.6f,0.7f });
+	healthbar.set_position({ 200 , 50});
 	healthbar.set_rotation(0);
+	m_background.init();
+
 
 	if (!m_player.init()){
 		return false;
 	}
 	m_player.set_health(5);
-	if (m_boss.init(250.f, &m_little_enemies)) {
+	if (m_boss.init(boss_health, &m_little_enemies, &m_structures)) {
+		Structure::player_bullets = &m_bullets;
+		Structure::enemy_bullets = &m_enemy_bullets;
+		Structure::player = &m_player;
+		m_boss_health_bar.init();
+		m_boss_health_bar.set_rotation(0);
+		bbox bhp_bbox = m_boss_health_bar.get_bounding_box();
+		m_boss_health_bar.set_position({screen.x/2.0f, (bhp_bbox.max_y + bhp_bbox.min_y)/2.0f});
 		blue_center_beat_circle.init(false);
 		orange_center_beat_circle.init(true);
 		CenterBeatCircle::player = &m_player;
@@ -178,6 +127,22 @@ bool Level1::init() {
 	}
 	
 	return false;
+}
+
+Level::~Level()
+{
+
+}
+bool Level2::init() {
+	return Level::init(song_path("598830 Shawn Wasabi - Marble Soda/Marble Soda.wav"),
+		song_path("598830 Shawn Wasabi - Marble Soda/Shawn Wasabi - Marble Soda (Exa) [Normal].osu"),
+		375.0f);
+}
+// World initialization
+bool Level1::init() {
+	return Level::init(song_path("BlendS/BlendS.wav"),
+		song_path("BlendS/Blend A - Bon Appetit S (Meg) [Easy].osu"),
+		250.0f);
 }
 
 // Releases all the associated resources
@@ -193,6 +158,7 @@ void Level::destroy()
 	Mix_CloseAudio();
 
 	m_player.destroy();
+	m_boss.destroy();
 	
 	for (auto& bullet : m_bullets)
 		bullet.destroy();
@@ -200,11 +166,18 @@ void Level::destroy()
 		beatcircle.destroy();
 	for (auto& enemy : m_little_enemies)
 		enemy.destroy();
+	for (auto& structure : m_structures)
+		structure->destroy();
+	for (auto& bullet : m_enemy_bullets)
+		bullet.destroy();
+	m_enemy_bullets.clear();
 	orange_center_beat_circle.destroy();
 	blue_center_beat_circle.destroy();
-	
+	healthbar.destroy();
+	m_boss_health_bar.destroy();
 	m_bullets.clear();
 	m_little_enemies.clear();
+	m_structures.clear();
 	m_beatcircles.clear();
 }
 
@@ -223,8 +196,8 @@ void Level::handle_beat(float remaining_offset, Beat* curBeat, vec2 screen) {
 	//Turtle& new_turtle = m_turtles.back();
 	//new_turtle.set_position({ ((64.f + (float)curBeat->x) / 640.f)*screen.x, ((48.f + (float)curBeat->y) / 480.f)*screen.y });
 
-	m_player.scale_by(1.3);
-	m_boss.on_beat(curBeat, screen, m_textures["enemy0"]);
+	m_player.scale_by(1.3f);
+	m_boss.on_beat(curBeat, screen);
 }
 
 // Update our game world
@@ -237,8 +210,9 @@ bool Level::update(float elapsed_ms)
 		m_current_time += elapsed_ms;
 	}
 
+	m_boss_health_bar.set_health_percentage(m_boss.get_health()/m_boss.get_total_health());
 	float remaining_offset = elapsed_ms;
-
+	
 	Beat* curBeat;
 	while (beatPos < beatlist->beats.size()) {
 		curBeat = &beatlist->beats.at(beatPos);
@@ -257,7 +231,8 @@ bool Level::update(float elapsed_ms)
 			float pos = some_fixed_spawn_distance - speed * delta;
 			float scale = 1.5 - delta / 1500;
 			curBeat->spawned = true;
-			spawn_beat_circle(curBeat->dir, pos, speed, scale, curBeat->absoluteOffset);
+			Texture* texture = tm->get_texture(((curBeat->dir % 2) == 1) ? "orange_moving_beat" : "blue_moving_beat");
+			spawn_beat_circle(curBeat->dir, pos, speed, scale, curBeat->absoluteOffset, &m_player, texture, &m_beatcircles);
 		}
 		else {
 			curBeat->relativeOffset -= remaining_offset;
@@ -297,16 +272,17 @@ bool Level::update(float elapsed_ms)
 
 	// Updating all entities, making the turtle and fish
 	// faster based on current
-	
+
 	auto bullet_it = m_bullets.begin();
 	while (bullet_it != m_bullets.end())
 	{
 		if (m_boss.collides_with(*bullet_it))
 		{
 			Mix_PlayChannel(-1, m_player_dead_sound, 0);
-			printf("Boss hit by bullet\n");
+			//printf("Boss hit by bullet\n");
 			m_boss.set_health(-bullet_it->get_damage());
-			m_bullets.erase(bullet_it);
+			m_boss_health_bar.set_health_percentage(m_boss.get_health()/m_boss.get_total_health());
+			bullet_it = m_bullets.erase(bullet_it);
 			if (m_boss.get_health() <= 0) {
 				finished = 1;
 				new_points += 100;
@@ -315,12 +291,12 @@ bool Level::update(float elapsed_ms)
 			break;
 		}
 		if (bullet_it->get_bounding_box().max_y < 0) {
-			m_bullets.erase(bullet_it);
+			bullet_it = m_bullets.erase(bullet_it);
 			break;
 		}
 		++bullet_it;
 	}
-
+	
 	m_player.update(elapsed_ms);
 	if (m_player.get_position().y > screen.y)
 		exit(0);
@@ -334,21 +310,22 @@ bool Level::update(float elapsed_ms)
 		beatcircle.update(elapsed_modified_ms);
 	for (auto& enemy : m_little_enemies)
 		enemy.update(elapsed_modified_ms);
+	for (auto& structure : m_structures) {
+		structure->update(elapsed_modified_ms);
+	for (auto& bullet : m_enemy_bullets)
+		bullet.update(elapsed_modified_ms);
+	//printf("Level structures: %d\n", m_structures.size());ctv
+	
+		//printf("Updated structure\n");
+	}
 	for (auto little_enemy_it = m_little_enemies.begin(); little_enemy_it != m_little_enemies.end();) {
 		if (m_player.collides_with(*little_enemy_it)) {
+			healthbar.update();
 			little_enemy_it = m_little_enemies.erase(little_enemy_it);
 			m_player.set_health(-1);
-			printf("%f\n", m_player.get_health());
-			float percent_health = m_player.get_health()/5.0f;
-			healthbar.set_scale({percent_health, 1.5f});
-			bbox hp_bb = healthbar.get_bounding_box();
-			healthbar.set_position({(hp_bb.max_x-hp_bb.min_x)/2.0f,200.0f});
-			float r = 1.0f;
-			//std::min(0.5f+(1.0f-(percent_health))/2.0f, 1.0f);
-			float g = std::max(percent_health,0.0f);
-			healthbar.set_color(r*2.0f,g,g);
 			if (m_player.get_health() <= 0) {
-				m_player.kill();
+				//m_player.kill();
+				//printf("Player has died\n");
 			}
 			break;
 		} else {
@@ -357,24 +334,54 @@ bool Level::update(float elapsed_ms)
 	}
 
 
-	if (m_bullets.size() > 0 && m_little_enemies.size() > 0) {
+	if (m_bullets.size() > 0) {
 		for (auto bullet_it = m_bullets.begin(); bullet_it != m_bullets.end();) {
 			bool removed_enemy = false;
-
-			for (auto little_enemy_it = m_little_enemies.begin(); little_enemy_it != m_little_enemies.end();) {
-				if (little_enemy_it->collides_with(*bullet_it)) {
-					new_points += (bullet_it->get_damage() == 100 ? 15 : 10);
-					little_enemy_it = m_little_enemies.erase(little_enemy_it);
-					bullet_it = m_bullets.erase(bullet_it);
-					removed_enemy = true;
-					
-					break;
-				}
-				else {
-					++little_enemy_it;
+			bool hit_structure = false;
+			if (m_little_enemies.size() > 0){
+				for (auto little_enemy_it = m_little_enemies.begin(); little_enemy_it != m_little_enemies.end();) {
+					if (little_enemy_it->collides_with(*bullet_it)) {
+						new_points += (bullet_it->get_damage() == 100 ? 15 : 10);
+						little_enemy_it = m_little_enemies.erase(little_enemy_it);
+						bullet_it = m_bullets.erase(bullet_it);
+						removed_enemy = true;
+						
+						break;
+					}
+					else {
+						++little_enemy_it;
+					}
 				}
 			}
-			if (!removed_enemy) { ++bullet_it; };
+			if (removed_enemy) {
+				continue;
+			}
+			if (m_structures.size() > 0) {
+				for (auto structure_it = m_structures.begin(); structure_it != m_structures.end();) {
+					if ((*structure_it)->collides_with(*bullet_it)) {
+						bullet_it = m_bullets.erase(bullet_it);
+						hit_structure = true;
+						(*structure_it)->health--;
+
+						if ((*structure_it)->health < 1) {
+							if ((*structure_it) == m_boss.structure_slots.left) {
+								m_boss.structure_slots.left = nullptr;
+							} else if ((*structure_it) == m_boss.structure_slots.center) {
+								m_boss.structure_slots.center = nullptr;
+							} else {
+								m_boss.structure_slots.right = nullptr;
+							}
+							structure_it = m_structures.erase(structure_it);
+						}
+						break;
+					} 
+					else {
+						++structure_it;
+					}
+					
+				}
+			}
+			if (!hit_structure) { ++bullet_it; };
 		}
 	}
 
@@ -407,12 +414,20 @@ void Level::draw()
 
 	for (auto& bullet : m_bullets)
 		bullet.draw(projection_2D);
+	for (auto& bullet : m_enemy_bullets)
+		bullet.draw(projection_2D);
 	for (auto& beatcircle : m_beatcircles)
 		beatcircle.draw(projection_2D);
 	
 	for (auto& enemy : m_little_enemies)
 		enemy.draw(projection_2D); 
+	for (auto& structure : m_structures) {
+		//printf("Drawing: %f\n", structure->get_position().x);
+		structure->draw(projection_2D);
+	}
 	m_boss.draw(projection_2D);
+	m_boss_health_bar.draw(projection_2D);
+	//healthbar.draw(projection_2D);
 	healthbar.draw(projection_2D);
 	orange_center_beat_circle.draw(projection_2D);
 	blue_center_beat_circle.draw(projection_2D);
@@ -425,74 +440,6 @@ bool Level::is_over()const
 	// TODO: Implement Me
 	return finished;
 }
-
-// Creates a new turtle and if successfull adds it to the list of turtles
-
-
-// Creates a new fish and if successfull adds it to the list of fish
-bool Level::spawn_bullet(vec2 position, float angle, vec2 scale, bool bullet_type, float dmg, float spd)
-{
-	Bullet bullet;
-	bullet.set_texture(m_textures[bullet_type ? "bullet_1" : "bullet_2"]);
-	if (bullet.init(dmg, spd))
-	{
-		
-		bullet.set_position(position);
-		bullet.set_rotation(angle);
-		bullet.set_scale(scale);
-		bullet.m_movement_dir = { (float)cos(angle), (float)-sin(angle) };
-		m_bullets.emplace_back(bullet);
-		m_player.bullet_type = !bullet_type;
-
-		return true;
-	}
-	fprintf(stderr, "Failed to spawn fish");
-	return false;
-}
-/*
-bool Level::spawn_enemy(vec2 position)
-{
-	Enemy enemy;
-	if (enemy.init())
-	{
-		enemy.set_position(position);
-	
-		
-		m_enemies.emplace_back(enemy);
-
-		return true;
-	}
-	fprintf(stderr, "Failed to spawn enemy");
-	return false;
-}
-*/
-
-bool Level::spawn_little_enemy() {
-	LittleEnemy littleEnemy;
-	littleEnemy.set_texture(m_textures["enemy0"]);
-	if (littleEnemy.init()) {
-		m_little_enemies.emplace_back(littleEnemy);
-		return true;
-	}
-	fprintf(stderr, "Failed to spawn little enemy");
-	return false;
-}
-
-bool Level::spawn_beat_circle(int dir, float pos, float speed, float scale, float abs_offset) {
-	BeatCircle beat_circle(&m_player, speed, abs_offset);
-    bool type = ((dir % 2) == 1);
-    beat_circle.set_texture(m_textures[type ? "orange_moving_beat" : "blue_moving_beat"]);
-    if (beat_circle.init()) {
-        beat_circle.set_dir(dir, pos);
-        float angle = m_player.get_rotation();
-        beat_circle.set_scale({scale, scale});
-        m_beatcircles.emplace_back(beat_circle);
-        return true;
-    }
-    fprintf(stderr, "Failed to spawn beat circle");
-    return false;
-}
-
 
 // On key callback
 void Level::on_key(int key, int action, int mod)
@@ -583,6 +530,7 @@ void Level::on_arrow_key(Dir dir)
 {
 	float player_angle = m_player.get_rotation() + 1.57;
 	vec2 salmon_pos = m_player.get_position();
+	Texture* texture = tm->get_texture(m_player.bullet_type ? "bullet_1" : "bullet_2");
 	auto beatcircle_it = m_beatcircles.begin();
 	while (beatcircle_it != m_beatcircles.end()) {
 		float abs_offset = beatcircle_it->get_offset();
@@ -598,20 +546,23 @@ void Level::on_arrow_key(Dir dir)
 
 		if (delta <= perfect_timing) {
 			printf("PERFECT with delta %f\n", delta);
-			spawn_bullet(salmon_pos, player_angle, { 0.5, 0.5 }, m_player.bullet_type, 10.f, 5000.f);
+			spawn_player_bullet(salmon_pos, player_angle, { 0.5, 0.5 }, 10.f, 5000.f, texture, &m_bullets);
 			m_beatcircles.erase(beatcircle_it);
+			m_player.bullet_type = !m_player.bullet_type;
 			break;
 		}
 		else if (delta <= good_timing) {
 			printf("GOOD with delta %f\n", delta);
-			spawn_bullet(salmon_pos, player_angle, { 0.5, 0.5 }, m_player.bullet_type, 5.f, 1500.f);
+			spawn_player_bullet(salmon_pos, player_angle, { 0.5, 0.5 }, 5.f, 1500.f, texture, &m_bullets);
 			m_beatcircles.erase(beatcircle_it);
+			m_player.bullet_type = !m_player.bullet_type;
 			break;
 		}
 		else if (delta <= bad_timing) {
 			printf("BAD with delta %f\n", delta);
-			spawn_bullet(salmon_pos, player_angle, { 1.f, 1.f }, m_player.bullet_type, 2.f, 800.f);
+			spawn_player_bullet(salmon_pos, player_angle, { 1.f, 1.f }, 3.f, 800.f, texture, &m_bullets);
 			m_beatcircles.erase(beatcircle_it);
+			m_player.bullet_type = !m_player.bullet_type;
 			break;
 		}
 		beatcircle_it++;
@@ -627,32 +578,6 @@ void Level::on_mouse_move(double xpos, double ypos)
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 	m_player.set_mouse((float)xpos, (float)ypos);
-}
-
-void Level::load_textures() {
-  std::vector<std::string> texture_names{
-    "character",
-	"boss0",
-    "bullet_1",
-    "bullet_2",
-    "orange_moving_beat",
-    "blue_moving_beat",
-	"healthbar",
-	"enemy0"
-  };
-
-  for (const auto& texture_name : texture_names)
-  {
-    Texture* texture = new Texture(); 
-    // TODO: fix the macro
-    auto texture_path = textures_path("") + texture_name + ".png";
-    std::cout << texture_path << std::endl;
-    if (!texture->load_from_file(texture_path.c_str()))
-    {
-      fprintf(stderr, "Failed to load texture!");
-    }
-    m_textures[texture_name] = texture;
-  }
 }
 
 int Level::getBossHealth() {

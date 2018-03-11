@@ -1,6 +1,7 @@
 #pragma once
 
 #include "common.hpp"
+#include <vector>
 #include "Sprite.hpp"
 
 // Salmon food
@@ -25,7 +26,35 @@ public:
 	
 	void set_speed(float spd);
 
-private:
+protected:
+	vec2 velocity;
 	float m_damage = 25.0f;
 	float m_speed = 800.f;
+};
+
+class PlayerBullet : public Bullet
+{
+public:
+	PlayerBullet() : Bullet() {};
+
+	static Texture* type_1;
+	static Texture* type_2;
+
+	void addForce(force delta) {added_forces.emplace_back(delta);};
+
+	void update(float ms);
+
+private:
+	std::vector<force> added_forces;
+	force get_net_force();
+};
+
+class EnemyBullet : public Bullet
+{
+public:
+
+	EnemyBullet() : Bullet() {};
+	static Texture* texture;
+private:
+	
 };
