@@ -14,16 +14,46 @@ Bullet::Bullet()
   velocity = {0,-1};
 }
 
-void PlayerBullet::update(float ms)
+bool Bullet::init(float dmg, float spd)
+{
+	m_damage = dmg;
+	m_speed = spd;
+	return Sprite::init();
+}
+
+void Bullet::update(float ms)
 {
 	// Move fish along -X based on how much time has passed, this is to (partially) avoid
 	// having entities move at different speed based on the machine.
-	float BULLET_SPEED;
-	if (m_scale.x > 1.1)
-		BULLET_SPEED = 3200.f;
-	else
-		BULLET_SPEED = 800.f;
-	float step = BULLET_SPEED * (ms / 1000);
+	float step = m_speed * (ms / 1000);
+	
+	m_position.x += m_movement_dir.x*step;
+	m_position.y += m_movement_dir.y*step;
+}
+
+float Bullet::get_damage()
+{
+	return m_damage;
+}
+
+void Bullet::set_damage(float dmg)
+{
+	m_damage = dmg;
+}
+
+float Bullet::get_speed()
+{
+	return m_speed;
+}
+
+void Bullet::set_speed(float spd)
+{
+	m_speed = spd;
+}
+
+void PlayerBullet::update(float ms)
+{
+	float step = m_speed * (ms / 1000);
 	force nf;
 	if (added_forces.size() > 0)
 		nf = get_net_force();
@@ -39,12 +69,6 @@ void PlayerBullet::update(float ms)
 	//printf("\n rotation: %f %f", m_movement_dir.x, m_movement_dir.y);
 	m_position = m_position + displacement;
 	added_forces.clear();
-}
-
-void EnemyBullet::update(float ms)
-{
-	float step =  (ms / 1000);
-	m_position = m_position + 200*step * m_movement_dir;
 }
 
 force PlayerBullet::get_net_force() {

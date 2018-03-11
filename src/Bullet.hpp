@@ -9,15 +9,27 @@ class Bullet : public Sprite
 {
 public:
 	Bullet();
+
+	bool init(float dmg, float spd);
+
 	// Update fish due to current
 	// ms represents the number of milliseconds elapsed from the previous update() call
-	virtual void update(float ms) {};
+	void update(float ms);
 
 	vec2 m_movement_dir;
-private:
+	
+	float get_damage();
+
+	void set_damage(float dmg);
+
+	float get_speed();
+	
+	void set_speed(float spd);
 
 protected:
 	vec2 velocity;
+	float m_damage = 25.0f;
+	float m_speed = 800.f;
 };
 
 class PlayerBullet : public Bullet
@@ -28,15 +40,11 @@ public:
 	static Texture* type_1;
 	static Texture* type_2;
 
-	void set_on_beat(bool was_created_on_beat){created_on_beat = was_created_on_beat;};
-	float get_damage(){return (created_on_beat ? bullet_damage * 4 : bullet_damage);};
 	void addForce(force delta) {added_forces.emplace_back(delta);};
 
 	void update(float ms);
 
 private:
-	float bullet_damage = 25.0f;
-	bool created_on_beat;
 	std::vector<force> added_forces;
 	force get_net_force();
 };
@@ -47,7 +55,6 @@ public:
 
 	EnemyBullet() : Bullet() {};
 	static Texture* texture;
-	void update(float ms);
 private:
 	
 };

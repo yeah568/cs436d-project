@@ -77,6 +77,8 @@ private:
 
 	//bool spawn_little_enemy();
 
+	void on_arrow_key(Dir dir);
+
 protected:
 
 	bool init(std::string song_path, std::string osu_path, float boss_health);
@@ -88,6 +90,10 @@ protected:
 	static Player m_player;
 	unsigned int m_points;
 
+	const int perfect_timing = 40;
+	const int good_timing = 80;
+	const int bad_timing = 120;
+
 	// C++ rng
 	static std::default_random_engine m_rng;
 	static std::uniform_real_distribution<float> m_dist; // default 0..1
@@ -98,6 +104,7 @@ protected:
 	SpriteSheet spritesheet;
 	BeatList* beatlist;
 	int beatPos = 0;
+	int lastBeat = 0;
 	int m_song;
 	GLFWwindow* window;
 	// Game entities
@@ -109,6 +116,8 @@ protected:
 
 	float m_current_speed;
 	float m_next_little_enemies_spawn;
+
+	float m_current_time;
 
 	Mix_Music* m_background_music;
 	Mix_Chunk* m_player_dead_sound;
