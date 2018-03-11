@@ -25,8 +25,6 @@ public:
 	// ms represents the number of milliseconds elapsed from the previous update() call
 	virtual void update(float ms);
 
-	bool collides_with(const Bullet &bullet);
-
 	void scale_by(float scale);
 	
 	int health;
