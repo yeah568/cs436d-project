@@ -36,8 +36,6 @@ public:
 
 	void on_beat(Beat* beat, vec2 screen);
 
-	bool collides_with(const PlayerBullet& bullet);
-
 	void move(vec2 off);
 
 	float get_health()const;

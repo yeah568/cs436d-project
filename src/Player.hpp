@@ -19,11 +19,6 @@ public:
 	// ms represents the number of milliseconds elapsed from the previous update() call
 	void update(float ms);
 
-	// Collision routines for turtles and fish
-	bool collides_with(const LittleEnemy& little_enemy);
-	
-	bool collides_with(const Bullet& fish);
-
 	// Moves the salmon's position by the specified offset
 	void move(vec2 off);
 

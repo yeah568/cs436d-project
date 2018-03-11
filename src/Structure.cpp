@@ -18,13 +18,6 @@ void Healing_Structure::update(float ms) {
 	heal_boss(ms);
 }
 
-bool Structure::collides_with(const Bullet &bullet) {
-	bbox enemy_bbox = get_bounding_box();
-	bbox bullet_bbox = bullet.get_bounding_box();
-	return bullet_bbox.min_x <= enemy_bbox.max_x && bullet_bbox.max_x >= enemy_bbox.min_x &&
-		bullet_bbox.min_y <= enemy_bbox.max_y && bullet_bbox.max_y >= enemy_bbox.min_y;
-}
-
 void Structure::scale_by(float scale) {
 	m_scale.x *= scale;
 	m_scale.y *= scale;

@@ -84,6 +84,7 @@ protected:
 	bool init(std::string song_path, std::string osu_path, float boss_health);
 	TextureManager* tm;
 	static Texture background_texture;
+	static bool show_hitboxes;
 	
 	static CenterBeatCircle blue_center_beat_circle;
 	static CenterBeatCircle orange_center_beat_circle;

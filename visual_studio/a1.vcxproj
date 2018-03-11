@@ -510,6 +510,7 @@
     <ClCompile Include="..\src\Spawner.cpp" />
     <ClCompile Include="..\src\BossHealthBar.cpp" />
     <ClCompile Include="..\src\HealthBar.cpp" />
+    <ClCompile Include="..\src\Hitbox.cpp" />
     <ClCompile Include="..\src\Level.cpp" />
     <ClCompile Include="..\src\TextureManager.cpp" />
     <ClCompile Include="..\src\LevelList.cpp" />
@@ -532,6 +533,7 @@
     <ClInclude Include="..\src\BeatList.hpp" />
     <ClInclude Include="..\src\BossHealthBar.hpp" />
     <ClInclude Include="..\src\HealthBar.hpp" />
+    <ClInclude Include="..\src\Hitbox.hpp" />
     <ClInclude Include="..\src\Level.hpp" />
     <ClInclude Include="..\src\LevelList.hpp" />
     <ClInclude Include="..\src\SpriteSheet.hpp" />

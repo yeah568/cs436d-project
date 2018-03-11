@@ -24,6 +24,7 @@ Player Level::m_player;
 std::default_random_engine Level::m_rng;
 std::uniform_real_distribution<float> Level::m_dist;//default:0..1
 
+bool Level::show_hitboxes = false;
 
 // Same as static in c, local to compilation unit
 namespace
@@ -432,6 +433,19 @@ void Level::draw()
 	orange_center_beat_circle.draw(projection_2D);
 	blue_center_beat_circle.draw(projection_2D);
 	m_player.draw(projection_2D);
+
+	if (show_hitboxes) {
+		for (auto& bullet : m_bullets)
+			bullet.draw_hitboxes(projection_2D);
+		for (auto& beatcircle : m_beatcircles)
+			beatcircle.draw_hitboxes(projection_2D);
+		for (auto& enemy : m_little_enemies)
+			enemy.draw_hitboxes(projection_2D);
+
+		m_boss.draw_hitboxes(projection_2D);
+		healthbar.draw_hitboxes(projection_2D);
+		m_player.draw_hitboxes(projection_2D);
+	}
 }
 
 // Should the game be over ?
@@ -466,6 +480,10 @@ void Level::on_key(int key, int action, int mod)
 			break;
 		case GLFW_KEY_U:
 			m_player.exploding_timer = 1;
+			break;
+
+		case GLFW_KEY_P:
+			show_hitboxes = !show_hitboxes;
 			break;
 		case GLFW_KEY_UP:
 		case GLFW_KEY_I:

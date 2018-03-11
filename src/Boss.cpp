@@ -1,4 +1,5 @@
 #include "Boss.hpp"
+#include "Hitbox.hpp"
 #include "Spawner.hpp"
 #include "common.hpp"
 
@@ -28,6 +29,10 @@ bool Boss::init(float health, std::vector<LittleEnemy>* little_enemies, std::vec
 	m_health = health;
 	total_health = health;
 	m_little_enemies = little_enemies;
+	Hitbox* hitbox = new Hitbox();
+	if (hitbox->init({ 0.f, 80.f }, { 0.8f, 0.6f }, 0.f, this, m_texture)) {
+		m_hitboxes.push_back(hitbox);
+	}
 	m_structures = structures;
 	tm = TextureManager::get_instance();
 	return Sprite::init();
@@ -118,14 +123,6 @@ void Boss::on_beat(Beat* beat, vec2 screen) {
 		printf("Finished boss spawning structure\n");
 		break;
 	}
-}
-
-bool Boss::collides_with(const PlayerBullet& bullet)
-{
-	bbox boss_bbox = get_bounding_box();
-	bbox bullet_bbox = bullet.get_bounding_box();
-	return bullet_bbox.min_x <= boss_bbox.max_x && bullet_bbox.max_x >= boss_bbox.min_x &&
-		bullet_bbox.min_y <= boss_bbox.max_y && bullet_bbox.max_y >= boss_bbox.min_y;
 }
 
 void Boss::move(vec2 off)
