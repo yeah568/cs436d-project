@@ -342,6 +342,12 @@ bool Level::update(float elapsed_ms)
 			if (m_little_enemies.size() > 0){
 				for (auto little_enemy_it = m_little_enemies.begin(); little_enemy_it != m_little_enemies.end();) {
 					if (little_enemy_it->collides_with(*bullet_it)) {
+						auto pe = new ParticleEmitter(
+							little_enemy_it->get_position(),
+							100,
+							false);
+						pe->init();
+						m_particle_emitters.emplace_back(pe);
 						new_points += (bullet_it->get_damage() == 100 ? 15 : 10);
 						little_enemy_it = m_little_enemies.erase(little_enemy_it);
 						bullet_it = m_bullets.erase(bullet_it);
@@ -386,6 +392,20 @@ bool Level::update(float elapsed_ms)
 		}
 	}
 
+	for (auto& particleEmitter : m_particle_emitters) {
+		particleEmitter->update(elapsed_ms);
+	}
+
+	for (auto pe_it = m_particle_emitters.begin(); pe_it != m_particle_emitters.end();) {
+		if ((*pe_it)->get_alive_particles() == 0) {
+			delete *pe_it;
+			pe_it = m_particle_emitters.erase(pe_it);
+		}
+		else {
+			++pe_it;
+		}
+	}
+
 	return true;
 }
 
@@ -422,6 +442,10 @@ void Level::draw()
 	
 	for (auto& enemy : m_little_enemies)
 		enemy.draw(projection_2D); 
+	for (auto& particleEmitter : m_particle_emitters) {
+		particleEmitter->draw(projection_2D);
+	}
+
 	for (auto& structure : m_structures) {
 		//printf("Drawing: %f\n", structure->get_position().x);
 		structure->draw(projection_2D);
