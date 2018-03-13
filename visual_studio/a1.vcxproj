@@ -526,7 +526,6 @@
     <ClCompile Include="$(ProjectDir)..\src\BeatList.cpp" />
     <ClCompile Include="$(ProjectDir)..\src\Particle.cpp" />
     <ClCompile Include="$(ProjectDir)..\src\ParticleEmitter.cpp" />
-    <ClCompile Include="$(ProjectDir)..\src\ParticleSystem.cpp" />
     <ClCompile Include="..\src\SpriteSheet.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -548,7 +547,6 @@
     <ClInclude Include="..\src\Bullet.hpp" />
     <ClCompile Include="$(ProjectDir)..\src\Particle.hpp" />
     <ClCompile Include="$(ProjectDir)..\src\ParticleEmitter.hpp" />
-    <ClCompile Include="$(ProjectDir)..\src\ParticleSystem.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
