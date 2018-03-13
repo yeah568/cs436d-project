@@ -22,7 +22,7 @@ BIN=beatcoin
 OBJ=$(BIN).o common.o Sprite.o Player.o Turtle.o World.o Bullet.o Background.o
 OBJ2=BeatCircle.o BeatList.o OsuParser.o CenterBeatCircle.o Level.o
 OBJ3=HealthBar.o LevelList.o Boss.o Enemy.o SpriteSheet.o BossHealthBar.o Structure.o
-OBJ4=Spawner.o TextureManager.o Hitbox.o
+OBJ4=Spawner.o TextureManager.o Hitbox.o Particle.o ParticleEmitter.o
 ALL_OBJ=$(OBJ) $(OBJ2) $(OBJ3) $(OBJ4)
 SUBDIRS = src/utils
 

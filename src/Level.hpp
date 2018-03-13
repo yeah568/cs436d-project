@@ -13,6 +13,7 @@
 #include "HealthBar.hpp"
 #include "SpriteSheet.hpp"
 #include "Enemy.hpp"
+#include "ParticleEmitter.hpp"
 #include "BossHealthBar.hpp"
 #include "Structure.hpp"
 #include "TextureManager.hpp"
@@ -157,6 +158,7 @@ protected:
     std::vector<LittleEnemy> m_little_enemies;
     std::vector<Structure *> m_structures;
     Boss m_boss;
+	std::vector<ParticleEmitter*> m_particle_emitters;
 };
 
 class Level1 : public Level {
