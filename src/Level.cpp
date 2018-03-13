@@ -52,7 +52,7 @@ Level::Level(int width, int height) : m_points(0), m_next_little_enemies_spawn(0
     m_current_time = 0;
 }
 
-bool Level::init(std::string song_path, std::string osu_path, float boss_health) {
+bool Level::init(std::string song_path1, std::string osu_path, float boss_health) {
     OsuParser *parser;
     //-------------------------------------------------------------------------
 
@@ -106,8 +106,7 @@ bool Level::init(std::string song_path, std::string osu_path, float boss_health)
 
 
     //can turn on looping for songs?
-    //TODO: song_path() to take in song_path variable instead of hard code
-    result = system->createSound(song_path("598830 Shawn Wasabi - Marble Soda/Marble Soda.wav"), FMOD_DEFAULT, 0,
+    result = system->createSound(song_path1.c_str(), FMOD_DEFAULT, 0,
                                  &music_level);
     if (result != FMOD_OK) {
         printf("FMOD error! (%d) creating sound FMOD failure\n", result);
@@ -295,8 +294,6 @@ bool Level::update(float elapsed_ms) {
         m_current_time += elapsed_ms;
     }
 
-    system->update();
-
     m_boss_health_bar.set_health_percentage(m_boss.get_health() / m_boss.get_total_health());
     float remaining_offset = elapsed_ms;
 
@@ -474,6 +471,8 @@ bool Level::update(float elapsed_ms) {
             if (!hit_structure) { ++bullet_it; };
         }
     }
+
+    system->update();
 
     return true;
 }

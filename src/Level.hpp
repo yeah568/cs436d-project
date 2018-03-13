@@ -114,7 +114,7 @@ protected:
     FMOD::Sound *sound_perfect_timing;
     FMOD::Sound *sound_good_timing;
     FMOD::Sound *sound_bad_timing;
-    bool* isPlaying;
+    bool *isPlaying;
 
     static CenterBeatCircle blue_center_beat_circle;
     static CenterBeatCircle orange_center_beat_circle;
@@ -150,9 +150,9 @@ protected:
 
     float m_current_time;
 
-    Mix_Music *m_background_music;
-    Mix_Chunk *m_player_dead_sound;
-    Mix_Chunk *m_player_eat_sound;
+//    Mix_Music *m_background_music;
+//    Mix_Chunk *m_player_dead_sound;
+//    Mix_Chunk *m_player_eat_sound;
 
     std::vector<LittleEnemy> m_little_enemies;
     std::vector<Structure *> m_structures;
