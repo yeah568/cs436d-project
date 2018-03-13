@@ -1,7 +1,7 @@
 #pragma once
 #include "common.hpp"
 
-class Particle
+class Particle : public Renderable
 {
 public:
 	Particle();
@@ -11,6 +11,8 @@ public:
 	void copy_from(Particle & particle);
 
 	vec2 getPosition();
+
+	void draw(const mat3 & projection);
 
 	bool is_alive;
 private:

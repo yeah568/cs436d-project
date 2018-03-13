@@ -113,7 +113,7 @@ protected:
 	
 	Boss m_boss;
 
-	std::vector<ParticleEmitter> m_particle_emitters;
+	std::vector<ParticleEmitter*> m_particle_emitters;
 };
 
 class Level1 : public Level {
