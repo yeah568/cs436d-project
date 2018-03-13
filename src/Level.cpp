@@ -322,7 +322,13 @@ bool Level::update(float elapsed_ms)
 	for (auto little_enemy_it = m_little_enemies.begin(); little_enemy_it != m_little_enemies.end();) {
 		if (m_player.collides_with(*little_enemy_it)) {
 			healthbar.update();
+			auto pe = new ParticleEmitter(
+				little_enemy_it->get_position(),
+				100,
+				false);
+			pe->init();
 			little_enemy_it = m_little_enemies.erase(little_enemy_it);
+			m_particle_emitters.emplace_back(pe);
 			m_player.set_health(-1);
 			if (m_player.get_health() <= 0) {
 				//m_player.kill();
