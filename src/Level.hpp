@@ -18,6 +18,8 @@
 #include "TextureManager.hpp"
 
 // external
+//#include "fmod.hpp"
+//#include "fmod_errors.h"
 #include "../ext/fmod/inc/fmod.hpp"
 #include "../ext/fmod/inc/fmod_errors.h"
 
@@ -100,7 +102,8 @@ protected:
     static bool show_hitboxes;
 
     FMOD::System *system;
-    FMOD::Channel *channel = 0;
+    FMOD::Channel *channel;
+    FMOD::Channel *music_channel;
     FMOD::Sound *sound_player_hit;
     FMOD::Sound *sound_boss_hit;
     FMOD::Sound *music_level;
@@ -111,6 +114,7 @@ protected:
     FMOD::Sound *sound_perfect_timing;
     FMOD::Sound *sound_good_timing;
     FMOD::Sound *sound_bad_timing;
+    bool* isPlaying;
 
     static CenterBeatCircle blue_center_beat_circle;
     static CenterBeatCircle orange_center_beat_circle;

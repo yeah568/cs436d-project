@@ -1,4 +1,3 @@
-// Header
 #include "common.hpp"
 #include "Level.hpp"
 #include "OsuParser.hpp"
@@ -8,8 +7,7 @@
 #include "Structure.hpp"
 #include "Spawner.hpp"
 #include "TextureManager.hpp"
-#include "../ext/fmod/inc/fmod_common.h"
-#include "../ext/fmod/inc/fmod.hpp"
+
 
 // stlib
 #include <string.h>
@@ -93,18 +91,14 @@ bool Level::init(std::string song_path, std::string osu_path, float boss_health)
 
     fprintf(stderr, "Loaded music through SDL");
 */
-    ///////////////FMOD///////////////
-    FMOD_RESULT result;
-    system = NULL;
 
-    result = FMOD::System_Create(&system);      // Create the main system object.
 
+    FMOD_RESULT result = FMOD::System_Create(&system);      // Create the main system object.
     if (result != FMOD_OK) {
         printf("FMOD error! (%d) creation of FMOD system failure\n", result);
         return false;
     }
-
-    result = system->init(512, FMOD_INIT_NORMAL, 0);    // Initialize FMOD.
+    result = system->init(32, FMOD_INIT_NORMAL, 0);    // Initialize FMOD.
     if (result != FMOD_OK) {
         printf("FMOD error! (%d) initialization of FMOD system failure\n", result);
         return false;
@@ -119,7 +113,6 @@ bool Level::init(std::string song_path, std::string osu_path, float boss_health)
         printf("FMOD error! (%d) creating sound FMOD failure\n", result);
         return false;
     }
-
     result = system->createSound(audio_path("345551_enemy_Spawn.wav"), FMOD_DEFAULT, 0, &sound_player_hit);
     if (result != FMOD_OK) {
         printf("FMOD error! (%d) creating sound FMOD failure\n", result);
@@ -130,52 +123,45 @@ bool Level::init(std::string song_path, std::string osu_path, float boss_health)
         printf("FMOD error! (%d) creating sound FMOD failure\n", result);
         return false;
     }
-
     result = system->createSound(audio_path("345551_enemy_Spawn.wav"), FMOD_DEFAULT, 0, &sound_boss_death);
     if (result != FMOD_OK) {
         printf("FMOD error! (%d) creating sound FMOD failure\n", result);
         return false;
     }
-
     result = system->createSound(audio_path("345551_enemy_Spawn.wav"), FMOD_DEFAULT, 0, &sound_player_death);
     if (result != FMOD_OK) {
         printf("FMOD error! (%d) creating sound FMOD failure\n", result);
         return false;
     }
-
     result = system->createSound(audio_path("345551_enemy_Spawn.wav"), FMOD_DEFAULT, 0, &sound_enemy_hit);
     if (result != FMOD_OK) {
         printf("FMOD error! (%d) creating sound FMOD failure\n", result);
         return false;
     }
-
     result = system->createSound(audio_path("345551_enemy_Spawn.wav"), FMOD_DEFAULT, 0, &sound_structure_death);
     if (result != FMOD_OK) {
         printf("FMOD error! (%d) creating sound FMOD failure\n", result);
         return false;
     }
-
     result = system->createSound(audio_path("345551_enemy_Spawn.wav"), FMOD_DEFAULT, 0, &sound_perfect_timing);
     if (result != FMOD_OK) {
         printf("FMOD error! (%d) creating sound FMOD failure\n", result);
         return false;
     }
-
     result = system->createSound(audio_path("345551_enemy_Spawn.wav"), FMOD_DEFAULT, 0, &sound_good_timing);
     if (result != FMOD_OK) {
         printf("FMOD error! (%d) creating sound FMOD failure\n", result);
         return false;
     }
-
     result = system->createSound(audio_path("345551_enemy_Spawn.wav"), FMOD_DEFAULT, 0, &sound_bad_timing);
     if (result != FMOD_OK) {
         printf("FMOD error! (%d) creating sound FMOD failure\n", result);
         return false;
     }
 
+    printf("FMOD loaded sounds and music");
 
 
-    ///////////////////////
     m_current_speed = 1.f;
 
     m_background.init();
@@ -302,11 +288,14 @@ void Level::handle_beat(float remaining_offset, Beat *curBeat, vec2 screen) {
 
 // Update our game world
 bool Level::update(float elapsed_ms) {
-    if (!Mix_PlayingMusic()) {
-        Mix_PlayMusic(m_background_music, 1);
+
+    if (FMOD_OK != music_channel->isPlaying(isPlaying)) {
+        system->playSound(music_level, 0, false, &music_channel);
     } else {
         m_current_time += elapsed_ms;
     }
+
+    system->update();
 
     m_boss_health_bar.set_health_percentage(m_boss.get_health() / m_boss.get_total_health());
     float remaining_offset = elapsed_ms;
