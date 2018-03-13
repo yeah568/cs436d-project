@@ -1,5 +1,5 @@
 #include "Particle.hpp"
-
+#include <math.h>
 
 Particle::Particle() {
 	m_position = { 0, 0 };
