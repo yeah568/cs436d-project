@@ -8,10 +8,10 @@ Particle::Particle() {
 }
 
 static const Vertex vertex_buffer_data[] = {
-	{{-0.5f, -0.5f, -0.01f}, {1.f, 0.f, 0.f}},
-{ { 0.5f, -0.5f, -0.01f },{ 1.f, 0.f, 0.f } },
-{ { -0.5f,  0.5f, -0.01f },{ 1.f, 0.f, 0.f } },
-{ { 0.5f,  0.5f, -0.01f },{ 1.f, 0.f, 0.f } },
+	{ { -0.5f, -0.5f, -0.01f }, { 1.f, 0.f, 0.f } },
+	{ {  0.5f, -0.5f, -0.01f }, { 1.f, 0.f, 0.f } },
+	{ { -0.5f,  0.5f, -0.01f }, { 1.f, 0.f, 0.f } },
+	{ {  0.5f,  0.5f, -0.01f }, { 1.f, 0.f, 0.f } },
 };
 
 static const uint16_t indices[] = {
@@ -45,6 +45,10 @@ void Particle::init(vec2 position, float lifespan, float angle, float speed)
 
 }
 
+static const float p = 1.293f;
+static const float A = 0.1f;
+static const float Cd = 0.47f;
+static const float m = 1;
 
 void Particle::update(float elapsed_ms) {
 	m_lifespan -= elapsed_ms;
@@ -52,6 +56,15 @@ void Particle::update(float elapsed_ms) {
 		is_alive = false;
 		return;
 	}
+
+
+	float fd_x = -m_velocity.x * 0.5f * p * Cd * A * pow(m_velocity.x, 2);
+	float fd_y = -m_velocity.y * 0.5f * p * Cd * A * pow(m_velocity.y, 2);
+	float a_x = fd_x / m;
+	float a_y = fd_y / m;
+
+	m_velocity.x += a_x * (elapsed_ms / 1000);
+	m_velocity.y += a_y * (elapsed_ms / 1000);
 
 	m_position.x += m_velocity.x;
 	m_position.y += m_velocity.y;

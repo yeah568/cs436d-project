@@ -45,7 +45,7 @@ bool ParticleEmitter::init()
 
 	int i = 0;
 	while (i < m_max_particles) {
-		m_particle_pool[i++].init(m_position, 300, rand() % 359, rand() % 3 + 3);
+		m_particle_pool[i++].init(m_position, 500, rand() % 359, rand() % 3 + 3);
 		m_num_alive_particles++;
 	}
 
