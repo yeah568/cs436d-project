@@ -15,7 +15,7 @@ LittleEnemy::LittleEnemy() : Sprite(nullptr) {
 void LittleEnemy::update(float ms) {
 	// Move fish along -X based on how much time has passed, this is to (partially) avoid
 	// having entities move at different speed based on the machine.
-	const float enemy_speed = 200.f;
+	const float enemy_speed = 100.f;
 	float step = enemy_speed * (ms / 1000);
 	vec2 to_player = normalize(player->get_position() - get_position());
 	m_position.y += to_player.y*step;
@@ -43,13 +43,6 @@ void LittleEnemy::update(float ms) {
 	//        set_rotation(3.14/2);
 	//
 	//    printf("updated enemy");
-}
-
-bool LittleEnemy::collides_with(const Bullet &bullet) {
-	bbox enemy_bbox = get_bounding_box();
-	bbox bullet_bbox = bullet.get_bounding_box();
-	return bullet_bbox.min_x <= enemy_bbox.max_x && bullet_bbox.max_x >= enemy_bbox.min_x &&
-		bullet_bbox.min_y <= enemy_bbox.max_y && bullet_bbox.max_y >= enemy_bbox.min_y;
 }
 
 void LittleEnemy::scale_by(float scale) {

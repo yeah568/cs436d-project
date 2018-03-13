@@ -22,12 +22,17 @@
 #define mesh_path(name) data_path "/meshes/" name
 #define song_path(name) data_path "/songs/" name
 
+static const int HEALING_STRUCTURE = 0;
+static const int BLACK_HOLE_STRUCTURE = 1;
+static const int SHOOTING_STRUCTURE = 2;
+
 // Not much math is needed and there are already way too many libraries linked (:
 // If you want to do some overloads..
 struct vec2 { float x, y; };
 struct vec3 { float x, y, z; };
 struct mat3 { vec3 c0, c1, c2; };
 struct bbox { float min_x, min_y, max_x, max_y; };
+struct force {vec2 dir; float mag;};
 
 vec2 operator/(const vec2& lhs, const vec2& rhs);
 vec2 operator-(const vec2& lhs, const vec2& rhs);
@@ -39,7 +44,12 @@ float length(vec2 v);
 float dot(vec2 l, vec2 r);
 float dot(vec3 l, vec3 r);
 mat3  mul(const mat3& l, const mat3& r);
+vec3  mul(const mat3& m, vec3 v);
 vec2  normalize(vec2 v);
+mat3  identity();
+mat3  mat_translate(mat3 m, vec2 offset);
+mat3  mat_scale(mat3 m, vec2 scale);
+mat3  mat_rotate(mat3 m, float radians);
 
 // OpenGL utilities
 // cleans error buffer

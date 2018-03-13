@@ -1,43 +1,35 @@
-// Header
-#include "CenterBeatCircle.hpp"
-#include <cmath>
+#include "Hitbox.hpp"
+#include "Sprite.hpp"
 
-Player* CenterBeatCircle::player;
+Texture* Hitbox::m_texture;
 
-bool CenterBeatCircle::init(bool type)
+Hitbox::Hitbox()
 {
-	// Load shared texture
-	if (!center_beat_circle_texture.is_valid())
-	{	if (type) {
-			if (!center_beat_circle_texture.load_from_file(textures_path("orange_moving_beat.png")))
-			{
-				fprintf(stderr, "Failed to load turtle texture!");
-				return false;
-			}
-		} else {
-			if (!center_beat_circle_texture.load_from_file(textures_path("blue_moving_beat.png")))
-			{
-				fprintf(stderr, "Failed to load turtle texture!");
-				return false;
-			}
-		}
+	if (!m_texture) {
+		load_hitbox_texture();
 	}
-	if (!type) {
-		m_scale.x = 2.0f;
-		m_scale.y = 2.0f;
-	} else {
-		m_scale.x = 1.5f;
-		m_scale.y = 1.5f;
-	}
+}
+
+bool Hitbox::init(vec2 tr, vec2 sc, float rot, Renderable* parent, Texture* parent_texture)
+{
+	m_matrix = identity();
+	m_matrix = mat_translate(m_matrix, tr);
+	m_matrix = mat_scale(m_matrix, sc);
+	m_matrix = mat_rotate(m_matrix, rot);
+	m_parent = parent; 
+	
+	m_color[0] = 1.0f;
+	m_color[1] = 1.0f;
+	m_color[2] = 1.0f;
 	// The position corresponds to the center of the texture
-	float wr = center_beat_circle_texture.width * 0.5f;
-	float hr = center_beat_circle_texture.height * 0.5f;
+	float wr = parent_texture->width * 0.5f;
+	float hr = parent_texture->height * 0.5f;
 
 	TexturedVertex vertices[4];
 	vertices[0].position = { -wr, +hr, -0.01f };
 	vertices[0].texcoord = { 0.f, 1.f };
 	vertices[1].position = { +wr, +hr, -0.01f };
-	vertices[1].texcoord = { 1.f, 1.f,  };
+	vertices[1].texcoord = { 1.f, 1.f, };
 	vertices[2].position = { +wr, -hr, -0.01f };
 	vertices[2].texcoord = { 1.f, 0.f };
 	vertices[3].position = { -wr, -hr, -0.01f };
@@ -68,19 +60,10 @@ bool CenterBeatCircle::init(bool type)
 	if (!effect.load_from_file(shader_path("textured.vs.glsl"), shader_path("textured.fs.glsl")))
 		return false;
 
-	// Setting initial values,
-	// 1.0 would be as big as the original texture
-	m_position.x = -50;
-	m_position.y = 50;
-	beat_circle_type = type;
-
-
 	return true;
 }
 
-// Call if init() was successful
-// Releases all graphics resources
-void CenterBeatCircle::destroy()
+void Hitbox::destroy()
 {
 	glDeleteBuffers(1, &mesh.vbo);
 	glDeleteBuffers(1, &mesh.ibo);
@@ -91,33 +74,14 @@ void CenterBeatCircle::destroy()
 	glDeleteShader(effect.program);
 }
 
-void CenterBeatCircle::update(float ms)
+void Hitbox::draw(const mat3& projection)
 {
-	// Move fish along -X based on how much time has passed, this is to (partially) avoid
-	// having entities move at different speed based on the machine.
-	// float step = SPEED * (ms / 1);
-	
-	// m_position.x += m_movement_dir.x*step;
-	// m_position.y += m_movement_dir.y*step;
-	// m_scale.x -= ms/1000;
-	// m_scale.y -= ms/1000;
-}
-
-void CenterBeatCircle::set_scale(vec2 scale) {
-	m_scale = scale;
-}
-
-void CenterBeatCircle::draw(const mat3& projection)
-{
-	
-	// Transformation code, see Rendering and Transformation in the template specification for more info
-	// Incrementally updates transformation matrix, thus ORDER IS IMPORTANT
-	// vec2 rotated = rotate(m_position, -player->get_rotation());
-	// vec2 final_pos = rotated+player->get_position();
-	//printf("BC.x=%f,BC.y=%f\n", final_pos.x, final_pos.y);
+	Sprite* parent = (Sprite*)m_parent;
 	transform_begin();
-	transform_translate(player->get_position());
-	transform_scale(m_scale);
+	transform_translate(parent->get_position());
+	transform_scale(parent->get_scale());
+	transform_rotate(parent->get_rotation());
+	transform = mul(transform, m_matrix);
 	transform_end();
 
 	// Setting shaders
@@ -147,38 +111,35 @@ void CenterBeatCircle::draw(const mat3& projection)
 
 	// Enabling and binding texture to slot 0
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, center_beat_circle_texture.id);
+	glBindTexture(GL_TEXTURE_2D, m_texture->id);
 
 	// Setting uniform values to the currently bound program
 	glUniformMatrix3fv(transform_uloc, 1, GL_FALSE, (float*)&transform);
-	float color[] = { 1.f, 1.f, 1.f };
-	glUniform3fv(color_uloc, 1, color);
+	glUniform3fv(color_uloc, 1, m_color);
 	glUniformMatrix3fv(projection_uloc, 1, GL_FALSE, (float*)&projection);
 
 	// Drawing!
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, nullptr);
-	
 }
 
-vec2 CenterBeatCircle::get_position()const
+mat3 Hitbox::get_matrix()const
 {
-	return m_position;
+	return m_matrix;
 }
 
-void CenterBeatCircle::set_position(vec2 position)
+void Hitbox::set_matrix(mat3 matrix)
 {
-	
-	m_position = position;
+	m_matrix = matrix;
 }
 
-void CenterBeatCircle::set_rotation(float angle)
+void Hitbox::load_hitbox_texture()
 {
-	m_rotation = angle;
-}
-
-// Returns the local bounding coordinates scaled by the current size of the fish 
-vec2 CenterBeatCircle::get_bounding_box()const
-{
-	// fabs is to avoid negative scale due to the facing direction
-	return { std::fabs(m_scale.x) * center_beat_circle_texture.width, std::fabs(m_scale.y) * center_beat_circle_texture.height };
+	Texture* texture = new Texture();
+	// TODO: fix the macro
+	auto texture_path = textures_path("hitbox.png");
+	if (!texture->load_from_file(texture_path))
+	{
+		fprintf(stderr, "Failed to load texture!");
+	}
+	m_texture = texture;
 }

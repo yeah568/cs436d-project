@@ -29,45 +29,6 @@ void Player::update(float ms)
 {
 	const float SALMON_SPEED = 200.f;
 	float step = SALMON_SPEED * (ms / 1000);
-  /*
-	if (exploding_timer > 0 && exploding_timer < 1.25) {
-		m_scale.y = 0.4f;
-		player_texture.load_from_file(textures_path("explosion_1.png"));
-		exploding_timer += ms/1000;
-	}
-	if (exploding_timer > 1.25 && exploding_timer < 1.5) {
-		player_texture.load_from_file(textures_path("explosion_2.png"));
-		exploding_timer += ms/1000;
-	}
-	if (exploding_timer > 1.5 && exploding_timer < 1.75) {
-		player_texture.load_from_file(textures_path("explosion_3.png"));
-		exploding_timer += ms/1000;
-	}
-	if (exploding_timer > 1.75 && exploding_timer < 2) {
-		player_texture.load_from_file(textures_path("explosion_4.png"));
-		exploding_timer += ms/1000;
-	}
-	if (exploding_timer > 2 && exploding_timer < 2.25) {
-		player_texture.load_from_file(textures_path("explosion_5.png"));
-		exploding_timer += ms / 1000;
-	}
-	if (exploding_timer > 2.25 && exploding_timer < 2.5) {
-		player_texture.load_from_file(textures_path("explosion_6.png"));
-		exploding_timer += ms / 1000;
-	}
-	if (exploding_timer > 2.5 && exploding_timer < 3) {
-		player_texture.load_from_file(textures_path("explosion_7.png"));
-		exploding_timer += ms / 1000;
-	}
-	if (exploding_timer > 3 && exploding_timer <3.5) {
-		player_texture.load_from_file(textures_path("explosion_8.png"));
-		exploding_timer += ms / 1000;
-	}
-	if (exploding_timer > 3.5 && exploding_timer < 4) {
-		player_texture.load_from_file(textures_path("explosion_9.png"));
-		exploding_timer += ms / 1000;
-	}
-  */
 	if (m_is_alive)
 	{
 		// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -91,43 +52,18 @@ void Player::update(float ms)
 		m_scale.x = -0.5f;
 	}
 	else {
-		m_scale.x *= 0.5;
+		m_scale.x *= 0.9;
 	}
 
 	if (abs(m_scale.y * 0.95) < 1.f) {
 		m_scale.y = 0.5f;
 	}
 	else {
-		m_scale.y *= 0.5;
+		m_scale.y *= 0.9;
 	}
 
 	if (m_light_up_countdown_ms > 0.f)
 		m_light_up_countdown_ms -= ms;
-}
-
-// Simple bounding box collision check, 
-
-
-bool Player::collides_with(const LittleEnemy& little_enemy)
-{
-	bbox player_bbox = get_bounding_box();
-	bbox enemy_bbox = little_enemy.get_bounding_box();
-	return enemy_bbox.min_x <= player_bbox.max_x && enemy_bbox.max_x >= player_bbox.min_x &&
-		enemy_bbox.min_y <= player_bbox.max_y && enemy_bbox.max_y >= player_bbox.min_y;
-}
-
-bool Player::collides_with(const Bullet& bullet)
-{
-	/*float dx = m_position.x - bullet.get_position().x;
-	float dy = m_position.y - bullet.get_position().y;
-	float d_sq = dx * dx + dy * dy;
-	float other_r = std::max(bullet.get_bounding_box().x, bullet.get_bounding_box().y);
-	float my_r = std::max(m_scale.x, m_scale.y);
-	float r = std::max(other_r, my_r);
-	r *= 0.6f;
-	if (d_sq < r * r)
-		return true;*/
-	return false;
 }
 
 void Player::move(vec2 off)
