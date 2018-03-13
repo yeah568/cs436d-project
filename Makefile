@@ -11,8 +11,8 @@ ifeq ($(OS), Darwin)
 else ifeq ($(OS), Linux)
     CXXFLAGS = -Iext/gl3w -Iext/fmod-lin/inc -std=c++11 -Wall -pedantic -DENABLE_SOUND -D LINUX -g
     LIB = -lglfw -lGL -lm -lXrandr -lXi -lX11 -lXxf86vm -lpthread -ldl -lSDL2 -lSDL2_mixer -lfmod -lfmodL
-	LIBPATH = -Lext/fmod-lin/lib
-	LDFLAGS = "-Wl,-rpath,./ext/fmod-lin/lib"
+	LIBPATH = -Lext/fmod-lin/lib/x86_64
+	LDFLAGS = "-Wl,-rpath,./ext/fmod-lin/lib/x86_64"
 else
     $(error Your OS $(OS) is not supported.) 
     exit 1
