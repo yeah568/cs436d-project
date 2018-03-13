@@ -159,7 +159,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>$(ProjectDir)\..\ext\glfw\include;$(ProjectDir)\..\ext\gl3w;$(ProjectDir)\..\ext\stb_image;$(ProjectDir)\..\ext\sdl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\ext\fmod-win\include;$(ProjectDir)\..\ext\glfw\include;$(ProjectDir)\..\ext\gl3w;$(ProjectDir)\..\ext\stb_image;$(ProjectDir)\..\ext\sdl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>Debug/</AssemblerListingLocation>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <CompileAs>CompileAsCpp</CompileAs>
@@ -176,10 +176,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;CMAKE_INTDIR=\"Debug\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir)\..\ext\glfw\include;$(ProjectDir)\..\ext\gl3w;$(ProjectDir)\..\ext\stb_image;$(ProjectDir)\..\ext\sdl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\ext\fmod-win\include;$(ProjectDir)\..\ext\glfw\include;$(ProjectDir)\..\ext\gl3w;$(ProjectDir)\..\ext\stb_image;$(ProjectDir)\..\ext\sdl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>$(ProjectDir)\..\ext\glfw\include;$(ProjectDir)\..\ext\gl3w;$(ProjectDir)\..\ext\stb_image;$(ProjectDir)\..\ext\sdl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\ext\fmod-win\include;$(ProjectDir)\..\ext\glfw\include;$(ProjectDir)\..\ext\gl3w;$(ProjectDir)\..\ext\stb_image;$(ProjectDir)\..\ext\sdl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -187,7 +187,7 @@
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
     <Link>
-      <AdditionalDependencies>OpenGL32.lib;..\ext\sdl\lib\SDL2-x86.lib;..\ext\sdl\lib\SDL2_mixer-x86.lib;..\ext\glfw\lib\glfw3dll-x86.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalDependencies>OpenGL32.lib;..\ext\fmod-win\lib\fmod_X86.lib;..\ext\fmod-win\lib\fmodL_X86.lib;..\ext\sdl\lib\SDL2-x86.lib;..\ext\sdl\lib\SDL2_mixer-x86.lib;..\ext\glfw\lib\glfw3dll-x86.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>%(AdditionalOptions) /machine:X86</AdditionalOptions>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -202,7 +202,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>$(ProjectDir)\..\ext\glfw\include;$(ProjectDir)\..\ext\gl3w;$(ProjectDir)\..\ext\stb_image;$(ProjectDir)\..\ext\sdl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\ext\fmod-win\include;$(ProjectDir)\..\ext\glfw\include;$(ProjectDir)\..\ext\gl3w;$(ProjectDir)\..\ext\stb_image;$(ProjectDir)\..\ext\sdl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>Debug/</AssemblerListingLocation>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <CompileAs>CompileAsCpp</CompileAs>
@@ -219,10 +219,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;CMAKE_INTDIR=\"Debug\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir)\..\ext\glfw\include;$(ProjectDir)\..\ext\gl3w;$(ProjectDir)\..\ext\stb_image;$(ProjectDir)\..\ext\sdl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\ext\fmod-win\include;$(ProjectDir)\..\ext\glfw\include;$(ProjectDir)\..\ext\gl3w;$(ProjectDir)\..\ext\stb_image;$(ProjectDir)\..\ext\sdl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>$(ProjectDir)\..\ext\glfw\include;$(ProjectDir)\..\ext\gl3w;$(ProjectDir)\..\ext\stb_image;$(ProjectDir)\..\ext\sdl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\ext\fmod-win\include;$(ProjectDir)\..\ext\glfw\include;$(ProjectDir)\..\ext\gl3w;$(ProjectDir)\..\ext\stb_image;$(ProjectDir)\..\ext\sdl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -230,7 +230,7 @@
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
     <Link>
-      <AdditionalDependencies>OpenGL32.lib;..\ext\sdl\lib\SDL2-x64.lib;..\ext\sdl\lib\SDL2_mixer-x64.lib;..\ext\glfw\lib\glfw3dll-x64.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalDependencies>OpenGL32.lib;..\ext\fmod-win\lib\fmod_X64.lib;..\ext\fmod-win\lib\fmodL_X64.lib;..\ext\sdl\lib\SDL2-x64.lib;..\ext\sdl\lib\SDL2_mixer-x64.lib;..\ext\glfw\lib\glfw3dll-x64.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>%(AdditionalOptions)</AdditionalOptions>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -245,7 +245,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>$(ProjectDir)\..\ext\glfw\include;$(ProjectDir)\..\ext\gl3w;$(ProjectDir)\..\ext\stb_image;$(ProjectDir)\..\ext\sdl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\ext\fmod-win\include;$(ProjectDir)\..\ext\glfw\include;$(ProjectDir)\..\ext\gl3w;$(ProjectDir)\..\ext\stb_image;$(ProjectDir)\..\ext\sdl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>Release/</AssemblerListingLocation>
       <CompileAs>CompileAsCpp</CompileAs>
       <ExceptionHandling>Sync</ExceptionHandling>
@@ -262,10 +262,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;_CRT_SECURE_NO_WARNINGS;CMAKE_INTDIR=\"Release\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir)\..\ext\glfw\include;$(ProjectDir)\..\ext\gl3w;$(ProjectDir)\..\ext\stb_image;$(ProjectDir)\..\ext\sdl\include;%(AdditionalIncludeDirectories))</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\ext\fmod-win\include;$(ProjectDir)\..\ext\glfw\include;$(ProjectDir)\..\ext\gl3w;$(ProjectDir)\..\ext\stb_image;$(ProjectDir)\..\ext\sdl\include;%(AdditionalIncludeDirectories))</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>$(ProjectDir)\..\ext\glfw\include;$(ProjectDir)\..\ext\gl3w;$(ProjectDir)\..\ext\stb_image;$(ProjectDir)\..\ext\sdl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\ext\fmod-win\include;$(ProjectDir)\..\ext\glfw\include;$(ProjectDir)\..\ext\gl3w;$(ProjectDir)\..\ext\stb_image;$(ProjectDir)\..\ext\sdl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -273,7 +273,7 @@
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
     <Link>
-      <AdditionalDependencies>OpenGL32.lib;..\ext\sdl\lib\SDL2-x86.lib;..\ext\sdl\lib\SDL2_mixer-x86.lib;..\ext\glfw\lib\glfw3dll-x86.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalDependencies>OpenGL32.lib;..\ext\fmod-win\lib\fmod_X86.lib;..\ext\fmod-win\lib\fmodL_X86.lib;..\ext\sdl\lib\SDL2-x86.lib;..\ext\sdl\lib\SDL2_mixer-x86.lib;..\ext\glfw\lib\glfw3dll-x86.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>%(AdditionalOptions) /machine:X86</AdditionalOptions>
       <GenerateDebugInformation>false</GenerateDebugInformation>
@@ -288,7 +288,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>$(ProjectDir)\..\ext\glfw\include;$(ProjectDir)\..\ext\gl3w;$(ProjectDir)\..\ext\stb_image;$(ProjectDir)\..\ext\sdl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\ext\fmod-win\include;$(ProjectDir)\..\ext\glfw\include;$(ProjectDir)\..\ext\gl3w;$(ProjectDir)\..\ext\stb_image;$(ProjectDir)\..\ext\sdl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>Release/</AssemblerListingLocation>
       <CompileAs>CompileAsCpp</CompileAs>
       <ExceptionHandling>Sync</ExceptionHandling>
@@ -305,10 +305,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;_CRT_SECURE_NO_WARNINGS;CMAKE_INTDIR=\"Release\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir)\..\ext\glfw\include;$(ProjectDir)\..\ext\gl3w;$(ProjectDir)\..\ext\stb_image;$(ProjectDir)\..\ext\sdl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\ext\fmod-win\include;$(ProjectDir)\..\ext\glfw\include;$(ProjectDir)\..\ext\gl3w;$(ProjectDir)\..\ext\stb_image;$(ProjectDir)\..\ext\sdl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>$(ProjectDir)\..\ext\glfw\include;$(ProjectDir)\..\ext\gl3w;$(ProjectDir)\..\ext\stb_image;$(ProjectDir)\..\ext\sdl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\ext\fmod-win\include;$(ProjectDir)\..\ext\glfw\include;$(ProjectDir)\..\ext\gl3w;$(ProjectDir)\..\ext\stb_image;$(ProjectDir)\..\ext\sdl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -316,7 +316,7 @@
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
     <Link>
-      <AdditionalDependencies>OpenGL32.lib;..\ext\sdl\lib\SDL2-x64.lib;..\ext\sdl\lib\SDL2_mixer-x64.lib;..\ext\glfw\lib\glfw3dll-x64.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalDependencies>OpenGL32.lib;..\ext\fmod-win\lib\fmod_X64.lib;..\ext\fmod-win\lib\fmodL_X64.lib;..\ext\sdl\lib\SDL2-x64.lib;..\ext\sdl\lib\SDL2_mixer-x64.lib;..\ext\glfw\lib\glfw3dll-x64.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>%(AdditionalOptions)</AdditionalOptions>
       <GenerateDebugInformation>false</GenerateDebugInformation>
@@ -331,7 +331,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>$(ProjectDir)\..\ext\glfw\include;$(ProjectDir)\..\ext\gl3w;$(ProjectDir)\..\ext\stb_image;$(ProjectDir)\..\ext\sdl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\ext\fmod-win\include;$(ProjectDir)\..\ext\glfw\include;$(ProjectDir)\..\ext\gl3w;$(ProjectDir)\..\ext\stb_image;$(ProjectDir)\..\ext\sdl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>MinSizeRel/</AssemblerListingLocation>
       <CompileAs>CompileAsCpp</CompileAs>
       <ExceptionHandling>Sync</ExceptionHandling>
@@ -348,10 +348,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;_CRT_SECURE_NO_WARNINGS;CMAKE_INTDIR=\"MinSizeRel\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir)\..\ext\glfw\include;$(ProjectDir)\..\ext\gl3w;$(ProjectDir)\..\ext\stb_image;$(ProjectDir)\..\ext\sdl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\ext\fmod-win\include;$(ProjectDir)\..\ext\glfw\include;$(ProjectDir)\..\ext\gl3w;$(ProjectDir)\..\ext\stb_image;$(ProjectDir)\..\ext\sdl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>$(ProjectDir)\..\ext\glfw\include;$(ProjectDir)\..\ext\gl3w;$(ProjectDir)\..\ext\stb_image;$(ProjectDir)\..\ext\sdl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\ext\fmod-win\include;$(ProjectDir)\..\ext\glfw\include;$(ProjectDir)\..\ext\gl3w;$(ProjectDir)\..\ext\stb_image;$(ProjectDir)\..\ext\sdl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -359,7 +359,7 @@
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
     <Link>
-      <AdditionalDependencies>OpenGL32.lib;..\ext\sdl\lib\SDL2-x86.lib;..\ext\sdl\lib\SDL2_mixer-x86.lib;..\ext\glfw\lib\glfw3dll-x86.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalDependencies>OpenGL32.lib;..\ext\fmod-win\lib\fmod_X86.lib;..\ext\fmod-win\lib\fmodL_X86.lib;..\ext\sdl\lib\SDL2-x86.lib;..\ext\sdl\lib\SDL2_mixer-x86.lib;..\ext\glfw\lib\glfw3dll-x86.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>%(AdditionalOptions) /machine:X86</AdditionalOptions>
       <GenerateDebugInformation>false</GenerateDebugInformation>
@@ -374,7 +374,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>$(ProjectDir)\..\ext\glfw\include;$(ProjectDir)\..\ext\gl3w;$(ProjectDir)\..\ext\stb_image;$(ProjectDir)\..\ext\sdl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\ext\fmod-win\include;$(ProjectDir)\..\ext\glfw\include;$(ProjectDir)\..\ext\gl3w;$(ProjectDir)\..\ext\stb_image;$(ProjectDir)\..\ext\sdl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>MinSizeRel/</AssemblerListingLocation>
       <CompileAs>CompileAsCpp</CompileAs>
       <ExceptionHandling>Sync</ExceptionHandling>
@@ -391,10 +391,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;_CRT_SECURE_NO_WARNINGS;CMAKE_INTDIR=\"MinSizeRel\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir)\..\ext\glfw\include;$(ProjectDir)\..\ext\gl3w;$(ProjectDir)\..\ext\stb_image;$(ProjectDir)\..\ext\sdl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\ext\fmod-win\include;$(ProjectDir)\..\ext\glfw\include;$(ProjectDir)\..\ext\gl3w;$(ProjectDir)\..\ext\stb_image;$(ProjectDir)\..\ext\sdl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>$(ProjectDir)\..\ext\glfw\include;$(ProjectDir)\..\ext\gl3w;$(ProjectDir)\..\ext\stb_image;$(ProjectDir)\..\ext\sdl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\ext\fmod-win\include;$(ProjectDir)\..\ext\glfw\include;$(ProjectDir)\..\ext\gl3w;$(ProjectDir)\..\ext\stb_image;$(ProjectDir)\..\ext\sdl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -402,7 +402,7 @@
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
     <Link>
-      <AdditionalDependencies>OpenGL32.lib;..\ext\sdl\lib\SDL2-x64.lib;..\ext\sdl\lib\SDL2_mixer-x64.lib;..\ext\glfw\lib\glfw3dll-x64.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalDependencies>OpenGL32.lib;..\ext\fmod-win\lib\fmod_X64.lib;..\ext\fmod-win\lib\fmodL_X64.lib;..\ext\sdl\lib\SDL2-x64.lib;..\ext\sdl\lib\SDL2_mixer-x64.lib;..\ext\glfw\lib\glfw3dll-x64.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>%(AdditionalOptions)</AdditionalOptions>
       <GenerateDebugInformation>false</GenerateDebugInformation>
@@ -417,7 +417,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>$(ProjectDir)\..\ext\glfw\include;$(ProjectDir)\..\ext\gl3w;$(ProjectDir)\..\ext\stb_image;$(ProjectDir)\..\ext\sdl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\ext\fmod-win\include;$(ProjectDir)\..\ext\glfw\include;$(ProjectDir)\..\ext\gl3w;$(ProjectDir)\..\ext\stb_image;$(ProjectDir)\..\ext\sdl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>RelWithDebInfo/</AssemblerListingLocation>
       <CompileAs>CompileAsCpp</CompileAs>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -433,7 +433,7 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;_CRT_SECURE_NO_WARNINGS;CMAKE_INTDIR=\"RelWithDebInfo\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir)\..\ext\glfw\include;$(ProjectDir)\..\ext\gl3w;$(ProjectDir)\..\ext\stb_image;$(ProjectDir)\..\ext\sdl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\ext\fmod-win\include;$(ProjectDir)\..\ext\glfw\include;$(ProjectDir)\..\ext\gl3w;$(ProjectDir)\..\ext\stb_image;$(ProjectDir)\..\ext\sdl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
       <AdditionalIncludeDirectories>$(ProjectDir)\..\ext\glfw\include;$(ProjectDir)\..\ext\gl3w;$(ProjectDir)\..\ext\stb_image;$(ProjectDir)\..\ext\sdl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -444,7 +444,7 @@
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
     <Link>
-      <AdditionalDependencies>OpenGL32.lib;..\ext\sdl\lib\SDL2-x86.lib;..\ext\sdl\lib\SDL2_mixer-x86.lib;..\ext\glfw\lib\glfw3dll-x86.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalDependencies>OpenGL32.lib;..\ext\fmod-win\lib\fmod_X86.lib;..\ext\fmod-win\lib\fmodL_X86.lib;..\ext\sdl\lib\SDL2-x86.lib;..\ext\sdl\lib\SDL2_mixer-x86.lib;..\ext\glfw\lib\glfw3dll-x86.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>%(AdditionalOptions) /machine:X86</AdditionalOptions>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -459,7 +459,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>$(ProjectDir)\..\ext\glfw\include;$(ProjectDir)\..\ext\gl3w;$(ProjectDir)\..\ext\stb_image;$(ProjectDir)\..\ext\sdl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\ext\fmod-win\include;$(ProjectDir)\..\ext\glfw\include;$(ProjectDir)\..\ext\gl3w;$(ProjectDir)\..\ext\stb_image;$(ProjectDir)\..\ext\sdl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>RelWithDebInfo/</AssemblerListingLocation>
       <CompileAs>CompileAsCpp</CompileAs>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -475,10 +475,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;_CRT_SECURE_NO_WARNINGS;CMAKE_INTDIR=\"RelWithDebInfo\";%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir)\..\ext\glfw\include;$(ProjectDir)\..\ext\gl3w;$(ProjectDir)\..\ext\stb_image;$(ProjectDir)\..\ext\sdl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\ext\fmod-win\include;$(ProjectDir)\..\ext\glfw\include;$(ProjectDir)\..\ext\gl3w;$(ProjectDir)\..\ext\stb_image;$(ProjectDir)\..\ext\sdl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>$(ProjectDir)\..\ext\glfw\include;$(ProjectDir)\..\ext\gl3w;$(ProjectDir)\..\ext\stb_image;$(ProjectDir)\..\ext\sdl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\ext\fmod-win\include;$(ProjectDir)\..\ext\glfw\include;$(ProjectDir)\..\ext\gl3w;$(ProjectDir)\..\ext\stb_image;$(ProjectDir)\..\ext\sdl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -486,7 +486,7 @@
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
     <Link>
-      <AdditionalDependencies>OpenGL32.lib;..\ext\sdl\lib\SDL2-x64.lib;..\ext\sdl\lib\SDL2_mixer-x64.lib;..\ext\glfw\lib\glfw3dll-x64.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalDependencies>OpenGL32.lib;..\ext\fmod-win\lib\fmod_X64.lib;..\ext\fmod-win\lib\fmodL_X64.lib;..\ext\sdl\lib\SDL2-x64.lib;..\ext\sdl\lib\SDL2_mixer-x64.lib;..\ext\glfw\lib\glfw3dll-x64.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>%(AdditionalOptions)</AdditionalOptions>
       <GenerateDebugInformation>true</GenerateDebugInformation>

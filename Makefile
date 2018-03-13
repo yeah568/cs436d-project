@@ -9,8 +9,10 @@ ifeq ($(OS), Darwin)
 	LIBPATH = -Lext/fmod/lib
 	LDFLAGS = "-Wl,-rpath,./ext/fmod/lib"
 else ifeq ($(OS), Linux)
-    CXXFLAGS = -Iext/gl3w -std=c++11 -Wall -pedantic -DENABLE_SOUND -D LINUX -g
-    LIB = -lglfw -lGL -lm -lXrandr -lXi -lX11 -lXxf86vm -lpthread -ldl -lSDL2 -lSDL2_mixer
+    CXXFLAGS = -Iext/gl3w -Iext/fmod-lin/inc -std=c++11 -Wall -pedantic -DENABLE_SOUND -D LINUX -g
+    LIB = -lglfw -lGL -lm -lXrandr -lXi -lX11 -lXxf86vm -lpthread -ldl -lSDL2 -lSDL2_mixer -lfmod -lfmodL
+	LIBPATH = -Lext/fmod-lin/lib
+	LDFLAGS = "-Wl,-rpath,./ext/fmod-lin/lib"
 else
     $(error Your OS $(OS) is not supported.) 
     exit 1
