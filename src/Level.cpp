@@ -103,8 +103,9 @@ bool Level::init(std::string song_path1, std::string osu_path, float boss_health
         printf("FMOD error! (%d) initialization of FMOD system failure\n", result);
         return false;
     }
-
-
+    music_channel = nullptr;
+    channel = nullptr;
+    isPlaying = new bool(false);
     //can turn on looping for songs?
     result = system->createSound(song_path1.c_str(), FMOD_DEFAULT, 0,
                                  &music_level);
@@ -289,7 +290,7 @@ void Level::handle_beat(float remaining_offset, Beat *curBeat, vec2 screen) {
 
 bool Level::update(float elapsed_ms)
 {
-  if (FMOD_OK != music_channel->isPlaying(isPlaying)) {
+  if ( music_channel == nullptr || FMOD_OK != music_channel->isPlaying(isPlaying)) {
       system->playSound(music_level, 0, false, &music_channel);
 	}
 	else {
