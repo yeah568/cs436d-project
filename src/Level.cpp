@@ -396,8 +396,9 @@ bool Level::update(float elapsed_ms)
 		particleEmitter->update(elapsed_ms);
 	}
 
-	for (auto& pe_it = m_particle_emitters.begin(); pe_it != m_particle_emitters.end();) {
+	for (auto pe_it = m_particle_emitters.begin(); pe_it != m_particle_emitters.end();) {
 		if ((*pe_it)->get_alive_particles() == 0) {
+			delete *pe_it;
 			pe_it = m_particle_emitters.erase(pe_it);
 		}
 		else {
