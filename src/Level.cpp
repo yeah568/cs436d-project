@@ -76,7 +76,7 @@ Level::Level(int width, int height)  : m_points(0), m_next_little_enemies_spawn(
 	}
 
 bool Level::initialize_fmod(std::string song_path1) {
-	FMOD_RESULT result = FMOD::System_Create(&system);      // Create the main system object.
+	FMOD_RESULT result = FMOD::System_Create(&system);      // Create the main system object
     if (result != FMOD_OK) {
         printf("FMOD error! (%d) creation of FMOD system failure\n", result);
         return false;
@@ -88,7 +88,7 @@ bool Level::initialize_fmod(std::string song_path1) {
     }
     music_channel = nullptr;
     channel = nullptr;
-    isPlaying = new bool(false);
+    isPlaying = std::make_shared<bool>(false);
     //can turn on looping for songs?
     result = system->createSound(song_path1.c_str(), FMOD_DEFAULT, 0,
                                  &music_level);
@@ -159,7 +159,9 @@ bool Level::init(std::string song_path1, std::string osu_path, float boss_health
 
 	m_current_speed = 1.f;
 
-    m_background.init();
+    if (!m_background.init()) {
+		return false;
+	}
     healthbar.init(5);
 
     healthbar.set_scale({0.6f, 0.7f});
@@ -272,7 +274,7 @@ void Level::handle_beat(float remaining_offset, Beat& curBeat, vec2 screen) {
 
 bool Level::update(float elapsed_ms)
 {
-	if ( music_channel == nullptr || FMOD_OK != music_channel->isPlaying(isPlaying)) {
+	if ( music_channel == nullptr || FMOD_OK != music_channel->isPlaying(isPlaying.get())) {
 		system->playSound(music_level, 0, false, &music_channel);
 	} else {
 		m_current_time += elapsed_ms;

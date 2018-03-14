@@ -21,8 +21,8 @@
 // external
 //#include "fmod.hpp"
 //#include "fmod_errors.h"
-#include "../ext/fmod/inc/fmod.hpp"
-#include "../ext/fmod/inc/fmod_errors.h"
+#include "fmod.hpp"
+#include "fmod_errors.h"
 
 // stlib
 #include <vector>
@@ -128,7 +128,7 @@ protected:
     FMOD::Sound *sound_perfect_timing;
     FMOD::Sound *sound_good_timing;
     FMOD::Sound *sound_bad_timing;
-    bool *isPlaying;
+    std::shared_ptr<bool> isPlaying;
 
 	BossHealthBar m_boss_health_bar;
 	HealthBar healthbar;
