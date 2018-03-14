@@ -1,5 +1,8 @@
 #pragma once
 
+#ifndef Enemy_H
+#define Enemy_H
+
 #include "common.hpp"
 #include "Bullet.hpp"
 #include "Player.hpp"
@@ -21,7 +24,7 @@ class Player;
 class LittleEnemy : public Sprite {
 
 public:
-	static Player* player;
+	static std::shared_ptr<Player> player;
 
 	LittleEnemy();
 
@@ -33,3 +36,5 @@ public:
 
 private:
 };
+
+#endif

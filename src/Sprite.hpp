@@ -1,16 +1,21 @@
 #pragma once
 
+#ifndef Sprite_H
+#define Sprite_H
+
 #include "common.hpp"
 #include "Hitbox.hpp"
 
 #include <vector>
 #include <array>
 
+class Hitbox;
+
 class Sprite : public Renderable
 {
 public:
-  Sprite(Texture* texture);
-  Sprite(const vec2& position, const vec2& scale, float rotation, Texture* texture);
+  Sprite(std::shared_ptr<Texture> texture);
+  Sprite(const vec2& position, const vec2& scale, float rotation, std::shared_ptr<Texture> texture);
 
   virtual bool init();
   void destroy();
@@ -30,7 +35,7 @@ public:
 
   bbox get_hitbox_bbox(std::vector<std::array<vec2, 4>> hitboxes) const;
 
-  void set_texture(Texture* texture);
+  void set_texture(std::shared_ptr<Texture> texture);
 
   void set_color(float r, float g, float b) {m_color[0]=r;m_color[1]=g;m_color[2]=b;};
 
@@ -38,7 +43,7 @@ public:
 
   std::array<vec2, 4> get_vertices() const;
 
-  std::vector<Hitbox*> get_hitboxes() const;
+  std::vector<std::shared_ptr<Hitbox>> get_hitboxes() const;
 
   std::vector<std::array<vec2, 4>> get_hitbox_points() const;
 
@@ -52,8 +57,10 @@ protected:
   vec2 m_position;
   vec2 m_scale;
   float m_rotation; 
-  Texture* m_texture;
+  std::shared_ptr<Texture> m_texture;
   float m_color[3];
   // Hitboxes represented as a transformation vector from the sprite
-  std::vector<Hitbox*> m_hitboxes;
+  std::vector<std::shared_ptr<Hitbox>> m_hitboxes;
 };
+
+#endif

@@ -1,5 +1,8 @@
 #pragma once
 
+#ifndef Bullet_H
+#define Bullet_H
+
 #include "common.hpp"
 #include <vector>
 #include "Sprite.hpp"
@@ -37,9 +40,6 @@ class PlayerBullet : public Bullet
 public:
 	PlayerBullet() : Bullet() {};
 
-	static Texture* type_1;
-	static Texture* type_2;
-
 	void addForce(force delta) {added_forces.emplace_back(delta);};
 
 	void update(float ms);
@@ -54,7 +54,8 @@ class EnemyBullet : public Bullet
 public:
 
 	EnemyBullet() : Bullet() {};
-	static Texture* texture;
 private:
 	
 };
+
+#endif

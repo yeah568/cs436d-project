@@ -2,7 +2,7 @@
 #include "CenterBeatCircle.hpp"
 #include <cmath>
 
-Player* CenterBeatCircle::player;
+std::shared_ptr<Player> CenterBeatCircle::player;
 
 bool CenterBeatCircle::init(bool type)
 {

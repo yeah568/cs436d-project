@@ -60,7 +60,7 @@ private:
 	int m_points;
 
 	int levelCounter;
-	std::vector<Level*> levelList;
+	std::vector<std::shared_ptr<Level>> levelList;
 
 	// Window hjandle
 	GLFWwindow* m_window;

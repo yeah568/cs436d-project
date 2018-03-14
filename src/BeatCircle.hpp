@@ -6,7 +6,7 @@
 class BeatCircle : public Sprite
 {
 public:
-  BeatCircle(Player* player, float speed, float abs_offset);
+  BeatCircle(float speed, float abs_offset);
 	
 	void update(float ms);
 
@@ -16,9 +16,10 @@ public:
   int get_dir() const;
   const vec2& get_movement_dir() const;
   float get_offset() const;
+	static std::shared_ptr<Player> m_player;
 
 private:
-  Player* m_player;
+  //static Player& m_player;
 	float m_speed;
 	vec2 m_local_position; // local coordinates
 	int m_dir;

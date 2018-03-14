@@ -1,22 +1,21 @@
 #include "Hitbox.hpp"
 #include "Sprite.hpp"
 
-Texture* Hitbox::m_texture;
+std::shared_ptr<Texture> Hitbox::m_texture;
 
-Hitbox::Hitbox()
+Hitbox::Hitbox(Renderable* p) : m_parent(((Sprite*) p))
 {
 	if (!m_texture) {
 		load_hitbox_texture();
 	}
 }
 
-bool Hitbox::init(vec2 tr, vec2 sc, float rot, Renderable* parent, Texture* parent_texture)
+bool Hitbox::init(vec2 tr, vec2 sc, float rot, std::shared_ptr<Texture> parent_texture)
 {
 	m_matrix = identity();
 	m_matrix = mat_translate(m_matrix, tr);
 	m_matrix = mat_scale(m_matrix, sc);
 	m_matrix = mat_rotate(m_matrix, rot);
-	m_parent = parent; 
 	
 	m_color[0] = 1.0f;
 	m_color[1] = 1.0f;
@@ -76,7 +75,7 @@ void Hitbox::destroy()
 
 void Hitbox::draw(const mat3& projection)
 {
-	Sprite* parent = (Sprite*)m_parent;
+	std::shared_ptr<Sprite> parent = m_parent;
 	transform_begin();
 	transform_translate(parent->get_position());
 	transform_scale(parent->get_scale());
@@ -134,7 +133,7 @@ void Hitbox::set_matrix(mat3 matrix)
 
 void Hitbox::load_hitbox_texture()
 {
-	Texture* texture = new Texture();
+	std::shared_ptr<Texture> texture(new Texture());
 	// TODO: fix the macro
 	auto texture_path = textures_path("hitbox.png");
 	if (!texture->load_from_file(texture_path))

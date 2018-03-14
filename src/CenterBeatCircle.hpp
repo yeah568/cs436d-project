@@ -8,7 +8,7 @@ class CenterBeatCircle : public Renderable
 	
 
 public:
-	static Player* player;
+	static std::shared_ptr<Player> player;
 	// Creates all the associated render resources and default transform
 	bool init(bool type);
 

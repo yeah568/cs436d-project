@@ -2,11 +2,11 @@
 #include "Sprite.hpp"
 #include <cfloat>
 
-Sprite::Sprite(Texture* texture)
+Sprite::Sprite(std::shared_ptr<Texture> texture)
   : m_texture(texture) {
 }
 
-Sprite::Sprite(const vec2& position, const vec2& scale, float rotation, Texture* texture)
+Sprite::Sprite(const vec2& position, const vec2& scale, float rotation, std::shared_ptr<Texture> texture)
   : m_position(position),
     m_scale(scale),
     m_rotation(rotation),
@@ -233,7 +233,7 @@ bbox Sprite::get_hitbox_bbox(std::vector<std::array<vec2, 4>> hitboxes) const
 	return { min_x, min_y, max_x, max_y };
 }
 
-void Sprite::set_texture(Texture* texture)
+void Sprite::set_texture(std::shared_ptr<Texture> texture)
 {
   m_texture = texture;
 }
@@ -257,7 +257,7 @@ bool Sprite::collides_with(const Sprite& other)
 	return false;
 }
 
-std::vector<Hitbox*> Sprite::get_hitboxes() const
+std::vector<std::shared_ptr<Hitbox>> Sprite::get_hitboxes() const
 {
 	return m_hitboxes;
 }

@@ -1,4 +1,8 @@
 #pragma once
+
+#ifndef Particle_H
+#define Particle_H
+
 #include "common.hpp"
 
 class Particle : public Renderable
@@ -21,3 +25,4 @@ private:
 	float m_lifespan;
 };
 
+#endif

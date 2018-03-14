@@ -6,9 +6,11 @@
 class Background : public Renderable
 {
 	// Shared between all turtles, no need to load one for each instance
-	static Texture background_texture;
+	
 
 public:
+
+	Texture background_texture;
 	// Creates all the associated render resources and default transform
 	bool init();
 

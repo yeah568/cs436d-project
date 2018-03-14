@@ -13,9 +13,9 @@ class Boss;
 class Structure : public Sprite {
 
 public:
-	static Player* player;
-	static std::vector<PlayerBullet>* player_bullets;
-	static std::vector<EnemyBullet>* enemy_bullets;
+	static std::shared_ptr<Player> player;
+	static std::shared_ptr<std::vector<PlayerBullet>> player_bullets;
+	static std::shared_ptr<std::vector<EnemyBullet>> enemy_bullets;
 
 	Structure();
 	
@@ -40,9 +40,9 @@ public:
 	//Level1(int width, int height) : Level(width, height) {};
 	//Healing_Structure(vec2 pos, vec2 scale, float rot, Texture* texture) : Sprite(pos, scale, rot, texture) {};
 	void update(float ms);
-	void set_boss(Boss* boss) {b = boss;};
+	static std::shared_ptr<Boss> b;
 private:
-	Boss* b;
+	
 	void heal_boss(float ms);
 };
 

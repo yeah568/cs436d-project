@@ -72,7 +72,7 @@ private:
 
 	//bool spawn_beat_circle(int dir, float pos, float speed);
 	
-	void handle_beat(float remaining_offset, Beat* curBeat, vec2 screen);
+	void handle_beat(float remaining_offset, Beat& curBeat, vec2 screen);
 
 	//bool spawn_enemy(vec2 position);
 
@@ -83,13 +83,13 @@ private:
 protected:
 
 	bool init(std::string song_path, std::string osu_path, float boss_health);
-	TextureManager* tm;
-	static Texture background_texture;
+	std::shared_ptr<TextureManager> tm;
+	Texture background_texture;
 	static bool show_hitboxes;
 	
 	static CenterBeatCircle blue_center_beat_circle;
 	static CenterBeatCircle orange_center_beat_circle;
-	static Player m_player;
+	static std::shared_ptr<Player> m_player;
 	unsigned int m_points;
 
 	const int perfect_timing = 40;
@@ -104,17 +104,17 @@ protected:
 	HealthBar healthbar;
 	int finished = 0;
 	SpriteSheet spritesheet;
-	BeatList* beatlist;
+	std::shared_ptr<BeatList> beatlist;
 	int beatPos = 0;
 	int lastBeat = 0;
 	int m_song;
 	GLFWwindow* window;
 	// Game entities
-	std::vector<PlayerBullet> m_bullets;
-	std::vector<EnemyBullet> m_enemy_bullets;
+	std::shared_ptr<std::vector<PlayerBullet>> m_bullets;
+	std::shared_ptr<std::vector<EnemyBullet>> m_enemy_bullets;
 	Background m_background;
 	vec2 screen;
-	std::vector<BeatCircle> m_beatcircles;
+	std::shared_ptr<std::vector<BeatCircle>> m_beatcircles;
 
 	float m_current_speed;
 	float m_next_little_enemies_spawn;
@@ -125,11 +125,11 @@ protected:
 	Mix_Chunk* m_player_dead_sound;
 	Mix_Chunk* m_player_eat_sound;
 	
-	std::vector <LittleEnemy> m_little_enemies;
-	std::vector<Structure*> m_structures;
-	Boss m_boss;
+	std::shared_ptr<std::vector <LittleEnemy>> m_little_enemies;
+	std::shared_ptr<std::vector<std::shared_ptr<Structure>>> m_structures;
+	std::shared_ptr<Boss> m_boss;
 
-	std::vector<ParticleEmitter*> m_particle_emitters;
+	std::vector<std::shared_ptr<ParticleEmitter>> m_particle_emitters;
 };
 
 class Level1 : public Level {

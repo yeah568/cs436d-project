@@ -1,14 +1,20 @@
 #pragma once
 
+#ifndef Hitbox_H
+#define Hitbox_H
+
 #include "common.hpp"
+#include "Sprite.hpp"
+
+class Sprite;
 
 class Hitbox : public Renderable
 {
 
 public:
-	Hitbox();
+	Hitbox(Renderable* p);
 	// Creates all the associated render resources and default transform
-	bool init(vec2 tr, vec2 sc, float rot, Renderable* parent, Texture* parent_texture);
+	bool init(vec2 tr, vec2 sc, float rot, std::shared_ptr<Texture> parent_texture);
 	void destroy();
 
 	void draw(const mat3& projection) override;
@@ -18,9 +24,11 @@ public:
 	void set_matrix(mat3 matrix);
 
 protected:
-	static Texture* m_texture;
+	static std::shared_ptr<Texture> m_texture;
 	static void load_hitbox_texture();
 	mat3 m_matrix;
-	Renderable* m_parent;
+	std::shared_ptr<Sprite> m_parent;
 	float m_color[3];
 };
+
+#endif

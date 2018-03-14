@@ -2,7 +2,7 @@
 
 #include <cmath>
 
-Player* LittleEnemy::player;
+std::shared_ptr<Player> LittleEnemy::player;
 
 LittleEnemy::LittleEnemy() : Sprite(nullptr) {
 	// Setting initial values, scale is negative to make it face the opposite way

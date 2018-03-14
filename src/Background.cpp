@@ -3,8 +3,6 @@
 
 #include <cmath>
 
-Texture Background::background_texture;
-
 bool Background::init()
 {
 	// Load shared texture

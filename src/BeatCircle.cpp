@@ -3,11 +3,12 @@
 
 #include <cmath>
 
-BeatCircle::BeatCircle(Player* player, float speed, float abs_offset)
+std::shared_ptr<Player> BeatCircle::m_player;
+
+BeatCircle::BeatCircle(float speed, float abs_offset)
   : Sprite(nullptr),
-    m_player(player),
     m_speed(speed),
-	m_abs_offset(abs_offset)
+		m_abs_offset(abs_offset)
 {
 	m_scale.x = 1.1f;
 	m_scale.y = 1.1f;

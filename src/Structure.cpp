@@ -4,9 +4,10 @@
 
 #include <cmath>
 
-std::vector<PlayerBullet>* Structure::player_bullets;
-std::vector<EnemyBullet>* Structure::enemy_bullets;
-Player* Structure::player;
+std::shared_ptr<std::vector<PlayerBullet>> Structure::player_bullets;
+std::shared_ptr<std::vector<EnemyBullet>> Structure::enemy_bullets;
+std::shared_ptr<Player> Structure::player;
+std::shared_ptr<Boss> Healing_Structure::b;
 
 Structure::Structure() : Sprite(nullptr) {
 	health = 5;
@@ -40,7 +41,7 @@ void Shooting_Structure::update(float ms) {
 
 void Shooting_Structure::shoot() {
 	// vec2 position, vec2 movement_dir, Texture* texture,
-	TextureManager* tm = TextureManager::get_instance();
+	std::shared_ptr<TextureManager> tm = TextureManager::get_instance();
 	spawn_enemy_bullet(m_position, player->get_position() - m_position, tm->get_texture("enemy0"), enemy_bullets);
 }
 

@@ -7,20 +7,20 @@ ParticleEmitter::ParticleEmitter(vec2 position, int max_particles, bool continuo
 {
 	m_max_particles = max_particles;
 	m_num_alive_particles = 0;
-	m_particle_pool = new Particle[max_particles];
+	//m_particle_pool.reserve(max_particles);
+	for (int i=0; i<max_particles; i++)
+		m_particle_pool.emplace_back(std::make_shared<Particle>());
 	m_position = position;
 	m_continuous_repeat = continuous_repeat;
 }
 
-ParticleEmitter::~ParticleEmitter() {
-	delete[] m_particle_pool;
-}
+ParticleEmitter::~ParticleEmitter() {}
 
 void ParticleEmitter::update(int elapsed_ms) {
 	int i;
 	for (i = 0; i < m_num_alive_particles; i++) {
-		m_particle_pool[i].update(elapsed_ms);
-		if (!m_particle_pool[i].is_alive) {
+		m_particle_pool[i]->update(elapsed_ms);
+		if (!m_particle_pool[i]->is_alive) {
 			// replace dead particle with new 
 			m_particle_pool[i] = m_particle_pool[--m_num_alive_particles];
 		}
@@ -45,7 +45,7 @@ bool ParticleEmitter::init()
 
 	int i = 0;
 	while (i < m_max_particles) {
-		m_particle_pool[i++].init(m_position, 500, rand() % 359, rand() % 3 + 3);
+		m_particle_pool[i++]->init(m_position, 500, rand() % 359, rand() % 3 + 3);
 		m_num_alive_particles++;
 	}
 
@@ -59,7 +59,7 @@ bool ParticleEmitter::init()
 
 void ParticleEmitter::draw(const mat3& projection) {
 	for (int i = 0; i < m_num_alive_particles; i++) {
-		m_particle_pool[i].draw(projection);
+		m_particle_pool[i]->draw(projection);
 	}
 }
 

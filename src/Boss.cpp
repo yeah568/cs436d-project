@@ -24,13 +24,14 @@ Boss::Boss()
 	structure_slots.right = nullptr;
 }
 
-bool Boss::init(float health, std::vector<LittleEnemy>* little_enemies, std::vector<Structure*>* structures) 
+bool Boss::init(float health, std::shared_ptr<std::vector<LittleEnemy>> little_enemies, std::shared_ptr<std::vector<std::shared_ptr<Structure>>> structures) 
 {
 	m_health = health;
 	total_health = health;
 	m_little_enemies = little_enemies;
-	Hitbox* hitbox = new Hitbox();
-	if (hitbox->init({ 0.f, 80.f }, { 0.8f, 0.6f }, 0.f, this, m_texture)) {
+	std::shared_ptr<Hitbox> hitbox = std::make_shared<Hitbox>(this); //new Hitbox();
+
+	if (hitbox->init({ 0.f, 80.f }, { 0.8f, 0.6f }, 0.f, m_texture)) {
 		m_hitboxes.push_back(hitbox);
 	}
 	m_structures = structures;
@@ -38,7 +39,7 @@ bool Boss::init(float health, std::vector<LittleEnemy>* little_enemies, std::vec
 	return Sprite::init();
 }
 
-void Boss::update(float ms, vec2 screen, std::vector<PlayerBullet>* bullets)
+void Boss::update(float ms, vec2 screen, std::shared_ptr<std::vector<PlayerBullet>> bullets)
 {
 	// Very naive bullet avoidance algorithm.
 	// On each update, get the highest up bullet (oldest on bullet array)
@@ -67,7 +68,7 @@ void Boss::update(float ms, vec2 screen, std::vector<PlayerBullet>* bullets)
 
 }
 
-void Boss::set_slot(vec2 screen, Structure* structure) {
+void Boss::set_slot(vec2 screen, std::shared_ptr<Structure> structure) {
     if (structure_slots.left == nullptr) {
         structure_slots.left = structure;
         structure->set_position({screen.x/4.f, 300.f});
@@ -80,7 +81,7 @@ void Boss::set_slot(vec2 screen, Structure* structure) {
     }
 }
 
-void Boss::on_beat(Beat* beat, vec2 screen) {
+void Boss::on_beat(Beat& beat, vec2 screen) {
 	int action;
 	if (m_structures->size() < 3)
 		action = rand() % 6;
@@ -95,29 +96,26 @@ void Boss::on_beat(Beat* beat, vec2 screen) {
 		move({ 10.f, 0.f });
 		break;
 	case 2: {
-		vec2 position = { ((64.f + (float)beat->x) / 640.f) * screen.x,
-			((48.f + (float)beat->y) / 480.f) * screen.y * 0.67f };
+		vec2 position = { ((64.f + (float)beat.x) / 640.f) * screen.x,
+			((48.f + (float)beat.y) / 480.f) * screen.y * 0.67f };
 		spawn_little_enemy(position, tm->get_texture("enemy0"), m_little_enemies);
 	}
 		break;
 	case 3: {
-		vec2 position = {screen.x/4.f*(1+m_structures->size()), 300.f};
-		spawn_structure(HEALING_STRUCTURE, this, position, tm->get_texture("enemy0"), m_structures);
-		Structure* just_added = m_structures->back();
+		spawn_structure(HEALING_STRUCTURE, tm->get_texture("enemy0"), m_structures);
+		std::shared_ptr<Structure> just_added = m_structures->back();
         set_slot(screen, just_added);
 	}
 		break;
 	case 4: {
-		vec2 position = {screen.x/4.f*(1+m_structures->size()), 300.f};
-		spawn_structure(BLACK_HOLE_STRUCTURE, this, position, tm->get_texture("enemy0"), m_structures);
-        Structure* just_added = m_structures->back();
+		spawn_structure(BLACK_HOLE_STRUCTURE, tm->get_texture("enemy0"), m_structures);
+        std::shared_ptr<Structure> just_added = m_structures->back();
         set_slot(screen, just_added);
 	}
 		break;
 	case 5: {
-		vec2 position = {screen.x/4.f*(1+m_structures->size()), 300.f};
-		spawn_structure(SHOOTING_STRUCTURE, this, position, tm->get_texture("enemy0"), m_structures);
-        Structure* just_added = m_structures->back();
+		spawn_structure(SHOOTING_STRUCTURE, tm->get_texture("enemy0"), m_structures);
+        std::shared_ptr<Structure> just_added = m_structures->back();
         set_slot(screen, just_added);
 	}
 		printf("Finished boss spawning structure\n");

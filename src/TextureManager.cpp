@@ -5,18 +5,20 @@
 #include <vector>
 #include <iostream>
 #include <sstream>
-TextureManager* TextureManager::instance = nullptr;
-TextureManager* TextureManager::get_instance() {
+std::shared_ptr<TextureManager> TextureManager::instance = nullptr;
+std::shared_ptr<TextureManager> TextureManager::get_instance() {
     if (instance == nullptr)
-        instance = new TextureManager();
+        instance = std::shared_ptr<TextureManager>(new TextureManager);
     return instance;
 }
 
-Texture* TextureManager::get_texture(std::string name) {
+std::shared_ptr<Texture> TextureManager::get_texture(std::string name) {
     if (instance != nullptr)
         return m_textures[name];
     return nullptr;
 }
+
+TextureManager::~TextureManager() {}
 
 void TextureManager::load_textures() {
   std::vector<std::string> texture_names{
@@ -33,7 +35,7 @@ void TextureManager::load_textures() {
 
   for (const auto& texture_name : texture_names)
   {
-    Texture* texture = new Texture(); 
+    std::shared_ptr<Texture> texture = std::make_shared<Texture>(); 
     // TODO: fix the macro
     auto texture_path = textures_path("") + texture_name + ".png";
     std::cout << texture_path << std::endl;

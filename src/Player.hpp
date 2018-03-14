@@ -1,13 +1,12 @@
 #pragma once
 
+#ifndef Player_H
+#define Player_H
+
 #include "common.hpp"
 #include "Enemy.hpp"
 #include "Sprite.hpp"
 #include <algorithm>
-
-class Turtle;
-class Bullet;
-class LittleEnemy;
 
 class Player : public Sprite
 {
@@ -59,3 +58,5 @@ private:
 	vec2 m_mouse;
 	float m_health;
 };
+
+#endif

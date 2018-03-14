@@ -17,9 +17,9 @@
 class Structure;
 
 struct StructureSlots {
-	Structure* left;
-	Structure* center;
-	Structure* right;
+	std::shared_ptr<Structure> left;
+	std::shared_ptr<Structure> center;
+	std::shared_ptr<Structure> right;
 };
 
 class Boss : public Sprite
@@ -28,13 +28,13 @@ class Boss : public Sprite
 public:
 	Boss();
 	// Creates all the associated render resources and default transform
-	bool init(float health, std::vector<LittleEnemy>* little_enemies,
-		std::vector<Structure*>* structures);
+	bool init(float health, std::shared_ptr<std::vector<LittleEnemy>> little_enemies,
+		std::shared_ptr<std::vector<std::shared_ptr<Structure>>> structures);
 
 	// ms represents the number of milliseconds elapsed from the previous update() call
-	void update(float ms, vec2 screen, std::vector<PlayerBullet>* bullets);
+	void update(float ms, vec2 screen, std::shared_ptr<std::vector<PlayerBullet>> bullets);
 
-	void on_beat(Beat* beat, vec2 screen);
+	void on_beat(Beat& beat, vec2 screen);
 
 	void move(vec2 off);
 
@@ -50,11 +50,11 @@ private:
 	float m_health;
 	float total_health;
 	
-	std::vector<LittleEnemy>* m_little_enemies;
-	std::vector<Structure*>* m_structures;
+	std::shared_ptr<std::vector<LittleEnemy>> m_little_enemies;
+	std::shared_ptr<std::vector<std::shared_ptr<Structure>>> m_structures;
 
-	TextureManager* tm;
+	std::shared_ptr<TextureManager> tm;
 
-	void set_slot(vec2 screen, Structure *structure);
+	void set_slot(vec2 screen, std::shared_ptr<Structure> structure);
 };
 #endif
