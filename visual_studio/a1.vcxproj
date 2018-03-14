@@ -187,7 +187,7 @@
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
     <Link>
-      <AdditionalDependencies>OpenGL32.lib;..\ext\fmod-win\lib\fmod_X86.lib;..\ext\fmod-win\lib\fmodL_X86.lib;..\ext\sdl\lib\SDL2-x86.lib;..\ext\sdl\lib\SDL2_mixer-x86.lib;..\ext\glfw\lib\glfw3dll-x86.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalDependencies>OpenGL32.lib;..\ext\fmod-win\lib\fmodL_vc.lib;..\ext\sdl\lib\SDL2-x86.lib;..\ext\sdl\lib\SDL2_mixer-x86.lib;..\ext\glfw\lib\glfw3dll-x86.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>%(AdditionalOptions) /machine:X86</AdditionalOptions>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -230,7 +230,7 @@
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
     <Link>
-      <AdditionalDependencies>OpenGL32.lib;..\ext\fmod-win\lib\fmod_X64.lib;..\ext\fmod-win\lib\fmodL_X64.lib;..\ext\sdl\lib\SDL2-x64.lib;..\ext\sdl\lib\SDL2_mixer-x64.lib;..\ext\glfw\lib\glfw3dll-x64.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalDependencies>OpenGL32.lib;..\ext\fmod-win\lib\fmodL64_vc.lib;..\ext\sdl\lib\SDL2-x64.lib;..\ext\sdl\lib\SDL2_mixer-x64.lib;..\ext\glfw\lib\glfw3dll-x64.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>%(AdditionalOptions)</AdditionalOptions>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -273,7 +273,7 @@
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
     <Link>
-      <AdditionalDependencies>OpenGL32.lib;..\ext\fmod-win\lib\fmod_X86.lib;..\ext\fmod-win\lib\fmodL_X86.lib;..\ext\sdl\lib\SDL2-x86.lib;..\ext\sdl\lib\SDL2_mixer-x86.lib;..\ext\glfw\lib\glfw3dll-x86.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalDependencies>OpenGL32.lib;..\ext\fmod-win\lib\fmod_vc.lib;..\ext\sdl\lib\SDL2-x86.lib;..\ext\sdl\lib\SDL2_mixer-x86.lib;..\ext\glfw\lib\glfw3dll-x86.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>%(AdditionalOptions) /machine:X86</AdditionalOptions>
       <GenerateDebugInformation>false</GenerateDebugInformation>
@@ -316,7 +316,7 @@
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
     <Link>
-      <AdditionalDependencies>OpenGL32.lib;..\ext\fmod-win\lib\fmod_X64.lib;..\ext\fmod-win\lib\fmodL_X64.lib;..\ext\sdl\lib\SDL2-x64.lib;..\ext\sdl\lib\SDL2_mixer-x64.lib;..\ext\glfw\lib\glfw3dll-x64.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalDependencies>OpenGL32.lib;..\ext\fmod-win\lib\fmod64_vc.lib;..\ext\sdl\lib\SDL2-x64.lib;..\ext\sdl\lib\SDL2_mixer-x64.lib;..\ext\glfw\lib\glfw3dll-x64.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>%(AdditionalOptions)</AdditionalOptions>
       <GenerateDebugInformation>false</GenerateDebugInformation>
@@ -514,7 +514,6 @@
     <ClCompile Include="..\src\Level.cpp" />
     <ClCompile Include="..\src\TextureManager.cpp" />
     <ClCompile Include="..\src\LevelList.cpp" />
-
     <ClCompile Include="..\src\Player.cpp" />
     <ClCompile Include="..\src\Bullet.cpp" />
     <ClCompile Include="..\src\Enemy.cpp" />
