@@ -1,4 +1,3 @@
-// Header
 #include "common.hpp"
 #include "Level.hpp"
 #include "OsuParser.hpp"
@@ -8,6 +7,7 @@
 #include "Structure.hpp"
 #include "Spawner.hpp"
 #include "TextureManager.hpp"
+
 
 // stlib
 #include <string.h>
@@ -25,105 +25,152 @@ std::uniform_real_distribution<float> Level::m_dist;//default:0..1
 bool Level::show_hitboxes = false;
 
 // Same as static in c, local to compilation unit
-namespace
-{
-	const size_t MAX_TURTLES = 15;
-	const size_t MAX_LIL_ENEMIES = 15;
-	const size_t MAX_FISH = 5;
-	const size_t TURTLE_DELAY_MS = 2000;
-	const size_t FISH_DELAY_MS = 5000;
-	namespace
-	{
-		void glfw_err_cb(int error, const char* desc)
-		{
-			fprintf(stderr, "%d: %s", error, desc);
-		}
-	}
+namespace {
+    const size_t MAX_TURTLES = 15;
+    const size_t MAX_LIL_ENEMIES = 15;
+    const size_t MAX_FISH = 5;
+    const size_t TURTLE_DELAY_MS = 2000;
+    const size_t FISH_DELAY_MS = 5000;
+    namespace {
+        void glfw_err_cb(int error, const char *desc) {
+            fprintf(stderr, "%d: %s", error, desc);
+        }
+    }
 }
-
-Level::Level(int width, int height)  : m_points(0), m_next_little_enemies_spawn(0.f) {
-    m_enemy_bullets = std::make_shared<std::vector<EnemyBullet>>();
-    m_bullets = std::make_shared<std::vector<PlayerBullet>>();
-    m_little_enemies = std::make_shared<std::vector<LittleEnemy>>();
-    m_structures = std::make_shared<std::vector<std::shared_ptr<Structure>>>();
-    m_beatcircles = std::make_shared<std::vector<BeatCircle>>();
-    m_boss = std::make_shared<Boss>();
-	screen.x = width;
-	screen.y = height;
-	m_rng = std::default_random_engine(std::random_device()());
-	tm = TextureManager::get_instance();
-	m_player->set_texture(tm->get_texture("character"));
-	m_boss->set_texture(tm->get_texture("boss0"));
-	m_boss_health_bar.set_texture(tm->get_texture("boss_health_bar"));
-	m_points = 0;
-	m_current_time = 0;
-    LittleEnemy::player = m_player;
+void Level::setup_references() {
+	LittleEnemy::player = m_player;
     Healing_Structure::b = m_boss;
     Structure::player_bullets = m_bullets;
     Structure::enemy_bullets = m_enemy_bullets;
     Structure::player = m_player;
     CenterBeatCircle::player = m_player;
 	LittleEnemy::player = m_player;
-	BeatCircle::m_player = m_player;	
+	BeatCircle::m_player = m_player;
+}
+
+void Level::set_textures() {
+	m_player->set_texture(tm->get_texture("character"));
+	m_boss->set_texture(tm->get_texture("boss0"));
+	m_boss_health_bar.set_texture(tm->get_texture("boss_health_bar"));
+	healthbar.set_texture(tm->get_texture("healthbar"));
+}
+
+void Level::make_shared_ptrs() {
+	m_enemy_bullets = std::make_shared<std::vector<EnemyBullet>>();
+    m_bullets = std::make_shared<std::vector<PlayerBullet>>();
+    m_little_enemies = std::make_shared<std::vector<LittleEnemy>>();
+    m_structures = std::make_shared<std::vector<std::shared_ptr<Structure>>>();
+    m_beatcircles = std::make_shared<std::vector<BeatCircle>>();
+    m_boss = std::make_shared<Boss>();
+}
+
+Level::Level(int width, int height)  : m_points(0), m_next_little_enemies_spawn(0.f), m_current_time(0.f){
+    make_shared_ptrs();
+	screen.x = width;
+	screen.y = height;
+	m_rng = std::default_random_engine(std::random_device()());
+	tm = TextureManager::get_instance();
+	set_textures();
+    setup_references();
+	calculate_projection_2D();
 	}
 
-bool Level::init(std::string song_path, std::string osu_path, float boss_health) {
+bool Level::initialize_fmod(std::string song_path1) {
+	FMOD_RESULT result = FMOD::System_Create(&system);      // Create the main system object.
+    if (result != FMOD_OK) {
+        printf("FMOD error! (%d) creation of FMOD system failure\n", result);
+        return false;
+    }
+    result = system->init(32, FMOD_INIT_NORMAL, 0);    // Initialize FMOD.
+    if (result != FMOD_OK) {
+        printf("FMOD error! (%d) initialization of FMOD system failure\n", result);
+        return false;
+    }
+    music_channel = nullptr;
+    channel = nullptr;
+    isPlaying = new bool(false);
+    //can turn on looping for songs?
+    result = system->createSound(song_path1.c_str(), FMOD_DEFAULT, 0,
+                                 &music_level);
+    if (result != FMOD_OK) {
+        printf("FMOD error! (%d) creating sound FMOD failure\n", result);
+        return false;
+    }
+    result = system->createSound(audio_path("345551_enemy_Spawn.wav"), FMOD_DEFAULT, 0, &sound_player_hit);
+    if (result != FMOD_OK) {
+        printf("FMOD error! (%d) creating sound FMOD failure\n", result);
+        return false;
+    }
+    result = system->createSound(audio_path("345551_enemy_Spawn.wav"), FMOD_DEFAULT, 0, &sound_boss_hit);
+    if (result != FMOD_OK) {
+        printf("FMOD error! (%d) creating sound FMOD failure\n", result);
+        return false;
+    }
+    result = system->createSound(audio_path("345551_enemy_Spawn.wav"), FMOD_DEFAULT, 0, &sound_boss_death);
+    if (result != FMOD_OK) {
+        printf("FMOD error! (%d) creating sound FMOD failure\n", result);
+        return false;
+    }
+    result = system->createSound(audio_path("345551_enemy_Spawn.wav"), FMOD_DEFAULT, 0, &sound_player_death);
+    if (result != FMOD_OK) {
+        printf("FMOD error! (%d) creating sound FMOD failure\n", result);
+        return false;
+    }
+    result = system->createSound(audio_path("345551_enemy_Spawn.wav"), FMOD_DEFAULT, 0, &sound_enemy_hit);
+    if (result != FMOD_OK) {
+        printf("FMOD error! (%d) creating sound FMOD failure\n", result);
+        return false;
+    }
+    result = system->createSound(audio_path("345551_enemy_Spawn.wav"), FMOD_DEFAULT, 0, &sound_structure_death);
+    if (result != FMOD_OK) {
+        printf("FMOD error! (%d) creating sound FMOD failure\n", result);
+        return false;
+    }
+    result = system->createSound(audio_path("345551_enemy_Spawn.wav"), FMOD_DEFAULT, 0, &sound_perfect_timing);
+    if (result != FMOD_OK) {
+        printf("FMOD error! (%d) creating sound FMOD failure\n", result);
+        return false;
+    }
+    result = system->createSound(audio_path("345551_enemy_Spawn.wav"), FMOD_DEFAULT, 0, &sound_good_timing);
+    if (result != FMOD_OK) {
+        printf("FMOD error! (%d) creating sound FMOD failure\n", result);
+        return false;
+    }
+    result = system->createSound(audio_path("345551_enemy_Spawn.wav"), FMOD_DEFAULT, 0, &sound_bad_timing);
+    if (result != FMOD_OK) {
+        printf("FMOD error! (%d) creating sound FMOD failure\n", result);
+        return false;
+    }
+	return true;
+}
+
+bool Level::init(std::string song_path1, std::string osu_path, float boss_health) {
 	std::shared_ptr<OsuParser> parser;
 	//-------------------------------------------------------------------------
 	
 	//-------------------------------------------------------------------------
 	// Loading music and sounds
-	if (SDL_Init(SDL_INIT_AUDIO) < 0)
-	{
-		fprintf(stderr, "Failed to initialize SDL Audio");
-		return false;
-	}
-	
-	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) == -1)
-	{
-		fprintf(stderr, "Failed to open audio device");
-		return false;
-	}
-	m_background_music = Mix_LoadMUS(song_path.c_str());
 	parser = std::make_shared<OsuParser>(osu_path.c_str());
 
 	OsuBeatmap beatmap = parser->parse();
 	beatlist = std::make_shared<BeatList>(beatmap);
-	if (!m_background_music) {
-		printf("Mix_LoadMUS(\"music.mp3\"): %s\n", Mix_GetError());
-		// this might be a critical error...
-	}
 
-	m_player_dead_sound = Mix_LoadWAV(audio_path("salmon_dead.wav"));
-	m_player_eat_sound = Mix_LoadWAV(audio_path("salmon_eat.wav"));
-
-	if (m_background_music == nullptr || m_player_dead_sound == nullptr || m_player_eat_sound == nullptr)
-	{
-		fprintf(stderr, "Failed to load sounds, make sure the data directory is present");
-		return false;
-	}
-
-	fprintf(stderr, "Loaded music");
+    initialize_fmod(song_path1);
 
 	m_current_speed = 1.f;
 
-	m_background.init();
+    m_background.init();
+    healthbar.init(5);
 
+    healthbar.set_scale({0.6f, 0.7f});
+    healthbar.set_position({200, 50});
+    healthbar.set_rotation(0);
 
-	healthbar.set_texture(tm->get_texture("healthbar"));
-	healthbar.init(5);
-	
-	healthbar.set_scale({ 0.6f,0.7f });
-	healthbar.set_position({ 200 , 50});
-	healthbar.set_rotation(0);
-	m_background.init();
-
-
+	m_background.set_position({ (float)screen.x / 2, (float)screen.y / 2 });
 	if (!m_player->init()){
 		return false;
 	}
 	m_player->set_health(5);
-    // TODO: Probably fails
 	if (m_boss->init(boss_health, m_little_enemies, m_structures)) {
 		
 		m_boss_health_bar.init();
@@ -140,20 +187,21 @@ bool Level::init(std::string song_path, std::string osu_path, float boss_health)
 	return false;
 }
 
-Level::~Level()
-{
+Level::~Level() {
 
 }
+
 bool Level2::init() {
-	return Level::init(song_path("598830 Shawn Wasabi - Marble Soda/Marble Soda.wav"),
-		song_path("598830 Shawn Wasabi - Marble Soda/Shawn Wasabi - Marble Soda (Exa) [Normal].osu"),
-		375.0f);
+    return Level::init(song_path("598830 Shawn Wasabi - Marble Soda/Marble Soda.wav"),
+                       song_path("598830 Shawn Wasabi - Marble Soda/Shawn Wasabi - Marble Soda (Exa) [Normal].osu"),
+                       375.0f);
 }
+
 // World initialization
 bool Level1::init() {
-	return Level::init(song_path("BlendS/BlendS.wav"),
-		song_path("BlendS/Blend A - Bon Appetit S (Meg) [Easy].osu"),
-		250.0f);
+    return Level::init(song_path("BlendS/BlendS.wav"),
+                       song_path("BlendS/Blend A - Bon Appetit S (Meg) [Easy].osu"),
+                       250.0f);
 }
 
 Level1::~Level1() {
@@ -163,16 +211,17 @@ Level2::~Level2() {
 	
 }
 // Releases all the associated resources
-void Level::destroy()
-{
-	if (m_background_music != nullptr)
-		Mix_FreeMusic(m_background_music);
-	if (m_player_dead_sound != nullptr)
-		Mix_FreeChunk(m_player_dead_sound);
-	if (m_player_eat_sound != nullptr)
-		Mix_FreeChunk(m_player_eat_sound);
+void Level::destroy() {
+    /*
+    if (m_background_music != nullptr)
+        Mix_FreeMusic(m_background_music);
+    if (m_player_dead_sound != nullptr)
+        Mix_FreeChunk(m_player_dead_sound);
+    if (m_player_eat_sound != nullptr)
+        Mix_FreeChunk(m_player_eat_sound);
 
-	Mix_CloseAudio();
+    Mix_CloseAudio();
+    */
 
 	m_player->destroy();
 	m_boss->destroy();
@@ -197,6 +246,18 @@ void Level::destroy()
 	m_little_enemies->clear();
 	m_structures->clear();
 	m_beatcircles->clear();
+    music_level->release();
+    sound_player_hit->release();
+    sound_boss_hit->release();
+    sound_enemy_hit->release();
+    sound_boss_death->release();
+    sound_structure_death->release();
+    sound_player_death->release();
+    sound_perfect_timing->release();
+    sound_bad_timing->release();
+    sound_good_timing->release();
+    system->close();
+    system->release();
 }
 
 
@@ -208,12 +269,12 @@ void Level::handle_beat(float remaining_offset, Beat& curBeat, vec2 screen) {
 }
 
 // Update our game world
+
 bool Level::update(float elapsed_ms)
 {
-	if (!Mix_PlayingMusic()) {
-		Mix_PlayMusic(m_background_music, 1);
-	}
-	else {
+	if ( music_channel == nullptr || FMOD_OK != music_channel->isPlaying(isPlaying)) {
+		system->playSound(music_level, 0, false, &music_channel);
+	} else {
 		m_current_time += elapsed_ms;
 	}
 
@@ -284,12 +345,13 @@ bool Level::update(float elapsed_ms)
 	{
 		if (m_boss->collides_with(*bullet_it))
 		{
-			Mix_PlayChannel(-1, m_player_dead_sound, 0);
+			system->playSound(sound_boss_hit, 0, false, &channel);
 			//printf("Boss hit by bullet\n");
 			m_boss->set_health(-bullet_it->get_damage());
 			m_boss_health_bar.set_health_percentage(m_boss->get_health()/m_boss->get_total_health());
 			bullet_it = m_bullets->erase(bullet_it);
 			if (m_boss->get_health() <= 0) {
+        		system->playSound(sound_boss_death, 0, false, &channel);
 				finished = 1;
 				new_points += 100;
 				return true;
@@ -326,6 +388,7 @@ bool Level::update(float elapsed_ms)
 	}
 	for (auto little_enemy_it = m_little_enemies->begin(); little_enemy_it != m_little_enemies->end();) {
 		if (m_player->collides_with(*little_enemy_it)) {
+      system->playSound(sound_player_hit, 0, false, &channel);
 			healthbar.update();
 			auto pe = new ParticleEmitter(
 				little_enemy_it->get_position(),
@@ -337,6 +400,7 @@ bool Level::update(float elapsed_ms)
 			m_player->set_health(-1);
 			if (m_player->get_health() <= 0) {
 				//m_player->kill();
+        system->playSound(sound_player_death, 0, false, &channel);
 				//printf("Player has died\n");
 			}
 			break;
@@ -353,6 +417,7 @@ bool Level::update(float elapsed_ms)
 			if (m_little_enemies->size() > 0){
 				for (auto little_enemy_it = m_little_enemies->begin(); little_enemy_it != m_little_enemies->end();) {
 					if (little_enemy_it->collides_with(*bullet_it)) {
+            system->playSound(sound_enemy_hit, 0, false, &channel);
 						auto pe = new ParticleEmitter(
 							little_enemy_it->get_position(),
 							100,
@@ -363,7 +428,7 @@ bool Level::update(float elapsed_ms)
 						little_enemy_it = m_little_enemies->erase(little_enemy_it);
 						bullet_it = m_bullets->erase(bullet_it);
 						removed_enemy = true;
-						
+
 						break;
 					}
 					else {
@@ -390,13 +455,14 @@ bool Level::update(float elapsed_ms)
 								m_boss->structure_slots.right = nullptr;
 							}
 							structure_it = m_structures->erase(structure_it);
+              system->playSound(sound_structure_death, 0, false, &channel);
 						}
 						break;
-					} 
+					}
 					else {
 						++structure_it;
 					}
-					
+
 				}
 			}
 			if (!hit_structure) { ++bullet_it; };
@@ -415,13 +481,11 @@ bool Level::update(float elapsed_ms)
 			++pe_it;
 		}
 	}
-
+  system->update();
 	return true;
 }
 
-// Render our game world
-void Level::draw()
-{
+void Level::calculate_projection_2D() {
 	int w = screen.x;
 	int h = screen.y;
 	// Fake projection matrix, scales with respect to window coordinates
@@ -435,68 +499,69 @@ void Level::draw()
 	float sy = 2.f / (top - bottom);
 	float tx = -(right + left) / (right - left);
 	float ty = -(top + bottom) / (top - bottom);
-	mat3 projection_2D{ { sx, 0.f, 0.f },{ 0.f, sy, 0.f },{ tx, ty, 1.f } };
+	m_projection_2D = { { sx, 0.f, 0.f },{ 0.f, sy, 0.f },{ tx, ty, 1.f } };
+}
 
-	m_background.set_position({ (float)w / 2, (float)h / 2 });
-	
-	m_background.draw(projection_2D);
-	
+// Render our game world
+void Level::draw()
+{
+
+	m_background.draw(m_projection_2D);
+
 	// Drawing entities
 
 	for (auto& bullet : *m_bullets)
-		bullet.draw(projection_2D);
+		bullet.draw(m_projection_2D);
 	for (auto& bullet : *m_enemy_bullets)
-		bullet.draw(projection_2D);
+		bullet.draw(m_projection_2D);
 	for (auto& beatcircle : *m_beatcircles)
-		beatcircle.draw(projection_2D);
+		beatcircle.draw(m_projection_2D);
 	
 	for (auto& enemy : *m_little_enemies)
-		enemy.draw(projection_2D); 
+		enemy.draw(m_projection_2D); 
 	for (auto& particleEmitter : m_particle_emitters) {
-		particleEmitter->draw(projection_2D);
+		particleEmitter->draw(m_projection_2D);
 	}
 
 	for (auto& structure : *m_structures) {
 		//printf("Drawing: %f\n", structure->get_position().x);
-		structure->draw(projection_2D);
+		structure->draw(m_projection_2D);
 	}
-	m_boss->draw(projection_2D);
-	m_boss_health_bar.draw(projection_2D);
+	m_boss->draw(m_projection_2D);
+	m_boss_health_bar.draw(m_projection_2D);
 	//healthbar.draw(projection_2D);
-	healthbar.draw(projection_2D);
-	orange_center_beat_circle.draw(projection_2D);
-	blue_center_beat_circle.draw(projection_2D);
-	m_player->draw(projection_2D);
+	healthbar.draw(m_projection_2D);
+	orange_center_beat_circle.draw(m_projection_2D);
+	blue_center_beat_circle.draw(m_projection_2D);
+	m_player->draw(m_projection_2D);
 
 	if (show_hitboxes) {
 		for (auto& bullet : *m_bullets)
-			bullet.draw_hitboxes(projection_2D);
+			bullet.draw_hitboxes(m_projection_2D);
 		for (auto& beatcircle : *m_beatcircles)
-			beatcircle.draw_hitboxes(projection_2D);
+			beatcircle.draw_hitboxes(m_projection_2D);
 		for (auto& enemy : *m_little_enemies)
-			enemy.draw_hitboxes(projection_2D);
+			enemy.draw_hitboxes(m_projection_2D);
 
-		m_boss->draw_hitboxes(projection_2D);
-		healthbar.draw_hitboxes(projection_2D);
-		m_player->draw_hitboxes(projection_2D);
+		m_boss->draw_hitboxes(m_projection_2D);
+		healthbar.draw_hitboxes(m_projection_2D);
+		m_player->draw_hitboxes(m_projection_2D);
 	}
 }
 
 // Should the game be over ?
-bool Level::is_over()const
-{
-	// TODO: Implement Me
-	return finished;
+bool Level::is_over() const {
+    // TODO: Implement Me
+    return finished;
 }
 
 // On key callback
-void Level::on_key(int key, int action, int mod)
-{
-	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	// HANDLE SALMON MOVEMENT HERE
-	// key is of 'type' GLFW_KEY_
-	// action can be GLFW_PRESS GLFW_RELEASE GLFW_REPEAT
-	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+void Level::on_key(int key, int action, int mod) {
+    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    // HANDLE SALMON MOVEMENT HERE
+    // key is of 'type' GLFW_KEY_
+    // action can be GLFW_PRESS GLFW_RELEASE GLFW_REPEAT
+    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 	if (action == GLFW_PRESS) {
 		switch (key) {
@@ -516,27 +581,27 @@ void Level::on_key(int key, int action, int mod)
 			m_player->exploding_timer = 1;
 			break;
 
-		case GLFW_KEY_P:
-			show_hitboxes = !show_hitboxes;
-			break;
-		case GLFW_KEY_UP:
-		case GLFW_KEY_I:
-			on_arrow_key(up);
-			break;
-		case GLFW_KEY_DOWN:
-		case GLFW_KEY_K:
-			on_arrow_key(down);
-			break;
-		case GLFW_KEY_LEFT:
-		case GLFW_KEY_J:
-			on_arrow_key(left);
-			break;
-		case GLFW_KEY_RIGHT:
-		case GLFW_KEY_L:
-			on_arrow_key(right);
-			break;
-		}
-	}
+            case GLFW_KEY_P:
+                show_hitboxes = !show_hitboxes;
+                break;
+            case GLFW_KEY_UP:
+            case GLFW_KEY_I:
+                on_arrow_key(up);
+                break;
+            case GLFW_KEY_DOWN:
+            case GLFW_KEY_K:
+                on_arrow_key(down);
+                break;
+            case GLFW_KEY_LEFT:
+            case GLFW_KEY_J:
+                on_arrow_key(left);
+                break;
+            case GLFW_KEY_RIGHT:
+            case GLFW_KEY_L:
+                on_arrow_key(right);
+                break;
+        }
+    }
 
 	if (action == GLFW_RELEASE) {
 		switch (key) {
@@ -569,13 +634,13 @@ void Level::on_key(int key, int action, int mod)
 		m_current_speed = 1.f;
 	}
 
-	// Control the current speed with `<` `>`
-	if (action == GLFW_RELEASE && (mod & GLFW_MOD_SHIFT) && key == GLFW_KEY_COMMA)
-		m_current_speed -= 0.1f;
-	if (action == GLFW_RELEASE && (mod & GLFW_MOD_SHIFT) && key == GLFW_KEY_PERIOD)
-		m_current_speed += 0.1f;
+    // Control the current speed with `<` `>`
+    if (action == GLFW_RELEASE && (mod & GLFW_MOD_SHIFT) && key == GLFW_KEY_COMMA)
+        m_current_speed -= 0.1f;
+    if (action == GLFW_RELEASE && (mod & GLFW_MOD_SHIFT) && key == GLFW_KEY_PERIOD)
+        m_current_speed += 0.1f;
 
-	m_current_speed = fmax(0.f, m_current_speed);
+    m_current_speed = fmax(0.f, m_current_speed);
 }
 
 void Level::on_arrow_key(Dir dir)
@@ -591,10 +656,10 @@ void Level::on_arrow_key(Dir dir)
 			break;
 		}
 
-		if (dir != beatcircle_it->get_dir()) {
-			beatcircle_it++;
-			continue;
-		}
+        if (dir != beatcircle_it->get_dir()) {
+            beatcircle_it++;
+            continue;
+        }
 
 		if (delta <= perfect_timing) {
 			printf("PERFECT with delta %f\n", delta);
@@ -619,15 +684,17 @@ void Level::on_arrow_key(Dir dir)
 		}
 		beatcircle_it++;
 	}
+	system->playSound(sound_perfect_timing, 0, false, &channel);
+	system->playSound(sound_good_timing, 0, false, &channel);
+	system->playSound(sound_bad_timing, 0, false, &channel);
 }
 
-void Level::on_mouse_move(double xpos, double ypos)
-{
-	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	// HANDLE SALMON ROTATION HERE
-	// xpos and ypos are relative to the top-left of the window, the salmon's
-	// default facing direction is (1, 0)
-	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+void Level::on_mouse_move(double xpos, double ypos) {
+    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    // HANDLE SALMON ROTATION HERE
+    // xpos and ypos are relative to the top-left of the window, the salmon's
+    // default facing direction is (1, 0)
+    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 	m_player->set_mouse((float)xpos, (float)ypos);
 }

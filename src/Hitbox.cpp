@@ -3,7 +3,7 @@
 
 std::shared_ptr<Texture> Hitbox::m_texture;
 
-Hitbox::Hitbox(Renderable* p) : m_parent(((Sprite*) p))
+Hitbox::Hitbox(Renderable* p) : m_parent(std::shared_ptr<Sprite>((Sprite*) p, [](Sprite*){}))
 {
 	if (!m_texture) {
 		load_hitbox_texture();
@@ -130,6 +130,8 @@ void Hitbox::set_matrix(mat3 matrix)
 {
 	m_matrix = matrix;
 }
+
+Hitbox::~Hitbox() {}
 
 void Hitbox::load_hitbox_texture()
 {

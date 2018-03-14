@@ -13,6 +13,7 @@ class Hitbox : public Renderable
 
 public:
 	Hitbox(Renderable* p);
+	~Hitbox();
 	// Creates all the associated render resources and default transform
 	bool init(vec2 tr, vec2 sc, float rot, std::shared_ptr<Texture> parent_texture);
 	void destroy();

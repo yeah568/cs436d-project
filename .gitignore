@@ -311,3 +311,9 @@ beatcoin
 cmake-build-debug/
 
 CMakeLists\.txt
+
+beatcoin\.dSYM/
+
+ext/fmod/lib/libfmod\.dylib\.dSYM/
+
+ext/fmod/lib/libfmodL\.dylib\.dSYM/

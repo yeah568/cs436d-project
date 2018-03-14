@@ -123,6 +123,8 @@ void Boss::on_beat(Beat& beat, vec2 screen) {
 	}
 }
 
+Boss::~Boss() {}
+
 void Boss::move(vec2 off)
 {
 	m_position.x += off.x; m_position.y += off.y;

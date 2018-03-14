@@ -16,7 +16,7 @@ class Sprite : public Renderable
 public:
   Sprite(std::shared_ptr<Texture> texture);
   Sprite(const vec2& position, const vec2& scale, float rotation, std::shared_ptr<Texture> texture);
-
+  ~Sprite();
   virtual bool init();
   void destroy();
   void draw(const mat3& projection) override;

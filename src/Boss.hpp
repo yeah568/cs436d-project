@@ -27,6 +27,7 @@ class Boss : public Sprite
 
 public:
 	Boss();
+	~Boss();
 	// Creates all the associated render resources and default transform
 	bool init(float health, std::shared_ptr<std::vector<LittleEnemy>> little_enemies,
 		std::shared_ptr<std::vector<std::shared_ptr<Structure>>> structures);

@@ -4,11 +4,15 @@ MAKEFLAGS += --jobs=$(CPUS)
 CXX = g++
 
 ifeq ($(OS), Darwin)
-    CXXFLAGS = -Iext/gl3w -std=c++11 -Wall -pedantic -DENABLE_SOUND -g
-    LIB = -ldl -framework OpenGL -framework Cocoa -framework CoreFoundation -lglfw -lSDL -lSDL_mixer -lpthread -lSDLmain
+	CXXFLAGS = -Iext/gl3w -Iext/fmod/inc -std=c++11 -Wall -pedantic -DENABLE_SOUND -g
+	LIB = -ldl -framework OpenGL -framework Cocoa -framework CoreFoundation -lglfw -lSDL -lSDL_mixer -lpthread -lSDLmain -lfmod -lfmodL
+	LIBPATH = -Lext/fmod/lib
+	LDFLAGS = "-Wl,-rpath,./ext/fmod/lib"
 else ifeq ($(OS), Linux)
-    CXXFLAGS = -Iext/gl3w -std=c++11 -Wall -pedantic -DENABLE_SOUND -D LINUX -g
-    LIB = -lglfw -lGL -lm -lXrandr -lXi -lX11 -lXxf86vm -lpthread -ldl -lSDL2 -lSDL2_mixer
+    CXXFLAGS = -Iext/gl3w -Iext/fmod-lin/inc -std=c++11 -Wall -pedantic -DENABLE_SOUND -D LINUX -g
+    LIB = -lglfw -lGL -lm -lXrandr -lXi -lX11 -lXxf86vm -lpthread -ldl -lSDL2 -lSDL2_mixer -lfmod -lfmodL
+	LIBPATH = -Lext/fmod-lin/lib/x86_64
+	LDFLAGS = "-Wl,-rpath,./ext/fmod-lin/lib/x86_64"
 else
     $(error Your OS $(OS) is not supported.) 
     exit 1
@@ -40,7 +44,7 @@ test: build
 	$(CXX) -c $(CXXFLAGS) -o $@ $< 
 
 $(BIN): $(SUBDIRS) $(ALL_OBJ) 
-	$(CXX) -o $@ $(ALL_OBJ) $(wildcard $(addsuffix /*.o,$(SUBDIRS))) $(LIB)
+	$(CXX)  $(LDFLAGS) -g -o $@ $(ALL_OBJ) $(wildcard $(addsuffix /*.o,$(SUBDIRS))) $(LIBPATH) $(LIB)
 
 clean:
 	- rm -f $(BIN) $(ALL_OBJ)

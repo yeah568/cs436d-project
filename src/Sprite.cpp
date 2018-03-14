@@ -262,6 +262,8 @@ std::vector<std::shared_ptr<Hitbox>> Sprite::get_hitboxes() const
 	return m_hitboxes;
 }
 
+Sprite::~Sprite() {}
+
 bool Sprite::hitboxes_collide(std::vector<std::array<vec2, 4>> hitboxes, std::vector<std::array<vec2, 4>> other_hitboxes)
 {
 	return hitbox_sat_collision(hitboxes, other_hitboxes) && hitbox_sat_collision(other_hitboxes, hitboxes);
