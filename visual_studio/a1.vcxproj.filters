@@ -1,3 +1,49 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="$(ProjectDir)..\src\Sprite.cpp" />
+    <ClCompile Include="$(ProjectDir)..\src\beatcoin.cpp" />
+    <ClCompile Include="$(ProjectDir)..\src\BeatCircle.cpp" />
+    <ClCompile Include="$(ProjectDir)..\src\CenterBeatCircle.cpp" />
+    <ClCompile Include="$(ProjectDir)..\src\common.cpp" />
+    <ClCompile Include="$(ProjectDir)..\src\World.cpp" />
+    <ClCompile Include="..\src\Background.cpp" />
+    <ClCompile Include="..\src\Spawner.cpp" />
+    <ClCompile Include="..\src\BossHealthBar.cpp" />
+    <ClCompile Include="..\src\HealthBar.cpp" />
+    <ClCompile Include="..\src\Hitbox.cpp" />
+    <ClCompile Include="..\src\Level.cpp" />
+    <ClCompile Include="..\src\TextureManager.cpp" />
+    <ClCompile Include="..\src\LevelList.cpp" />
+    <ClCompile Include="..\src\Player.cpp" />
+    <ClCompile Include="..\src\Bullet.cpp" />
+    <ClCompile Include="..\src\Enemy.cpp" />
+    <ClCompile Include="..\src\Boss.cpp" />
+    <ClCompile Include="..\src\Structure.cpp" />
+    <ClCompile Include="$(ProjectDir)..\src\Turtle.cpp" />
+    <ClCompile Include="$(ProjectDir)..\src\OsuParser.cpp" />
+    <ClCompile Include="$(ProjectDir)..\src\utils\StringUtils.cpp" />
+    <ClCompile Include="$(ProjectDir)..\src\BeatList.cpp" />
+    <ClCompile Include="$(ProjectDir)..\src\Particle.cpp" />
+    <ClCompile Include="$(ProjectDir)..\src\ParticleEmitter.cpp" />
+    <ClCompile Include="..\src\SpriteSheet.cpp" />
+    <ClCompile Include="$(ProjectDir)..\src\Particle.hpp" />
+    <ClCompile Include="$(ProjectDir)..\src\ParticleEmitter.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(ProjectDir)..\src\Sprite.hpp" />
+    <ClInclude Include="$(ProjectDir)..\src\OsuParser.hpp" />
+    <ClInclude Include="$(ProjectDir)..\src\utils\StringUtils.hpp" />
+    <ClInclude Include="..\src\BeatList.hpp" />
+    <ClInclude Include="..\src\BossHealthBar.hpp" />
+    <ClInclude Include="..\src\HealthBar.hpp" />
+    <ClInclude Include="..\src\Hitbox.hpp" />
+    <ClInclude Include="..\src\Level.hpp" />
+    <ClInclude Include="..\src\LevelList.hpp" />
+    <ClInclude Include="..\src\SpriteSheet.hpp" />
+    <ClInclude Include="..\src\Background.hpp" />
+    <ClInclude Include="..\src\Boss.hpp" />
+    <ClInclude Include="..\src\Enemy.hpp" />
+    <ClInclude Include="..\src\Bullet.hpp" />
+  </ItemGroup>
 </Project>
