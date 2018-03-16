@@ -11,9 +11,9 @@ bool MainMenu::init() {
 	exit_button.init();
 
 	bbox temp = play_button.get_bounding_box();
-	play_button.set_position({(temp.min_x + temp.max_x)/2.f, (temp.min_y + temp.max_y)/2.f});
+	play_button.set_position({200.f, 200.f});
 	temp = exit_button.get_bounding_box();
-	exit_button.set_position({(temp.min_x + temp.max_x)/2.f, screen.y - (temp.min_y + temp.max_y)/2.f});
+	exit_button.set_position({ 200.f, 850.f});
 	background.set_scale({0.75,0.75});
 	background.set_position({ (float)screen.x / 2, (float)screen.y / 2 });
 	background.set_rotation(0);
