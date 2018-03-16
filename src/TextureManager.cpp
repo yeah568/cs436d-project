@@ -28,7 +28,10 @@ void TextureManager::load_textures() {
     "blue_moving_beat",
 	"healthbar",
 	"enemy0",
-	"boss_health_bar"
+	"boss_health_bar",
+    "mainmenu",
+    "exit_button",
+    "play_button"
   };
 
   for (const auto& texture_name : texture_names)
