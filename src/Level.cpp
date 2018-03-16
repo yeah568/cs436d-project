@@ -164,7 +164,7 @@ bool Level::init(std::string song_path1, std::string osu_path, float boss_health
 
     m_current_speed = 1.f;
 
-    m_background.init();
+   
 
 
     healthbar.set_texture(tm->get_texture("healthbar"));
@@ -174,6 +174,9 @@ bool Level::init(std::string song_path1, std::string osu_path, float boss_health
     healthbar.set_position({200, 50});
     healthbar.set_rotation(0);
     m_background.init();
+	m_background.set_position({ (float)screen.x/ 2, (float)screen.y / 2 });
+	m_background.set_scale({ 1.f, 1.f });
+	m_background.set_rotation(0);
 
 
     if (!m_player.init()) {
@@ -204,6 +207,7 @@ Level::~Level() {
 }
 
 bool Level2::init() {
+	m_background.set_texture(tm->get_texture("healthbar"));
     return Level::init(song_path("598830 Shawn Wasabi - Marble Soda/Marble Soda.wav"),
                        song_path("598830 Shawn Wasabi - Marble Soda/Shawn Wasabi - Marble Soda (Exa) [Normal].osu"),
                        375.0f);
@@ -211,6 +215,7 @@ bool Level2::init() {
 
 // World initialization
 bool Level1::init() {
+	m_background.set_texture(tm->get_texture("character"));
     return Level::init(song_path("BlendS/BlendS.wav"),
                        song_path("BlendS/Blend A - Bon Appetit S (Meg) [Easy].osu"),
                        250.0f);
@@ -523,8 +528,6 @@ void Level::draw()
 	float tx = -(right + left) / (right - left);
 	float ty = -(top + bottom) / (top - bottom);
 	mat3 projection_2D{ { sx, 0.f, 0.f },{ 0.f, sy, 0.f },{ tx, ty, 1.f } };
-
-	m_background.set_position({ (float)w / 2, (float)h / 2 });
 
 	m_background.draw(projection_2D);
 

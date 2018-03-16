@@ -29,6 +29,7 @@
     <ClCompile Include="..\src\SpriteSheet.cpp" />
     <ClCompile Include="$(ProjectDir)..\src\Particle.hpp" />
     <ClCompile Include="$(ProjectDir)..\src\ParticleEmitter.hpp" />
+    <ClCompile Include="..\src\MainMenu.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(ProjectDir)..\src\Sprite.hpp" />

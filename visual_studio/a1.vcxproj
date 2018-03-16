@@ -507,6 +507,7 @@
     <ClCompile Include="$(ProjectDir)..\src\common.cpp" />
     <ClCompile Include="$(ProjectDir)..\src\World.cpp" />
     <ClCompile Include="..\src\Background.cpp" />
+    <ClCompile Include="..\src\MainMenu.cpp" />
     <ClCompile Include="..\src\Spawner.cpp" />
     <ClCompile Include="..\src\BossHealthBar.cpp" />
     <ClCompile Include="..\src\HealthBar.cpp" />

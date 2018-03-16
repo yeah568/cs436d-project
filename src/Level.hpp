@@ -54,13 +54,13 @@ public:
     virtual bool init()=0;
 
     // Releases all associated resources
-    void destroy();
+    virtual void destroy();
 
     // Steps the game ahead by ms milliseconds
-    bool update(float ms);
+    virtual bool update(float ms);
 
     // Renders our scene
-    void draw();
+    virtual void draw();
 
     int getBossHealth();
 
@@ -70,9 +70,9 @@ public:
     bool is_over() const;
 
     // !!! INPUT CALLBACK FUNCTIONS
-    void on_key(int key, int action, int mod);
+    virtual void on_key(int key, int action, int mod);
 
-    void on_mouse_move(double xpos, double ypos);
+    virtual void on_mouse_move(double xpos, double ypos);
 
     int new_points;
 
@@ -177,4 +177,17 @@ public:
     ~Level2();
 
     bool init();
+};
+
+class MainMenu : public Level {
+public: 
+	MainMenu(int width, int height) : Level(width, height) {};
+	
+
+	~MainMenu();
+	bool init();
+	void destroy();
+	bool update(float ms);
+	void draw();
+	Bullet background;
 };

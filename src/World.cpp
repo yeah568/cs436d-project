@@ -72,11 +72,16 @@ bool World::init(vec2 screen)
     auto cursor_pos_redirect = [](GLFWwindow *wnd, double _0, double _1) {
         ((World *) glfwGetWindowUserPointer(wnd))->on_mouse_move(wnd, _0, _1);
     };
+	auto cursor_button_redirect = [](GLFWwindow *wnd, int _0, int _1, int _2) {
+		((World *)glfwGetWindowUserPointer(wnd))->on_mouse_button(wnd, _0, _1, _2);
+	};
     glfwSetKeyCallback(m_window, key_redirect);
     glfwSetCursorPosCallback(m_window, cursor_pos_redirect);
+	glfwSetMouseButtonCallback(m_window, cursor_button_redirect);
 	TextureManager* tm = TextureManager::get_instance();
 	//return levelList[levelCounter].init
 	//Level1* level = new Level1(screen.x, screen.y);
+	levelList.emplace_back(new MainMenu(screen.x, screen.y));
 	levelList.emplace_back(new Level1(screen.x, screen.y));
 	levelList.emplace_back(new Level2(screen.x, screen.y));
 	//levelList.emplace_back(new Level1(screen.x, screen.y, 3));
@@ -197,4 +202,10 @@ void World::on_mouse_move(GLFWwindow *window, double xpos, double ypos) {
     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 	levelList[levelCounter]->on_mouse_move(xpos, ypos);
+}
+
+void World::on_mouse_button(GLFWwindow* window, int button, int action, int mods)
+{
+	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
+		printf("Clicking");
 }
