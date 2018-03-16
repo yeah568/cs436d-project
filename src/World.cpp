@@ -206,6 +206,10 @@ void World::on_mouse_move(GLFWwindow *window, double xpos, double ypos) {
 
 void World::on_mouse_button(GLFWwindow* window, int button, int action, int mods)
 {
-	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
+	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
 		printf("Clicking");
+		double xpos, ypos;
+		glfwGetCursorPos(window, &xpos, &ypos);
+		levelList[levelCounter]->on_mouse_click({(float)xpos, (float)ypos});
+	}
 }

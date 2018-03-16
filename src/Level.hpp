@@ -1,9 +1,13 @@
 #pragma once
 
+#ifndef Level_H
+#define Level_H
+
 // internal
 #include "common.hpp"
 #include "Player.hpp"
 #include "Turtle.hpp"
+#include "Button.hpp"
 #include "Bullet.hpp"
 #include "Background.hpp"
 #include "BeatList.hpp"
@@ -73,6 +77,8 @@ public:
     virtual void on_key(int key, int action, int mod);
 
     virtual void on_mouse_move(double xpos, double ypos);
+
+    virtual void on_mouse_click(vec2 pos) {};
 
     int new_points;
 
@@ -189,5 +195,10 @@ public:
 	void destroy();
 	bool update(float ms);
 	void draw();
-	Bullet background;
+	Background background;
+    Button play_button;
+    Button exit_button;
+    void on_mouse_click(vec2 pos);
 };
+
+#endif
