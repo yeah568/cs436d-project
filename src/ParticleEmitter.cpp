@@ -20,7 +20,7 @@ void ParticleEmitter::update(int elapsed_ms) {
 	int i;
 	for (i = 0; i < m_num_alive_particles; i++) {
 		m_particle_pool[i].update(elapsed_ms);
-		if (!m_particle_pool[i].is_alive) {
+		if (!m_particle_pool[i].getIsAlive()) {
 			// replace dead particle with new 
 			m_particle_pool[i] = m_particle_pool[--m_num_alive_particles];
 		}
@@ -43,6 +43,9 @@ bool ParticleEmitter::init()
 	// Vertex Array (Container for Vertex + Index buffer)
 	glGenVertexArrays(1, &mesh.vao);
 
+	// Loading shaders
+	effect.load_from_file(shader_path("colored.vs.glsl"), shader_path("colored.fs.glsl"));
+
 	int i = 0;
 	while (i < m_max_particles) {
 		m_particle_pool[i++].init(m_position, 500, rand() % 359, rand() % 3 + 3);
@@ -64,8 +67,12 @@ void ParticleEmitter::draw(const mat3& projection) {
 		glBindBuffer(GL_ARRAY_BUFFER, m_particle_pool[0].mesh.vbo);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_particle_pool[0].mesh.ibo);
 
+		// Setting shaders
+		glUseProgram(effect.program);
+
+
 		for (int i = 0; i < m_num_alive_particles; i++) {
-			m_particle_pool[i].draw(projection);
+			m_particle_pool[i].draw(projection, effect);
 		}
 	}
 }
