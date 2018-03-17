@@ -19,5 +19,6 @@ private:
 	vec2 m_position;
 	vec2 m_velocity;
 	float m_lifespan;
+	float m_size;
 };
 

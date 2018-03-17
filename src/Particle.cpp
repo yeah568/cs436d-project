@@ -7,16 +7,7 @@ Particle::Particle() {
 	m_velocity = { 0, 0 };
 }
 
-static const Vertex vertex_buffer_data[] = {
-	{ { -0.5f, -0.5f, -0.01f }, { 1.f, 0.f, 0.f } },
-	{ {  0.5f, -0.5f, -0.01f }, { 1.f, 0.f, 0.f } },
-	{ { -0.5f,  0.5f, -0.01f }, { 1.f, 0.f, 0.f } },
-	{ {  0.5f,  0.5f, -0.01f }, { 1.f, 0.f, 0.f } },
-};
 
-static const uint16_t indices[] = {
-	0, 1, 2, 0, 2, 3
-};
 
 void Particle::init(vec2 position, float lifespan, float angle, float speed)
 {
@@ -25,20 +16,8 @@ void Particle::init(vec2 position, float lifespan, float angle, float speed)
 	float angleRads = angle * 3.14 / 180;
 	m_velocity.x = speed * cos(angleRads);
 	m_velocity.y = -speed * sin(angleRads);
-
-
-	// Vertex Buffer creation
-	glGenBuffers(1, &mesh.vbo);
-	glBindBuffer(GL_ARRAY_BUFFER, mesh.vbo);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * 4, vertex_buffer_data, GL_STATIC_DRAW);
-
-	// Index Buffer creation
-	glGenBuffers(1, &mesh.ibo);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.ibo);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint16_t) * 6, indices, GL_STATIC_DRAW);
-
-	// Vertex Array (Container for Vertex + Index buffer)
-	glGenVertexArrays(1, &mesh.vao);
+	
+	m_size = 5.f;
 
 	// Loading shaders
 	effect.load_from_file(shader_path("colored.vs.glsl"), shader_path("colored.fs.glsl"));
@@ -99,6 +78,7 @@ void Particle::draw(const mat3& projection) {
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	// REMOVE THE FOLLOWING LINES BEFORE ADDING ANY TRANSFORMATION CODE
 	transform_translate(m_position);
+	transform_scale({ m_size, m_size });
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 

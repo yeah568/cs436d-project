@@ -27,18 +27,32 @@ void ParticleEmitter::update(int elapsed_ms) {
 	}
 }
 
+static const Vertex vertex_buffer_data[] = {
+	{ { -0.5f, -0.5f, -0.01f },{ 1.f, 0.f, 0.f } },
+	{ { 0.5f, -0.5f, -0.01f },{ 1.f, 0.f, 0.f } },
+	{ { -0.5f,  0.5f, -0.01f },{ 1.f, 0.f, 0.f } },
+	{ { 0.5f,  0.5f, -0.01f },{ 1.f, 0.f, 0.f } },
+};
+
+static const uint16_t indices[] = {
+	0, 1, 2, 0, 2, 3
+};
+
 bool ParticleEmitter::init()
 {
 	// Clearing errors
 	gl_flush_errors();
 
+
 	// Vertex Buffer creation
 	glGenBuffers(1, &mesh.vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, mesh.vbo);
-	
+	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * 4, vertex_buffer_data, GL_STATIC_DRAW);
+
 	// Index Buffer creation
 	glGenBuffers(1, &mesh.ibo);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.ibo);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint16_t) * 6, indices, GL_STATIC_DRAW);
 
 	// Vertex Array (Container for Vertex + Index buffer)
 	glGenVertexArrays(1, &mesh.vao);
@@ -60,9 +74,9 @@ bool ParticleEmitter::init()
 void ParticleEmitter::draw(const mat3& projection) {
 	if (m_num_alive_particles > 0) {
 		// Setting vertices and indices
-		glBindVertexArray(m_particle_pool[0].mesh.vao);
-		glBindBuffer(GL_ARRAY_BUFFER, m_particle_pool[0].mesh.vbo);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_particle_pool[0].mesh.ibo);
+		glBindVertexArray(mesh.vao);
+		glBindBuffer(GL_ARRAY_BUFFER,mesh.vbo);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.ibo);
 
 		for (int i = 0; i < m_num_alive_particles; i++) {
 			m_particle_pool[i].draw(projection);
