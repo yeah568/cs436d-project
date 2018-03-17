@@ -58,8 +58,15 @@ bool ParticleEmitter::init()
 }
 
 void ParticleEmitter::draw(const mat3& projection) {
-	for (int i = 0; i < m_num_alive_particles; i++) {
-		m_particle_pool[i].draw(projection);
+	if (m_num_alive_particles > 0) {
+		// Setting vertices and indices
+		glBindVertexArray(m_particle_pool[0].mesh.vao);
+		glBindBuffer(GL_ARRAY_BUFFER, m_particle_pool[0].mesh.vbo);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_particle_pool[0].mesh.ibo);
+
+		for (int i = 0; i < m_num_alive_particles; i++) {
+			m_particle_pool[i].draw(projection);
+		}
 	}
 }
 

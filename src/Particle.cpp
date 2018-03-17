@@ -48,7 +48,7 @@ void Particle::init(vec2 position, float lifespan, float angle, float speed)
 static const float p = 1.293f;
 static const float A = 0.1f;
 static const float Cd = 0.47f;
-static const float m = 1;
+static const float m = 1.f;
 
 void Particle::update(float elapsed_ms) {
 	m_lifespan -= elapsed_ms;
@@ -107,20 +107,6 @@ void Particle::draw(const mat3& projection) {
 	// Setting shaders
 	glUseProgram(effect.program);
 
-	// Enabling alpha channel for textures
-	glEnable(GL_BLEND); glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glEnable(GL_DEPTH_TEST);
-
-	// Getting uniform locations
-	GLint transform_uloc = glGetUniformLocation(effect.program, "transform");
-	GLint color_uloc = glGetUniformLocation(effect.program, "fcolor");
-	GLint projection_uloc = glGetUniformLocation(effect.program, "projection");
-
-	// Setting vertices and indices
-	glBindVertexArray(mesh.vao);
-	glBindBuffer(GL_ARRAY_BUFFER, mesh.vbo);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.ibo);
-
 	// Input data location as in the vertex buffer
 	GLint in_position_loc = glGetAttribLocation(effect.program, "in_position");
 	GLint in_color_loc = glGetAttribLocation(effect.program, "in_color");
@@ -129,14 +115,13 @@ void Particle::draw(const mat3& projection) {
 	glVertexAttribPointer(in_position_loc, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
 	glVertexAttribPointer(in_color_loc, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)sizeof(vec3));
 
+	// Getting uniform locations
+	GLint transform_uloc = glGetUniformLocation(effect.program, "transform");
+	GLint projection_uloc = glGetUniformLocation(effect.program, "projection");
+
 	// Setting uniform values to the currently bound program
 	glUniformMatrix3fv(transform_uloc, 1, GL_FALSE, (float*)&transform);
-
-	// !!! Salmon Color
-	float color[] = { 1.f, 0.f, 0.f };
-	glUniform3fv(color_uloc, 1, color);
 	glUniformMatrix3fv(projection_uloc, 1, GL_FALSE, (float*)&projection);
-
 
 	// Drawing!
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, nullptr);
