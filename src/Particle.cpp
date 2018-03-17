@@ -28,18 +28,6 @@ void Particle::init(vec2 position, float lifespan, float angle, float speed)
 	m_velocity.y = -speed * sin(angleRads);
 
 
-	// Vertex Buffer creation
-	glGenBuffers(1, &mesh.vbo);
-	glBindBuffer(GL_ARRAY_BUFFER, mesh.vbo);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * 4, vertex_buffer_data, GL_STATIC_DRAW);
-
-	// Index Buffer creation
-	glGenBuffers(1, &mesh.ibo);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.ibo);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint16_t) * 6, indices, GL_STATIC_DRAW);
-
-	// Vertex Array (Container for Vertex + Index buffer)
-	glGenVertexArrays(1, &mesh.vao);
 
 }
 
