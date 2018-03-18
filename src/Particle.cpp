@@ -5,6 +5,7 @@ Particle::Particle() {
 	m_position = { 0, 0 };
 	m_lifespan = 0;
 	m_velocity = { 0, 0 };
+	is_alive = true;
 }
 
 
@@ -16,12 +17,7 @@ void Particle::init(vec2 position, float lifespan, float angle, float speed)
 	float angleRads = angle * 3.14 / 180;
 	m_velocity.x = speed * cos(angleRads);
 	m_velocity.y = -speed * sin(angleRads);
-	
 	m_size = 5.f;
-
-	// Loading shaders
-	effect.load_from_file(shader_path("colored.vs.glsl"), shader_path("colored.fs.glsl"));
-
 }
 
 static const float p = 1.293f;
@@ -62,8 +58,15 @@ vec2 Particle::getPosition() {
 	return m_position;
 }
 
+bool Particle::getIsAlive() {
+	return is_alive;
+}
 
 void Particle::draw(const mat3& projection) {
+	return;
+}
+
+void Particle::draw(const mat3& projection, Effect& emitter_effect) {
 	transform_begin();
 
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -84,20 +87,17 @@ void Particle::draw(const mat3& projection) {
 
 	transform_end();
 
-	// Setting shaders
-	glUseProgram(effect.program);
-
 	// Input data location as in the vertex buffer
-	GLint in_position_loc = glGetAttribLocation(effect.program, "in_position");
-	GLint in_color_loc = glGetAttribLocation(effect.program, "in_color");
+	GLint in_position_loc = glGetAttribLocation(emitter_effect.program, "in_position");
+	GLint in_color_loc = glGetAttribLocation(emitter_effect.program, "in_color");
 	glEnableVertexAttribArray(in_position_loc);
 	glEnableVertexAttribArray(in_color_loc);
 	glVertexAttribPointer(in_position_loc, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
 	glVertexAttribPointer(in_color_loc, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)sizeof(vec3));
 
 	// Getting uniform locations
-	GLint transform_uloc = glGetUniformLocation(effect.program, "transform");
-	GLint projection_uloc = glGetUniformLocation(effect.program, "projection");
+	GLint transform_uloc = glGetUniformLocation(emitter_effect.program, "transform");
+	GLint projection_uloc = glGetUniformLocation(emitter_effect.program, "projection");
 
 	// Setting uniform values to the currently bound program
 	glUniformMatrix3fv(transform_uloc, 1, GL_FALSE, (float*)&transform);
