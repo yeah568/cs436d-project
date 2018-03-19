@@ -65,14 +65,12 @@ bool Level::init(std::string song_path, std::string osu_path, float boss_health)
     beatlist = new BeatList(beatmap);
 
     //FMOD INIT AND LOAD SOUNDS
-    printf("\nABOUT TO LOAD INIT OF FMOD\n");
     if (!(audioEngine.init() &&
           audioEngine.load_sounds() &&
           audioEngine.load_music(song_path.c_str()))) {
         printf("DID NOT LOAD FMOD\n");
         return false;
     }
-
     printf("FMOD loaded sounds and music");
 
     m_current_speed = 1.f;
@@ -187,12 +185,6 @@ bool Level::update(float elapsed_ms) {
     } else {
         m_current_time += elapsed_ms;
     }
-
-//    if (FMOD_OK != music_channel->isPlaying(isPlaying)) {
-//        system->playSound(music_level, 0, false, &music_channel);
-//    } else {
-//        m_current_time += elapsed_ms;
-//    }
 
     m_boss_health_bar.set_health_percentage(m_boss.get_health() / m_boss.get_total_health());
     float remaining_offset = elapsed_ms;

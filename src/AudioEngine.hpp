@@ -57,10 +57,10 @@ private:
 
 //    FMOD_VERSION version;
 
-    bool *is_Playing;
+    bool *is_Playing = new bool(false);
 
-    FMOD::Channel *music_channel;
-    FMOD::Channel *sound_effects;
+    FMOD::Channel *music_channel = nullptr;
+    FMOD::Channel *sound_effects = nullptr;
     FMOD::Sound *sound_player_hit;
     FMOD::Sound *music_level;
     FMOD::Sound *sound_boss_hit;

@@ -12,7 +12,6 @@
 
 
 bool AudioEngine::init() {
-
     result = FMOD::System_Create(&system);      // Create the main system object.
 
     if (result != FMOD_OK) {
