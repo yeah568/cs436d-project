@@ -17,6 +17,7 @@
 #include "BossHealthBar.hpp"
 #include "Structure.hpp"
 #include "TextureManager.hpp"
+#include "AudioEngine.hpp"
 
 // external
 //#include "fmod.hpp"
@@ -98,24 +99,10 @@ protected:
 
     bool init(std::string song_path, std::string osu_path, float boss_health);
 
+    AudioEngine audioEngine;
     TextureManager *tm;
     static Texture background_texture;
     static bool show_hitboxes;
-
-    FMOD::System *system;
-    FMOD::Channel *channel;
-    FMOD::Channel *music_channel;
-    FMOD::Sound *sound_player_hit;
-    FMOD::Sound *sound_boss_hit;
-    FMOD::Sound *music_level;
-    FMOD::Sound *sound_boss_death;
-    FMOD::Sound *sound_player_death;
-    FMOD::Sound *sound_enemy_hit;
-    FMOD::Sound *sound_structure_death;
-    FMOD::Sound *sound_perfect_timing;
-    FMOD::Sound *sound_good_timing;
-    FMOD::Sound *sound_bad_timing;
-    bool *isPlaying;
 
     static CenterBeatCircle blue_center_beat_circle;
     static CenterBeatCircle orange_center_beat_circle;
@@ -158,7 +145,7 @@ protected:
     std::vector<LittleEnemy> m_little_enemies;
     std::vector<Structure *> m_structures;
     Boss m_boss;
-	std::vector<ParticleEmitter*> m_particle_emitters;
+    std::vector<ParticleEmitter *> m_particle_emitters;
 };
 
 class Level1 : public Level {
