@@ -179,8 +179,9 @@ void Level::handle_beat(float remaining_offset, Beat *curBeat, vec2 screen) {
 // Update our game world
 
 bool Level::update(float elapsed_ms) {
-
+//printf("HELLO UPDATE\n");
     if (!(audioEngine.is_playing(audioEngine.get_music_channel()))) {
+//        printf("AUDIO ENGINE PLAYS MUSIC\n");
         audioEngine.play_music();
     } else {
         m_current_time += elapsed_ms;

@@ -7,6 +7,9 @@
 
 #include "../ext/fmod/inc/fmod.hpp"
 #include "../ext/fmod/inc/fmod_errors.h"
+#include "../ext/fmod/inc/fmod_dsp.h"
+#include "../ext/fmod/inc/fmod_dsp_effects.h"
+
 #include <string>
 
 
@@ -15,6 +18,7 @@ class AudioEngine {
 public:
 
     AudioEngine();
+
     ~AudioEngine();
 
     bool init();
@@ -29,7 +33,7 @@ public:
 
     void play_music();
 
-    FMOD::Channel* get_music_channel();
+    FMOD::Channel *get_music_channel();
 
     bool is_playing(FMOD::Channel *channel);
 
@@ -50,12 +54,10 @@ public:
     void play_good_timing();
 
     void play_bad_timing();
+
 private:
 
     FMOD_RESULT result = FMOD_OK;
-
-
-//    FMOD_VERSION version;
 
     bool *is_Playing = new bool(false);
 
@@ -73,6 +75,10 @@ private:
     FMOD::Sound *sound_bad_timing;
     FMOD::System *system;
 
+    FMOD::DSP *dsphighpass = nullptr;
+    FMOD::DSP *dspdistortion = nullptr;
+    FMOD::DSP *dspreverb = nullptr;
+    FMOD::DSP *dsplowpass = nullptr;
 };
 
 

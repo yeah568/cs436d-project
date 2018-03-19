@@ -12,21 +12,58 @@
 
 
 bool AudioEngine::init() {
-    result = FMOD::System_Create(&system);      // Create the main system object.
 
+    result = FMOD::System_Create(&system);      // Create the main system object.
     if (result != FMOD_OK) {
         printf("FMOD error! (%d) creation of FMOD system failure\n", result);
         return false;
     }
 
     result = system->init(32, FMOD_INIT_NORMAL, 0);    // Initialize FMOD.
-
     if (result != FMOD_OK) {
         printf("FMOD error! (%d) initialization of FMOD system failure\n", result);
         return false;
     }
 
+    result = system->createDSPByType(FMOD_DSP_TYPE_DISTORTION, &dspdistortion);
+    if (result != FMOD_OK) {
+        printf("FMOD error! (%d) creation of DSP distortion of FMOD system failure\n", result);
+        return false;
+    }
+    result = system->createDSPByType(FMOD_DSP_TYPE_HIGHPASS, &dsphighpass);
+    if (result != FMOD_OK) {
+        printf("FMOD error! (%d) creation of DSP highpass filter of FMOD system failure\n", result);
+        return false;
+    }
+
+    result = system->createDSPByType(FMOD_DSP_TYPE_LOWPASS, &dsplowpass);
+    if (result != FMOD_OK) {
+        printf("FMOD error! (%d) creation of DSP lowpass filter of FMOD system failure\n", result);
+        return false;
+    }
+
+    result = system->createDSPByType(FMOD_DSP_TYPE_SFXREVERB, &dspreverb);
+    if (result != FMOD_OK) {
+        printf("FMOD error! (%d) creation of DSP reverb of FMOD system failure\n", result);
+        return false;
+    }
+
+    result = music_channel->addDSP(0, dsplowpass);
+    result = music_channel->addDSP(0, dsphighpass);
+    result = music_channel->addDSP(0, dspdistortion);
+    result = music_channel->addDSP(0, dspreverb);
+
+    /*
+        By default, bypass all effects.  This means let the original signal go through without processing.
+        It will sound 'dry' until effects are enabled by the user.
+    */
+    result = dsplowpass->setBypass(true);
+    result = dsphighpass->setBypass(true);
+    result = dspdistortion->setBypass(true);
+    result = dspreverb->setBypass(true);
+
     return true;
+
 }
 
 AudioEngine::AudioEngine() {
@@ -38,6 +75,15 @@ AudioEngine::~AudioEngine() {
 }
 
 bool AudioEngine::destroy() {
+
+    result = music_channel->removeDSP(dsplowpass);
+    result = music_channel->removeDSP(dsphighpass);
+    result = music_channel->removeDSP(dspdistortion);
+    result = music_channel->removeDSP(dspreverb);
+    result = dsplowpass->release();
+    result = dsphighpass->release();
+    result = dspdistortion->release();
+    result = dspreverb->release();
 
     result = music_level->release();
     if (result != FMOD_OK) {
