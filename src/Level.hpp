@@ -3,7 +3,6 @@
 // internal
 #include "common.hpp"
 #include "Player.hpp"
-#include "Turtle.hpp"
 #include "Bullet.hpp"
 #include "Background.hpp"
 #include "BeatList.hpp"
@@ -77,10 +76,6 @@ public:
     int new_points;
 
 private:
-    // Generates a new turtle
-    bool spawn_turtle();
-
-
     // Generates a new fish
     //bool spawn_bullet(vec2 position, float angle, bool bullet_type, bool on_beat);
 
