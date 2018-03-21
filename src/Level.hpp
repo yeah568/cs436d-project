@@ -39,6 +39,10 @@
 
 #endif
 
+#if _WIN32
+#include <xinput.h>
+#endif
+
 
 // Container for all our entities and game logic. Individual rendering / update is 
 // deferred to the relative update() methods
@@ -73,21 +77,21 @@ public:
 
     void on_mouse_move(double xpos, double ypos);
 
+	void handle_controller(float elapsed_ms);
+
+	void vibrate_controller(int controller, float duration, WORD left_speed, WORD right_speed);
+
     int new_points;
 
 private:
-    // Generates a new fish
-    //bool spawn_bullet(vec2 position, float angle, bool bullet_type, bool on_beat);
-
-    //bool spawn_beat_circle(int dir, float pos, float speed);
-
     void handle_beat(float remaining_offset, Beat *curBeat, vec2 screen);
 
-    //bool spawn_enemy(vec2 position);
-
-    //bool spawn_little_enemy();
-
     void on_arrow_key(Dir dir);
+
+	float vibration_remaining;
+#if _WIN32
+	XINPUT_STATE controller_state;
+#endif
 
 protected:
 

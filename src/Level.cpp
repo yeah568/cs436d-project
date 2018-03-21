@@ -230,7 +230,8 @@ void Level::handle_beat(float remaining_offset, Beat *curBeat, vec2 screen) {
 
 bool Level::update(float elapsed_ms)
 {
-  if ( music_channel == nullptr || FMOD_OK != music_channel->isPlaying(isPlaying)) {
+	handle_controller(elapsed_ms);
+    if ( music_channel == nullptr || FMOD_OK != music_channel->isPlaying(isPlaying)) {
 	  system->playSound(music_level, 0, false, &music_channel);
 	  music_channel->setVolume(0.5);
 	}
@@ -342,7 +343,8 @@ bool Level::update(float elapsed_ms)
 	}
 	for (auto little_enemy_it = m_little_enemies.begin(); little_enemy_it != m_little_enemies.end();) {
 		if (m_player.collides_with(*little_enemy_it)) {
-      system->playSound(sound_player_hit, 0, false, &channel);
+			vibrate_controller(0, 500.f, 32000, 32000);
+			system->playSound(sound_player_hit, 0, false, &channel);
 			healthbar.update();
 			auto pe = new ParticleEmitter(
 				little_enemy_it->get_position(),
@@ -353,7 +355,7 @@ bool Level::update(float elapsed_ms)
 			m_particle_emitters.emplace_back(pe);
 			m_player.set_health(-1);
 			if (m_player.get_health() <= 0) {
-        system->playSound(sound_player_death, 0, false, &channel);
+			system->playSound(sound_player_death, 0, false, &channel);
 				//m_player.kill();
 				//printf("Player has died\n");
 			}
@@ -648,6 +650,90 @@ void Level::on_mouse_move(double xpos, double ypos) {
 
     m_player.set_mouse((float) xpos, (float) ypos);
 }
+
+
+void Level::handle_controller(float elapsed_ms) {
+#if _WIN32
+	ZeroMemory(&controller_state, sizeof(XINPUT_STATE));
+
+	if (XInputGetState(0, &controller_state) != ERROR_SUCCESS) {
+		return;
+	}
+
+	bool A_button_pressed = ((controller_state.Gamepad.wButtons & XINPUT_GAMEPAD_A) != 0);
+	bool B_button_pressed = ((controller_state.Gamepad.wButtons & XINPUT_GAMEPAD_B) != 0);
+	bool X_button_pressed = ((controller_state.Gamepad.wButtons & XINPUT_GAMEPAD_X) != 0);
+	bool Y_button_pressed = ((controller_state.Gamepad.wButtons & XINPUT_GAMEPAD_Y) != 0);
+	bool dpad_down_pressed = ((controller_state.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_DOWN) != 0);
+	bool dpad_right_pressed = ((controller_state.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_RIGHT) != 0);
+	bool dpad_up_pressed = ((controller_state.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_UP) != 0);
+	bool dpad_left_pressed = ((controller_state.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_LEFT) != 0);
+
+	if (A_button_pressed || dpad_down_pressed) {
+		on_arrow_key(down);
+	}
+	if (B_button_pressed || dpad_right_pressed) {
+		on_arrow_key(right);
+	}
+	if (Y_button_pressed || dpad_up_pressed) {
+		on_arrow_key(up);
+	}
+	if (X_button_pressed || dpad_left_pressed) {
+		on_arrow_key(left);
+	}
+
+	float leftTrigger = controller_state.Gamepad.bLeftTrigger / 255.f;
+	float rightTrigger = controller_state.Gamepad.bRightTrigger / 255.f;
+
+	float LX = controller_state.Gamepad.sThumbLX;
+
+	//determine how far the controller is pushed
+	float magnitude = std::abs(LX);
+
+	//determine the direction the controller is pushed
+	float normalizedLX = LX / magnitude;
+
+	float normalizedMagnitude = 0;
+
+	//check if the controller is outside a circular dead zone
+	if (magnitude > XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE)
+	{
+		//clip the magnitude at its expected maximum value
+		if (magnitude > 32767) magnitude = 32767;
+
+		//adjust magnitude relative to the end of the dead zone
+		magnitude -= XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE;
+
+		//optionally normalize the magnitude with respect to its expected range
+		//giving a magnitude value of 0.0 to 1.0
+		normalizedMagnitude = magnitude / (32767 - XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE);
+	}
+	else //if the controller is in the deadzone zero out the magnitude
+	{
+		magnitude = 0.0;
+		normalizedMagnitude = 0.0;
+	}
+
+	m_player.set_movement_dir({ normalizedLX * normalizedMagnitude, 0.f });
+
+	vibration_remaining -= elapsed_ms;
+	if (vibration_remaining <= 0) {
+		vibrate_controller(0, 0, 0, 0);
+	}
+#else
+	return;
+#endif
+}
+
+void Level::vibrate_controller(int controller, float duration, WORD left_speed, WORD right_speed) {
+	vibration_remaining = duration;
+	XINPUT_VIBRATION vibration;
+	ZeroMemory(&vibration, sizeof(XINPUT_VIBRATION));
+	vibration.wLeftMotorSpeed = left_speed; // use any value between 0-65535 here
+	vibration.wRightMotorSpeed = right_speed; // use any value between 0-65535 here
+	XInputSetState(controller, &vibration);
+}
+
 
 float Level::getBossHealth() {
     return m_boss.get_health();
