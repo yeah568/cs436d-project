@@ -47,9 +47,9 @@ TextRenderer::TextRenderer(std::string font_name) {
 		// Now store character for later use
 		Character character = {
 			texture,
-			{face->glyph->bitmap.width, face->glyph->bitmap.rows },
-			{face->glyph->bitmap_left, face->glyph->bitmap_top},
-			face->glyph->advance.x
+			{ static_cast<float>(face->glyph->bitmap.width),  static_cast<float>(face->glyph->bitmap.rows) },
+			{ static_cast<float>(face->glyph->bitmap_left),  static_cast<float>(face->glyph->bitmap_top) },
+			static_cast<GLuint>(face->glyph->advance.x)
 		};
 		characters.insert(std::pair<GLchar, Character>(c, character));
 	}
