@@ -52,7 +52,7 @@ Level::Level(int width, int height) : m_points(0), m_next_little_enemies_spawn(0
     m_current_time = 0;
 }
 
-bool Level::init(std::string song_path1, std::string osu_path, float boss_health) {
+bool Level::init(std::string song_path1, std::string osu_path, float boss_health, float player_health) {
     OsuParser *parser;
     //-------------------------------------------------------------------------
 
@@ -168,10 +168,10 @@ bool Level::init(std::string song_path1, std::string osu_path, float boss_health
 
 
     healthbar.set_texture(tm->get_texture("healthbar"));
-    healthbar.init(5);
-
-    healthbar.set_scale({0.6f, 0.7f});
-    healthbar.set_position({200, 50});
+    healthbar.init();
+	bbox hp_bbox = healthbar.get_bounding_box();
+    healthbar.set_scale({1.0f, 1.0f});
+    healthbar.set_position({ (hp_bbox.max_x - hp_bbox.min_x) / 2.0f, 200 });
     healthbar.set_rotation(0);
     m_background.init();
 
@@ -179,7 +179,9 @@ bool Level::init(std::string song_path1, std::string osu_path, float boss_health
     if (!m_player.init()) {
         return false;
     }
-    m_player.set_health(5);
+	max_player_health = player_health;
+    m_player.set_health_abs(max_player_health);
+	healthbar.update(1.f);
     if (m_boss.init(boss_health, &m_little_enemies, &m_structures)) {
         Structure::player_bullets = &m_bullets;
         Structure::enemy_bullets = &m_enemy_bullets;
@@ -206,14 +208,14 @@ Level::~Level() {
 bool Level2::init() {
     return Level::init(song_path("598830 Shawn Wasabi - Marble Soda/Marble Soda.wav"),
                        song_path("598830 Shawn Wasabi - Marble Soda/Shawn Wasabi - Marble Soda (Exa) [Normal].osu"),
-                       375.0f);
+                       375.0f, 10.f);
 }
 
 // World initialization
 bool Level1::init() {
     return Level::init(song_path("BlendS/BlendS.wav"),
                        song_path("BlendS/Blend A - Bon Appetit S (Meg) [Easy].osu"),
-                       250.0f);
+                       250.0f, 10.f);
 }
 
 // Releases all the associated resources
@@ -409,7 +411,7 @@ bool Level::update(float elapsed_ms)
 	for (auto little_enemy_it = m_little_enemies.begin(); little_enemy_it != m_little_enemies.end();) {
 		if (m_player.collides_with(*little_enemy_it)) {
       system->playSound(sound_player_hit, 0, false, &channel);
-			healthbar.update();
+			healthbar.update(m_player.get_health() / max_player_health);
 			auto pe = new ParticleEmitter(
 				little_enemy_it->get_position(),
 				100,
@@ -417,10 +419,10 @@ bool Level::update(float elapsed_ms)
 			pe->init();
 			little_enemy_it = m_little_enemies.erase(little_enemy_it);
 			m_particle_emitters.emplace_back(pe);
-			m_player.set_health(-1);
+			m_player.set_health(-0.5);
 			if (m_player.get_health() <= 0) {
         system->playSound(sound_player_death, 0, false, &channel);
-				//m_player.kill();
+				m_player.kill();
 				//printf("Player has died\n");
 			}
 			break;
@@ -474,7 +476,8 @@ bool Level::update(float elapsed_ms)
 							} else {
 								m_boss.structure_slots.right = nullptr;
 							}
-              system->playSound(sound_structure_death, 0, false, &channel);
+							system->playSound(sound_structure_death, 0, false, &channel);
+							m_boss.remove_structure(*structure_it, m_current_time);
 							structure_it = m_structures.erase(structure_it);
 						}
 						break;

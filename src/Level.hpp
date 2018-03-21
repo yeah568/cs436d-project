@@ -96,7 +96,7 @@ private:
 
 protected:
 
-    bool init(std::string song_path, std::string osu_path, float boss_health);
+    bool init(std::string song_path, std::string osu_path, float boss_health, float player_health);
 
     TextureManager *tm;
     static Texture background_texture;
@@ -159,6 +159,8 @@ protected:
     std::vector<Structure *> m_structures;
     Boss m_boss;
 	std::vector<ParticleEmitter*> m_particle_emitters;
+
+	float max_player_health;
 };
 
 class Level1 : public Level {

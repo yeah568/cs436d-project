@@ -32,4 +32,6 @@ public:
 	void scale_by(float scale);
 
 private:
+	
+	float MAX_ROTATION_PER_SEC = 3.14 / 6; // 30deg
 };
