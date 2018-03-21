@@ -16,7 +16,7 @@ ParticleEmitter::~ParticleEmitter() {
 	delete[] m_particle_pool;
 }
 
-void ParticleEmitter::update(int elapsed_ms) {
+void ParticleEmitter::update(float elapsed_ms) {
 	int i;
 	for (i = 0; i < m_num_alive_particles; i++) {
 		m_particle_pool[i].update(elapsed_ms);
@@ -45,7 +45,7 @@ bool ParticleEmitter::init()
 
 	int i = 0;
 	while (i < m_max_particles) {
-		m_particle_pool[i++].init(m_position, 500, rand() % 359, rand() % 3 + 3);
+		m_particle_pool[i++].init(m_position, 500.f, (rand() % 35999) / 100.f, rand() % 3 + 3);
 		m_num_alive_particles++;
 	}
 

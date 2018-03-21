@@ -40,7 +40,7 @@ namespace {
     }
 }
 
-Level::Level(int width, int height) : m_points(0), m_next_little_enemies_spawn(0.f) {
+Level::Level(float width, float height) : m_points(0), m_next_little_enemies_spawn(0.f) {
     screen.x = width;
     screen.y = height;
     m_rng = std::default_random_engine(std::random_device()());
@@ -316,7 +316,7 @@ bool Level::update(float elapsed_ms)
 		if (curBeat->absoluteOffset <= m_current_time + beat_spawn_time && !curBeat->spawned) {
 			float delta = m_current_time - curBeat->absoluteOffset + beat_spawn_time;
 			float pos = some_fixed_spawn_distance - speed * delta;
-			float scale = 1.5 - delta / 1500;
+			float scale = 1.5f - delta / 1500.f;
 			curBeat->spawned = true;
 			Texture* texture = tm->get_texture(((curBeat->dir % 2) == 1) ? "orange_moving_beat" : "blue_moving_beat");
 			spawn_beat_circle(curBeat->dir, pos, speed, scale, curBeat->absoluteOffset, &m_player, texture, &m_beatcircles);
@@ -344,8 +344,6 @@ bool Level::update(float elapsed_ms)
 	auto beatcircle_it = m_beatcircles.begin();
 	vec2 player_pos = m_player.get_position();
 	bool bad = false;
-	vec2 mov_dir;
-	vec2 bc_player;
 	while (beatcircle_it != m_beatcircles.end()) {
 		float delta = m_current_time - beatcircle_it->get_offset();
 		if (delta > bad_timing) {
@@ -509,14 +507,14 @@ bool Level::update(float elapsed_ms)
 // Render our game world
 void Level::draw()
 {
-	int w = screen.x;
-	int h = screen.y;
+	float w = screen.x;
+	float h = screen.y;
 	// Fake projection matrix, scales with respect to window coordinates
 	// PS: 1.f / w in [1][1] is correct.. do you know why ? (:
 	float left = 0.f;// *-0.5;
 	float top = 0.f;// (float)h * -0.5;
-	float right = (float)w;// *0.5;
-	float bottom = (float)h;// *0.5;
+	float right = w;// *0.5;
+	float bottom = h;// *0.5;
 
 	float sx = 2.f / (right - left);
 	float sy = 2.f / (top - bottom);
@@ -524,7 +522,7 @@ void Level::draw()
 	float ty = -(top + bottom) / (top - bottom);
 	mat3 projection_2D{ { sx, 0.f, 0.f },{ 0.f, sy, 0.f },{ tx, ty, 1.f } };
 
-	m_background.set_position({ (float)w / 2, (float)h / 2 });
+	m_background.set_position({ w / 2, h / 2 });
 
 	m_background.draw(projection_2D);
 
@@ -663,7 +661,7 @@ void Level::on_key(int key, int action, int mod) {
 }
 
 void Level::on_arrow_key(Dir dir) {
-    float player_angle = m_player.get_rotation() + 1.57;
+    float player_angle = m_player.get_rotation() + 1.57f;
     vec2 salmon_pos = m_player.get_position();
     Texture *texture = tm->get_texture(m_player.bullet_type ? "bullet_1" : "bullet_2");
     auto beatcircle_it = m_beatcircles.begin();
@@ -715,6 +713,6 @@ void Level::on_mouse_move(double xpos, double ypos) {
     m_player.set_mouse((float) xpos, (float) ypos);
 }
 
-int Level::getBossHealth() {
+float Level::getBossHealth() {
     return m_boss.get_health();
 }

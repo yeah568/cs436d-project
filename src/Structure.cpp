@@ -65,7 +65,7 @@ void Black_Hole_Structure::update(float ms) {
 		vec2 diff = m_position - bullet_it->get_position();
 		b_g_force.dir = normalize(diff);
 	
-		b_g_force.mag = numerator / std::pow(length(diff), 2.0);
+		b_g_force.mag = numerator / std::pow(length(diff), 2.0f);
 		bullet_it->addForce(b_g_force);
 		//printf("Force bullet: %f\n", b_g_force.dir.y);
 		bullet_it++;

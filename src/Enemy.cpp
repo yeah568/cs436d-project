@@ -24,7 +24,7 @@ void LittleEnemy::update(float ms) {
 	float delta_x = player_pos.x - m_position.x;
 	float delta_y = m_position.y - player_pos.y;
 	float angle = (float)atan2(delta_y, delta_x);
-	m_rotation = angle + 3.14/2;
+	m_rotation = angle + 3.14f/2;
 	//m_position.x += step;
 
 	//

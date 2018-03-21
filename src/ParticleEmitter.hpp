@@ -9,7 +9,7 @@ public:
 
 	~ParticleEmitter();
 
-	void update(int elapsed_ms);
+	void update(float elapsed_ms);
 	bool init();
 	void draw(const mat3 & projection);
 	int get_alive_particles();

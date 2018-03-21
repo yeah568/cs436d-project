@@ -46,7 +46,7 @@
 class Level {
 
 public:
-    Level(int width, int height);
+    Level(float width, float height);
 
     ~Level();
 
@@ -62,7 +62,7 @@ public:
     // Renders our scene
     void draw();
 
-    int getBossHealth();
+    float getBossHealth();
 
     void drawBackground();
 
@@ -163,7 +163,7 @@ protected:
 
 class Level1 : public Level {
 public:
-    Level1(int width, int height) : Level(width, height) {};
+    Level1(float width, float height) : Level(width, height) {};
 
     ~Level1();
 
@@ -172,7 +172,7 @@ public:
 
 class Level2 : public Level {
 public:
-    Level2(int width, int height) : Level(width, height) {};
+    Level2(float width, float height) : Level(width, height) {};
 
     ~Level2();
 
