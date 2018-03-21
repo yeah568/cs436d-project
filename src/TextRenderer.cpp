@@ -8,7 +8,7 @@ TextRenderer::TextRenderer(std::string font_name) {
 	}
 
 	FT_Face face;
-	if (FT_New_Face(ft, font_path("comic.ttf"), 0, &face)) {
+	if (FT_New_Face(ft, font_path(font_name).c_str(), 0, &face)) {
 		printf("ERROR::FREETYPE: Failed to load font");
 	}
 
