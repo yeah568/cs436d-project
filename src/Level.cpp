@@ -49,43 +49,10 @@ Level::Level(float width, float height) : m_points(0), m_next_little_enemies_spa
 
 bool Level::init(std::string song_path1, std::string osu_path, float boss_health) {
     OsuParser *parser;
-    //-------------------------------------------------------------------------
-
-    //-------------------------------------------------------------------------
-    // Loading music and sounds
-    /*
-    if (SDL_Init(SDL_INIT_AUDIO) < 0) {
-        fprintf(stderr, "Failed to initialize SDL Audio");
-        return false;
-    }
-
-    if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) == -1) {
-        fprintf(stderr, "Failed to open audio device");
-        return false;
-    }
-    */
-
-//    m_background_music = Mix_LoadMUS(song_path.c_str());
     parser = new OsuParser(osu_path.c_str());
 
     OsuBeatmap beatmap = parser->parse();
     beatlist = new BeatList(beatmap);
-    /*
-    if (!m_background_music) {
-        printf("Mix_LoadMUS(\"music.mp3\"): %s\n", Mix_GetError());
-        // this might be a critical error...
-    }
-
-    m_player_dead_sound = Mix_LoadWAV(audio_path("salmon_dead.wav"));
-    m_player_eat_sound = Mix_LoadWAV(audio_path("salmon_eat.wav"));
-
-    if (m_background_music == nullptr || m_player_dead_sound == nullptr || m_player_eat_sound == nullptr) {
-        fprintf(stderr, "Failed to load sounds, make sure the data directory is present");
-        return false;
-    }
-
-    fprintf(stderr, "Loaded music through SDL");
-*/
 
 
     FMOD_RESULT result = FMOD::System_Create(&system);      // Create the main system object.
@@ -213,17 +180,6 @@ bool Level1::init() {
 
 // Releases all the associated resources
 void Level::destroy() {
-    /*
-    if (m_background_music != nullptr)
-        Mix_FreeMusic(m_background_music);
-    if (m_player_dead_sound != nullptr)
-        Mix_FreeChunk(m_player_dead_sound);
-    if (m_player_eat_sound != nullptr)
-        Mix_FreeChunk(m_player_eat_sound);
-
-    Mix_CloseAudio();
-    */
-
     music_level->release();
     sound_player_hit->release();
     sound_boss_hit->release();
@@ -275,7 +231,8 @@ void Level::handle_beat(float remaining_offset, Beat *curBeat, vec2 screen) {
 bool Level::update(float elapsed_ms)
 {
   if ( music_channel == nullptr || FMOD_OK != music_channel->isPlaying(isPlaying)) {
-      system->playSound(music_level, 0, false, &music_channel);
+	  system->playSound(music_level, 0, false, &music_channel);
+	  music_channel->setVolume(0.5);
 	}
 	else {
 		m_current_time += elapsed_ms;
@@ -348,7 +305,7 @@ bool Level::update(float elapsed_ms)
 			m_boss_health_bar.set_health_percentage(m_boss.get_health()/m_boss.get_total_health());
 			bullet_it = m_bullets.erase(bullet_it);
 			if (m_boss.get_health() <= 0) {
-        system->playSound(sound_boss_death, 0, false, &channel);
+				system->playSound(sound_boss_death, 0, false, &channel);
 				finished = 1;
 				new_points += 100;
 				return true;
