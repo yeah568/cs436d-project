@@ -157,6 +157,8 @@ protected:
 	std::vector<ParticleEmitter*> m_particle_emitters;
 
 	TextRenderer* m_comic_sans_renderer;
+
+	int m_combo;
 };
 
 class Level1 : public Level {
