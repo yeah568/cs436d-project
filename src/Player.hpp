@@ -5,7 +5,6 @@
 #include "Sprite.hpp"
 #include <algorithm>
 
-class Turtle;
 class Bullet;
 class LittleEnemy;
 

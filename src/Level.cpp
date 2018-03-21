@@ -265,17 +265,6 @@ void Level::destroy() {
 
 void Level::handle_beat(float remaining_offset, Beat *curBeat, vec2 screen) {
     remaining_offset -= curBeat->relativeOffset;
-    //beatPos++;
-    // do beat things
-    // spawn thing
-
-
-
-
-    // spawn a thing
-    //spawn_turtle();
-    //Turtle& new_turtle = m_turtles.back();
-    //new_turtle.set_position({ ((64.f + (float)curBeat->x) / 640.f)*screen.x, ((48.f + (float)curBeat->y) / 480.f)*screen.y });
 
     m_player.scale_by(1.3f);
     m_boss.on_beat(curBeat, screen);
