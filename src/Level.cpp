@@ -28,11 +28,6 @@ bool Level::show_hitboxes = false;
 
 // Same as static in c, local to compilation unit
 namespace {
-    const size_t MAX_TURTLES = 15;
-    const size_t MAX_LIL_ENEMIES = 15;
-    const size_t MAX_FISH = 5;
-    const size_t TURTLE_DELAY_MS = 2000;
-    const size_t FISH_DELAY_MS = 5000;
     namespace {
         void glfw_err_cb(int error, const char *desc) {
             fprintf(stderr, "%d: %s", error, desc);
@@ -40,7 +35,7 @@ namespace {
     }
 }
 
-Level::Level(int width, int height) : m_points(0), m_next_little_enemies_spawn(0.f) {
+Level::Level(float width, float height) : m_points(0), m_next_little_enemies_spawn(0.f) {
     screen.x = width;
     screen.y = height;
     m_rng = std::default_random_engine(std::random_device()());
@@ -54,43 +49,10 @@ Level::Level(int width, int height) : m_points(0), m_next_little_enemies_spawn(0
 
 bool Level::init(std::string song_path1, std::string osu_path, float boss_health) {
     OsuParser *parser;
-    //-------------------------------------------------------------------------
-
-    //-------------------------------------------------------------------------
-    // Loading music and sounds
-    /*
-    if (SDL_Init(SDL_INIT_AUDIO) < 0) {
-        fprintf(stderr, "Failed to initialize SDL Audio");
-        return false;
-    }
-
-    if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) == -1) {
-        fprintf(stderr, "Failed to open audio device");
-        return false;
-    }
-    */
-
-//    m_background_music = Mix_LoadMUS(song_path.c_str());
     parser = new OsuParser(osu_path.c_str());
 
     OsuBeatmap beatmap = parser->parse();
     beatlist = new BeatList(beatmap);
-    /*
-    if (!m_background_music) {
-        printf("Mix_LoadMUS(\"music.mp3\"): %s\n", Mix_GetError());
-        // this might be a critical error...
-    }
-
-    m_player_dead_sound = Mix_LoadWAV(audio_path("salmon_dead.wav"));
-    m_player_eat_sound = Mix_LoadWAV(audio_path("salmon_eat.wav"));
-
-    if (m_background_music == nullptr || m_player_dead_sound == nullptr || m_player_eat_sound == nullptr) {
-        fprintf(stderr, "Failed to load sounds, make sure the data directory is present");
-        return false;
-    }
-
-    fprintf(stderr, "Loaded music through SDL");
-*/
 
 
     FMOD_RESULT result = FMOD::System_Create(&system);      // Create the main system object.
@@ -218,17 +180,6 @@ bool Level1::init() {
 
 // Releases all the associated resources
 void Level::destroy() {
-    /*
-    if (m_background_music != nullptr)
-        Mix_FreeMusic(m_background_music);
-    if (m_player_dead_sound != nullptr)
-        Mix_FreeChunk(m_player_dead_sound);
-    if (m_player_eat_sound != nullptr)
-        Mix_FreeChunk(m_player_eat_sound);
-
-    Mix_CloseAudio();
-    */
-
     music_level->release();
     sound_player_hit->release();
     sound_boss_hit->release();
@@ -270,17 +221,6 @@ void Level::destroy() {
 
 void Level::handle_beat(float remaining_offset, Beat *curBeat, vec2 screen) {
     remaining_offset -= curBeat->relativeOffset;
-    //beatPos++;
-    // do beat things
-    // spawn thing
-
-
-
-
-    // spawn a thing
-    //spawn_turtle();
-    //Turtle& new_turtle = m_turtles.back();
-    //new_turtle.set_position({ ((64.f + (float)curBeat->x) / 640.f)*screen.x, ((48.f + (float)curBeat->y) / 480.f)*screen.y });
 
     m_player.scale_by(1.3f);
     m_boss.on_beat(curBeat, screen);
@@ -291,7 +231,8 @@ void Level::handle_beat(float remaining_offset, Beat *curBeat, vec2 screen) {
 bool Level::update(float elapsed_ms)
 {
   if ( music_channel == nullptr || FMOD_OK != music_channel->isPlaying(isPlaying)) {
-      system->playSound(music_level, 0, false, &music_channel);
+	  system->playSound(music_level, 0, false, &music_channel);
+	  music_channel->setVolume(0.5);
 	}
 	else {
 		m_current_time += elapsed_ms;
@@ -303,9 +244,6 @@ bool Level::update(float elapsed_ms)
 	Beat* curBeat;
 	while (beatPos < beatlist->beats.size()) {
 		curBeat = &beatlist->beats.at(beatPos);
-		//printf("remaining offset %f", remaining_offset);
-		float center_radius = 100.0f;  // TODO: use radius of circle around player
-		float ms_per_beat = curBeat->duration;
 
 		// We should spawn a beat circle such that when the beat circle gets to the
 		// center circle, this event coincides with
@@ -316,7 +254,7 @@ bool Level::update(float elapsed_ms)
 		if (curBeat->absoluteOffset <= m_current_time + beat_spawn_time && !curBeat->spawned) {
 			float delta = m_current_time - curBeat->absoluteOffset + beat_spawn_time;
 			float pos = some_fixed_spawn_distance - speed * delta;
-			float scale = 1.5 - delta / 1500;
+			float scale = 1.5f - delta / 1500.f;
 			curBeat->spawned = true;
 			Texture* texture = tm->get_texture(((curBeat->dir % 2) == 1) ? "orange_moving_beat" : "blue_moving_beat");
 			spawn_beat_circle(curBeat->dir, pos, speed, scale, curBeat->absoluteOffset, &m_player, texture, &m_beatcircles);
@@ -342,10 +280,6 @@ bool Level::update(float elapsed_ms)
 
 	// Checking player - beatcircle complete overlaps/overshoots
 	auto beatcircle_it = m_beatcircles.begin();
-	vec2 player_pos = m_player.get_position();
-	bool bad = false;
-	vec2 mov_dir;
-	vec2 bc_player;
 	while (beatcircle_it != m_beatcircles.end()) {
 		float delta = m_current_time - beatcircle_it->get_offset();
 		if (delta > bad_timing) {
@@ -371,7 +305,7 @@ bool Level::update(float elapsed_ms)
 			m_boss_health_bar.set_health_percentage(m_boss.get_health()/m_boss.get_total_health());
 			bullet_it = m_bullets.erase(bullet_it);
 			if (m_boss.get_health() <= 0) {
-        system->playSound(sound_boss_death, 0, false, &channel);
+				system->playSound(sound_boss_death, 0, false, &channel);
 				finished = 1;
 				new_points += 100;
 				return true;
@@ -509,14 +443,14 @@ bool Level::update(float elapsed_ms)
 // Render our game world
 void Level::draw()
 {
-	int w = screen.x;
-	int h = screen.y;
+	float w = screen.x;
+	float h = screen.y;
 	// Fake projection matrix, scales with respect to window coordinates
 	// PS: 1.f / w in [1][1] is correct.. do you know why ? (:
 	float left = 0.f;// *-0.5;
 	float top = 0.f;// (float)h * -0.5;
-	float right = (float)w;// *0.5;
-	float bottom = (float)h;// *0.5;
+	float right = w;// *0.5;
+	float bottom = h;// *0.5;
 
 	float sx = 2.f / (right - left);
 	float sy = 2.f / (top - bottom);
@@ -524,7 +458,7 @@ void Level::draw()
 	float ty = -(top + bottom) / (top - bottom);
 	mat3 projection_2D{ { sx, 0.f, 0.f },{ 0.f, sy, 0.f },{ tx, ty, 1.f } };
 
-	m_background.set_position({ (float)w / 2, (float)h / 2 });
+	m_background.set_position({ w / 2, h / 2 });
 
 	m_background.draw(projection_2D);
 
@@ -663,13 +597,13 @@ void Level::on_key(int key, int action, int mod) {
 }
 
 void Level::on_arrow_key(Dir dir) {
-    float player_angle = m_player.get_rotation() + 1.57;
+    float player_angle = m_player.get_rotation() + 1.57f;
     vec2 salmon_pos = m_player.get_position();
     Texture *texture = tm->get_texture(m_player.bullet_type ? "bullet_1" : "bullet_2");
     auto beatcircle_it = m_beatcircles.begin();
     while (beatcircle_it != m_beatcircles.end()) {
         float abs_offset = beatcircle_it->get_offset();
-        float delta = abs(m_current_time - abs_offset);
+        float delta = std::abs(m_current_time - abs_offset);
         if (delta > bad_timing) {
             break;
         }
@@ -715,6 +649,6 @@ void Level::on_mouse_move(double xpos, double ypos) {
     m_player.set_mouse((float) xpos, (float) ypos);
 }
 
-int Level::getBossHealth() {
+float Level::getBossHealth() {
     return m_boss.get_health();
 }

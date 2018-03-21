@@ -22,7 +22,7 @@ void Particle::init(vec2 position, float lifespan, float angle, float speed)
 {
 	m_position = position;
 	m_lifespan = lifespan;
-	float angleRads = angle * 3.14 / 180;
+	float angleRads = angle * 3.14f / 180.f;
 	m_velocity.x = speed * cos(angleRads);
 	m_velocity.y = -speed * sin(angleRads);
 
