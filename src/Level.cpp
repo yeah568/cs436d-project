@@ -54,7 +54,7 @@ bool Level::init(std::string song_path1, std::string osu_path, float boss_health
     OsuBeatmap beatmap = parser->parse();
     beatlist = new BeatList(beatmap);
 
-	m_comic_sans_renderer = new TextRenderer("comic.ttf");
+	m_comic_sans_renderer = new TextRenderer("BigNoodleTooOblique.ttf");
 
     FMOD_RESULT result = FMOD::System_Create(&system);      // Create the main system object.
     if (result != FMOD_OK) {
@@ -505,9 +505,9 @@ void Level::draw()
 		m_player.draw_hitboxes(projection_2D);
 	}
 
-	m_comic_sans_renderer->setPosition({ 0 + 5, h - 5 });
-	m_comic_sans_renderer->setColour({ 1.f, 0.f, 0.f });
-	m_comic_sans_renderer->renderString(projection_2D, std::to_string(m_combo));
+	m_comic_sans_renderer->setPosition({ 0 + 10, h - 10 });
+	m_comic_sans_renderer->setColour({ 0.85f, 0.85f, 0.85f });
+	m_comic_sans_renderer->renderString(projection_2D, std::to_string(m_combo) + "x");
 }
 
 // Should the game be over ?

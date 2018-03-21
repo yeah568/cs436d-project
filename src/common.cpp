@@ -138,6 +138,16 @@ float length(vec2 v) {
 	return sqrtf(v.x * v.x + v.y * v.y);
 }
 
+
+std::string font_path(std::string name) {
+	std::stringstream ss;
+
+	//put arbitrary formatted data into the stream
+	ss << data_path << "/fonts/" << name;
+	
+	return ss.str();
+}
+
 Texture::Texture()
 {
 
