@@ -126,6 +126,7 @@ bool Level::init(std::string song_path1, std::string osu_path, float boss_health
 
 
     m_current_speed = 1.f;
+	m_combo = 0;
 
     m_background.init();
 
@@ -285,6 +286,7 @@ bool Level::update(float elapsed_ms)
 		float delta = m_current_time - beatcircle_it->get_offset();
 		if (delta > bad_timing) {
 			printf("MISS\n");
+			m_combo = 0;
 			beatcircle_it = m_beatcircles.erase(beatcircle_it);
 		}
 		else {
@@ -503,8 +505,9 @@ void Level::draw()
 		m_player.draw_hitboxes(projection_2D);
 	}
 
-	m_comic_sans_renderer->setPosition({ w / 2, h / 2 });
-	m_comic_sans_renderer->renderString(projection_2D, "hello world");
+	m_comic_sans_renderer->setPosition({ 0 + 5, h - 5 });
+	m_comic_sans_renderer->setColour({ 1.f, 0.f, 0.f });
+	m_comic_sans_renderer->renderString(projection_2D, std::to_string(m_combo));
 }
 
 // Should the game be over ?
@@ -623,6 +626,7 @@ void Level::on_arrow_key(Dir dir) {
             system->playSound(sound_perfect_timing, 0, false, &channel);
             m_beatcircles.erase(beatcircle_it);
             m_player.bullet_type = !m_player.bullet_type;
+			m_combo++;
             break;
         } else if (delta <= good_timing) {
             printf("GOOD with delta %f\n", delta);
@@ -630,6 +634,7 @@ void Level::on_arrow_key(Dir dir) {
             system->playSound(sound_good_timing, 0, false, &channel);
             m_beatcircles.erase(beatcircle_it);
             m_player.bullet_type = !m_player.bullet_type;
+			m_combo++;
             break;
         } else if (delta <= bad_timing) {
             printf("BAD with delta %f\n", delta);
@@ -637,6 +642,7 @@ void Level::on_arrow_key(Dir dir) {
             system->playSound(sound_bad_timing, 0, false, &channel);
             m_beatcircles.erase(beatcircle_it);
             m_player.bullet_type = !m_player.bullet_type;
+			m_combo = 0;
             break;
         }
         beatcircle_it++;
