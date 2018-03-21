@@ -504,7 +504,6 @@ void Level::draw()
 	}
 
 	m_comic_sans_renderer->setPosition({ w / 2, h / 2 });
-
 	m_comic_sans_renderer->renderString(projection_2D, "hello world");
 }
 

@@ -16,11 +16,10 @@ struct Character {
 };
 
 
-class TextRenderer : Renderable
+class TextRenderer : public Renderable
 {
 public:
 	TextRenderer(std::string font_name);
-	TextRenderer(std::string font_name, vec3 colour);
 	void setColour(vec3 colour);
 	void setPosition(vec2 position);
 	void setScale(vec2 scale);
