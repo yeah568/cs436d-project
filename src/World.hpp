@@ -59,7 +59,7 @@ private:
 private:
 	int m_points;
 
-	int levelCounter;
+	std::vector<Level*>::size_type levelCounter;
 	std::vector<Level*> levelList;
 
 	// Window hjandle
