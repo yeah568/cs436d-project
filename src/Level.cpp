@@ -720,18 +720,20 @@ void Level::handle_controller(float elapsed_ms) {
 	if (vibration_remaining <= 0) {
 		vibrate_controller(0, 0, 0, 0);
 	}
-#else
-	return;
 #endif
+	return;
 }
 
 void Level::vibrate_controller(int controller, float duration, unsigned short left_speed, unsigned short right_speed) {
+#if _WIN32
 	vibration_remaining = duration;
 	XINPUT_VIBRATION vibration;
 	ZeroMemory(&vibration, sizeof(XINPUT_VIBRATION));
 	vibration.wLeftMotorSpeed = left_speed; // use any value between 0-65535 here
 	vibration.wRightMotorSpeed = right_speed; // use any value between 0-65535 here
 	XInputSetState(controller, &vibration);
+#endif;
+	return;
 }
 
 
