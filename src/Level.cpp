@@ -725,7 +725,7 @@ void Level::handle_controller(float elapsed_ms) {
 #endif
 }
 
-void Level::vibrate_controller(int controller, float duration, WORD left_speed, WORD right_speed) {
+void Level::vibrate_controller(int controller, float duration, unsigned short left_speed, unsigned short right_speed) {
 	vibration_remaining = duration;
 	XINPUT_VIBRATION vibration;
 	ZeroMemory(&vibration, sizeof(XINPUT_VIBRATION));

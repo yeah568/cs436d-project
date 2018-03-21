@@ -79,7 +79,7 @@ public:
 
 	void handle_controller(float elapsed_ms);
 
-	void vibrate_controller(int controller, float duration, WORD left_speed, WORD right_speed);
+	void vibrate_controller(int controller, float duration, unsigned short left_speed, unsigned short right_speed);
 
     int new_points;
 
