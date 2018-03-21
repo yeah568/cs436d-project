@@ -28,11 +28,6 @@ bool Level::show_hitboxes = false;
 
 // Same as static in c, local to compilation unit
 namespace {
-    const size_t MAX_TURTLES = 15;
-    const size_t MAX_LIL_ENEMIES = 15;
-    const size_t MAX_FISH = 5;
-    const size_t TURTLE_DELAY_MS = 2000;
-    const size_t FISH_DELAY_MS = 5000;
     namespace {
         void glfw_err_cb(int error, const char *desc) {
             fprintf(stderr, "%d: %s", error, desc);
@@ -662,7 +657,7 @@ void Level::on_arrow_key(Dir dir) {
     auto beatcircle_it = m_beatcircles.begin();
     while (beatcircle_it != m_beatcircles.end()) {
         float abs_offset = beatcircle_it->get_offset();
-        float delta = abs(m_current_time - abs_offset);
+        float delta = std::abs(m_current_time - abs_offset);
         if (delta > bad_timing) {
             break;
         }

@@ -53,7 +53,6 @@ bool ParticleEmitter::init()
 		return false;
 	}
 
-
 	return true;
 }
 

@@ -15,7 +15,6 @@ public:
 	int get_alive_particles();
 private:
 	Particle * m_particle_pool;
-	bool m_should_cull;
 	int m_max_particles;
 	int m_num_alive_particles;
 	vec2 m_position;
