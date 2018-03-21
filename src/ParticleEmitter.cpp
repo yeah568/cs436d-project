@@ -34,10 +34,6 @@ static const Vertex vertex_buffer_data[] = {
 	{ { 0.5f,  0.5f, -0.01f },{ 1.f, 0.f, 0.f } },
 };
 
-static const uint16_t indices[] = {
-	0, 1, 2, 0, 2, 3
-};
-
 bool ParticleEmitter::init()
 {
 	// Clearing errors
@@ -48,20 +44,12 @@ bool ParticleEmitter::init()
 	glBindBuffer(GL_ARRAY_BUFFER, mesh.vbo);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * 4, vertex_buffer_data, GL_STATIC_DRAW);
 
-	// Index Buffer creation
-	glGenBuffers(1, &mesh.ibo);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.ibo);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint16_t) * 6, indices, GL_STATIC_DRAW);
-
-	// Vertex Array (Container for Vertex + Index buffer)
-	glGenVertexArrays(1, &mesh.vao);
-
 	// Loading shaders
 	effect.load_from_file(shader_path("colored.vs.glsl"), shader_path("colored.fs.glsl"));
 
 	int i = 0;
 	while (i < m_max_particles) {
-		m_particle_pool[i++].init(m_position, 500, rand() % 359, rand() % 3 + 3);
+		m_particle_pool[i++].init(m_position, 500, rand() % 359, (rand() % 3000) / 1000.f + 3);
 		m_num_alive_particles++;
 	}
 
@@ -69,16 +57,13 @@ bool ParticleEmitter::init()
 		return false;
 	}
 
-
 	return true;
 }
 
 void ParticleEmitter::draw(const mat3& projection) {
 	if (m_num_alive_particles > 0) {
-		// Setting vertices and indices
-		glBindVertexArray(mesh.vao);
+
 		glBindBuffer(GL_ARRAY_BUFFER, mesh.vbo);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.ibo);
 
 		// Setting shaders
 		glUseProgram(effect.program);

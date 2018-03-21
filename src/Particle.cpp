@@ -8,8 +8,6 @@ Particle::Particle() {
 	is_alive = true;
 }
 
-
-
 void Particle::init(vec2 position, float lifespan, float angle, float speed)
 {
 	m_position = position;
@@ -104,5 +102,5 @@ void Particle::draw(const mat3& projection, Effect& emitter_effect) {
 	glUniformMatrix3fv(projection_uloc, 1, GL_FALSE, (float*)&projection);
 
 	// Drawing!
-	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, nullptr);
+	glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_SHORT, 0);
 }
