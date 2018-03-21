@@ -303,9 +303,6 @@ bool Level::update(float elapsed_ms)
 	Beat* curBeat;
 	while (beatPos < beatlist->beats.size()) {
 		curBeat = &beatlist->beats.at(beatPos);
-		//printf("remaining offset %f", remaining_offset);
-		float center_radius = 100.0f;  // TODO: use radius of circle around player
-		float ms_per_beat = curBeat->duration;
 
 		// We should spawn a beat circle such that when the beat circle gets to the
 		// center circle, this event coincides with
@@ -342,8 +339,6 @@ bool Level::update(float elapsed_ms)
 
 	// Checking player - beatcircle complete overlaps/overshoots
 	auto beatcircle_it = m_beatcircles.begin();
-	vec2 player_pos = m_player.get_position();
-	bool bad = false;
 	while (beatcircle_it != m_beatcircles.end()) {
 		float delta = m_current_time - beatcircle_it->get_offset();
 		if (delta > bad_timing) {

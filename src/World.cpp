@@ -74,12 +74,8 @@ bool World::init(vec2 screen)
     };
     glfwSetKeyCallback(m_window, key_redirect);
     glfwSetCursorPosCallback(m_window, cursor_pos_redirect);
-	TextureManager* tm = TextureManager::get_instance();
-	//return levelList[levelCounter].init
-	//Level1* level = new Level1(screen.x, screen.y);
 	levelList.emplace_back(new Level1(screen.x, screen.y));
 	levelList.emplace_back(new Level2(screen.x, screen.y));
-	//levelList.emplace_back(new Level1(screen.x, screen.y, 3));
 	
 	return levelList[levelCounter]->init();
 }

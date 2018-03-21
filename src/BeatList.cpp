@@ -23,11 +23,6 @@ Beat::Beat(float absoluteOffset, float relativeOffset, int x, int y, float durat
 BeatList::BeatList(OsuBeatmap beatmap)
 {
 	int prevOffset = 0;
-	auto tps = beatmap.timingPoints;
-	int tps_index = 0;
-	float last_duration = tps[0].millisecondsPerBeat;
-	float duration = 0;
-	auto tp_range = tps[tps_index+1].offset - tps[tps_index].offset;
 	for (auto const& hitObject : beatmap.hitObjects) {
 		int delta = hitObject.time - prevOffset;
 		prevOffset = hitObject.time;
@@ -38,7 +33,7 @@ BeatList::BeatList(OsuBeatmap beatmap)
 				static_cast<float>(delta), 
 				hitObject.x, 
 				hitObject.y,
-				duration)
+				0.f)
 		);
 	}
 }
