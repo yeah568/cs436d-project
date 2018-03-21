@@ -16,6 +16,7 @@
 #include "BossHealthBar.hpp"
 #include "Structure.hpp"
 #include "TextureManager.hpp"
+#include "TextRenderer.hpp"
 
 // external
 //#include "fmod.hpp"
@@ -154,6 +155,10 @@ protected:
     std::vector<Structure *> m_structures;
     Boss m_boss;
 	std::vector<ParticleEmitter*> m_particle_emitters;
+
+	TextRenderer* m_comic_sans_renderer;
+
+	int m_combo;
 };
 
 class Level1 : public Level {
