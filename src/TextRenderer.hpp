@@ -19,7 +19,7 @@ struct Character {
 class TextRenderer : public Renderable
 {
 public:
-	TextRenderer(std::string font_name);
+	TextRenderer(std::string font_name, int size);
 	void setColour(vec3 colour);
 	void setPosition(vec2 position);
 	void setScale(vec2 scale);

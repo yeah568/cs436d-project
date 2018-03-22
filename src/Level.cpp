@@ -54,7 +54,7 @@ bool Level::init(std::string song_path1, std::string osu_path, float boss_health
     OsuBeatmap beatmap = parser->parse();
     beatlist = new BeatList(beatmap);
 
-	m_comic_sans_renderer = new TextRenderer("BigNoodleTooOblique.ttf");
+	m_comic_sans_renderer = new TextRenderer("BigNoodleTooOblique.ttf", 48);
 
     FMOD_RESULT result = FMOD::System_Create(&system);      // Create the main system object.
     if (result != FMOD_OK) {

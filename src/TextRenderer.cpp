@@ -1,7 +1,7 @@
 #include "TextRenderer.hpp"
 
 
-TextRenderer::TextRenderer(std::string font_name) {
+TextRenderer::TextRenderer(std::string font_name, int size) {
 	FT_Library ft;
 	if (FT_Init_FreeType(&ft)) {
 		printf("ERROR::FREETYPE: Could not init FreeType Library\n");
@@ -12,7 +12,7 @@ TextRenderer::TextRenderer(std::string font_name) {
 		printf("ERROR::FREETYPE: Failed to load font");
 	}
 
-	FT_Set_Pixel_Sizes(face, 0, 48);
+	FT_Set_Pixel_Sizes(face, 0, size);
 
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1); // Disable byte-alignment restriction
 
