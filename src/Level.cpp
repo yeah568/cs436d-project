@@ -54,6 +54,7 @@ bool Level::init(std::string song_path1, std::string osu_path, float boss_health
     OsuBeatmap beatmap = parser->parse();
     beatlist = new BeatList(beatmap);
 
+	m_comic_sans_renderer = new TextRenderer("comic.ttf");
 
     FMOD_RESULT result = FMOD::System_Create(&system);      // Create the main system object.
     if (result != FMOD_OK) {
@@ -162,7 +163,7 @@ bool Level::init(std::string song_path1, std::string osu_path, float boss_health
 }
 
 Level::~Level() {
-
+	delete m_comic_sans_renderer;
 }
 
 bool Level2::init() {
@@ -501,6 +502,9 @@ void Level::draw()
 		healthbar.draw_hitboxes(projection_2D);
 		m_player.draw_hitboxes(projection_2D);
 	}
+
+	m_comic_sans_renderer->setPosition({ w / 2, h / 2 });
+	m_comic_sans_renderer->renderString(projection_2D, "hello world");
 }
 
 // Should the game be over ?
