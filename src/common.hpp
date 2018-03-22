@@ -21,6 +21,7 @@
 #define audio_path(name) data_path "/audio/" name
 #define mesh_path(name) data_path "/meshes/" name
 #define song_path(name) data_path "/songs/" name
+#define font_path(name) data_path "/fonts/" name
 
 static const int HEALING_STRUCTURE = 0;
 static const int BLACK_HOLE_STRUCTURE = 1;
