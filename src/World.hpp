@@ -32,7 +32,7 @@ public:
     ~World();
 
     // Creates a window, sets up events and begins the game
-    bool init(vec2 screen);
+    bool init(vec2 screen, bool is_full_screen);
 
     // Releases all associated resources
     void destroy();
