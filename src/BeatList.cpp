@@ -1,5 +1,4 @@
 #include "BeatList.hpp"
-#include <algorithm>
 
 Beat::Beat(float absoluteOffset, float relativeOffset, int x, int y, float duration)
 	: absoluteOffset(absoluteOffset), relativeOffset(relativeOffset), x(x), y(y), duration(duration), spawned(false) 

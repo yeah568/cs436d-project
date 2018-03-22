@@ -4,13 +4,13 @@ MAKEFLAGS += --jobs=$(CPUS)
 CXX = g++
 
 ifeq ($(OS), Darwin)
-	CXXFLAGS = -Iext/gl3w -Iext/fmod/inc -std=c++11 -Wall -pedantic -DENABLE_SOUND -g
-	LIB = -ldl -framework OpenGL -framework Cocoa -framework CoreFoundation -lglfw -lSDL -lSDL_mixer -lpthread -lSDLmain -lfmod -lfmodL
+	CXXFLAGS = -Iext/gl3w -Iext/fmod/inc -Iext/freetype/include -std=c++11 -Wall -pedantic -DENABLE_SOUND -g
+	LIB = -ldl -framework OpenGL -framework Cocoa -framework CoreFoundation -lglfw -lSDL -lSDL_mixer -lpthread -lSDLmain -lfmod -lfmodL -lfreetype
 	LIBPATH = -Lext/fmod/lib
 	LDFLAGS = "-Wl,-rpath,./ext/fmod/lib"
 else ifeq ($(OS), Linux)
-    CXXFLAGS = -Iext/gl3w -Iext/fmod-lin/inc -std=c++11 -Wall -pedantic -DENABLE_SOUND -D LINUX -g
-    LIB = -lglfw -lGL -lm -lXrandr -lXi -lX11 -lXxf86vm -lpthread -ldl -lSDL2 -lSDL2_mixer -lfmod -lfmodL
+  CXXFLAGS = -Iext/gl3w -Iext/fmod-lin/inc -Iext/freetype/include -std=c++11 -Wall -pedantic -DENABLE_SOUND -D LINUX -g
+  LIB = -lglfw -lGL -lm -lXrandr -lXi -lX11 -lXxf86vm -lpthread -ldl -lSDL2 -lSDL2_mixer -lfmod -lfmodL -lfreetype
 	LIBPATH = -Lext/fmod-lin/lib/x86_64
 	LDFLAGS = "-Wl,-rpath,./ext/fmod-lin/lib/x86_64"
 else
@@ -22,7 +22,7 @@ BIN=beatcoin
 OBJ=$(BIN).o common.o Sprite.o Player.o World.o Bullet.o Background.o
 OBJ2=BeatCircle.o BeatList.o OsuParser.o CenterBeatCircle.o Level.o
 OBJ3=HealthBar.o LevelList.o Boss.o Enemy.o SpriteSheet.o BossHealthBar.o Structure.o
-OBJ4=Spawner.o TextureManager.o Hitbox.o Particle.o ParticleEmitter.o
+OBJ4=Spawner.o TextureManager.o Hitbox.o Particle.o ParticleEmitter.o TextRenderer.o
 ALL_OBJ=$(OBJ) $(OBJ2) $(OBJ3) $(OBJ4)
 SUBDIRS = src/utils
 
