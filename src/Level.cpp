@@ -54,6 +54,7 @@ bool Level::init(std::string song_path1, std::string osu_path, float boss_health
     OsuBeatmap beatmap = parser->parse();
     beatlist = new BeatList(beatmap);
 
+	m_comic_sans_renderer = new TextRenderer("BigNoodleTooOblique.ttf", 48);
 
     FMOD_RESULT result = FMOD::System_Create(&system);      // Create the main system object.
     if (result != FMOD_OK) {
@@ -125,6 +126,7 @@ bool Level::init(std::string song_path1, std::string osu_path, float boss_health
 
 
     m_current_speed = 1.f;
+	m_combo = 0;
 
     m_background.init();
 
@@ -162,7 +164,7 @@ bool Level::init(std::string song_path1, std::string osu_path, float boss_health
 }
 
 Level::~Level() {
-
+	delete m_comic_sans_renderer;
 }
 
 bool Level2::init() {
@@ -284,6 +286,7 @@ bool Level::update(float elapsed_ms)
 		float delta = m_current_time - beatcircle_it->get_offset();
 		if (delta > bad_timing) {
 			printf("MISS\n");
+			m_combo = 0;
 			beatcircle_it = m_beatcircles.erase(beatcircle_it);
 		}
 		else {
@@ -501,6 +504,10 @@ void Level::draw()
 		healthbar.draw_hitboxes(projection_2D);
 		m_player.draw_hitboxes(projection_2D);
 	}
+
+	m_comic_sans_renderer->setPosition({ 0 + 10, h - 10 });
+	m_comic_sans_renderer->setColour({ 0.85f, 0.85f, 0.85f });
+	m_comic_sans_renderer->renderString(projection_2D, std::to_string(m_combo) + "x");
 }
 
 // Should the game be over ?
@@ -619,6 +626,7 @@ void Level::on_arrow_key(Dir dir) {
             system->playSound(sound_perfect_timing, 0, false, &channel);
             m_beatcircles.erase(beatcircle_it);
             m_player.bullet_type = !m_player.bullet_type;
+			m_combo++;
             break;
         } else if (delta <= good_timing) {
             printf("GOOD with delta %f\n", delta);
@@ -626,6 +634,7 @@ void Level::on_arrow_key(Dir dir) {
             system->playSound(sound_good_timing, 0, false, &channel);
             m_beatcircles.erase(beatcircle_it);
             m_player.bullet_type = !m_player.bullet_type;
+			m_combo++;
             break;
         } else if (delta <= bad_timing) {
             printf("BAD with delta %f\n", delta);
@@ -633,6 +642,7 @@ void Level::on_arrow_key(Dir dir) {
             system->playSound(sound_bad_timing, 0, false, &channel);
             m_beatcircles.erase(beatcircle_it);
             m_player.bullet_type = !m_player.bullet_type;
+			m_combo = 0;
             break;
         }
         beatcircle_it++;

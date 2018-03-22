@@ -28,9 +28,13 @@ const char* title = "Your Title Here";
 // Entry point
 int main(int argc, char* argv[])
 {
+
 	// Initializing world (after renderer.init().. sorry)
 	//printf("HELLO");
-	if (!world.init({ (float)width, (float)height }))
+	if (argc>1)
+		printf(argv[1]);
+	bool full_screen_flag = argc>1 && strcmp(argv[1],"-F")==0;
+	if (!world.init({ (float)width, (float)height },full_screen_flag))
 	{
 		// Time to read the error message
 		std::cout << "Press any key to exit" << std::endl;

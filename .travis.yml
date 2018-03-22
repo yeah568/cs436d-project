@@ -15,5 +15,5 @@ language: cpp
 before_install:
 - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then docker build -t beatcoin/dockerbuild . ; fi
 - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update          ; fi 
-- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install glfw3 sdl sdl_mixer  ; fi
+- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install glfw3 sdl sdl_mixer freetype  ; fi
 
