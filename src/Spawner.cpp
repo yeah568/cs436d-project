@@ -110,7 +110,6 @@ void spawn_beat_circle(int dir, float pos, float speed, float scale, float abs_o
 
 BeatCircle* spawn_beat_circle(int dir, float pos, float speed, float scale, float abs_offset, Player* player, Texture* texture) {
     BeatCircle* beat_circle = new BeatCircle(player, speed, abs_offset);
-    bool type = ((dir % 2) == 1);
     beat_circle->set_texture(texture);
     if (beat_circle->init()) {
         beat_circle->set_dir(dir, pos);

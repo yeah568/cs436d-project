@@ -1,14 +1,13 @@
 #include "Player.hpp"
 
-#include "Turtle.hpp"
 #include "Bullet.hpp"
 #include "common.hpp"
 
 #include <math.h>
+#include <cmath>
 #include <vector>
 #include <string>
 #include <algorithm>
-#include <math.h>
 
 Player::Player()
   : Sprite(nullptr)
@@ -48,18 +47,18 @@ void Player::update(float ms)
 		move({ 0.f, step });
 	}
 
-	if (abs(m_scale.x * 0.95) < 1.f) {
+	if (std::abs(m_scale.x * 0.95) < 1.f) {
 		m_scale.x = -0.5f;
 	}
 	else {
-		m_scale.x *= 0.9;
+		m_scale.x *= 0.9f;
 	}
 
-	if (abs(m_scale.y * 0.95) < 1.f) {
+	if (std::abs(m_scale.y * 0.95) < 1.f) {
 		m_scale.y = 0.5f;
 	}
 	else {
-		m_scale.y *= 0.9;
+		m_scale.y *= 0.9f;
 	}
 
 	if (m_light_up_countdown_ms > 0.f)

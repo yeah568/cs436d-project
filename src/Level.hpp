@@ -6,7 +6,6 @@
 // internal
 #include "common.hpp"
 #include "Player.hpp"
-#include "Turtle.hpp"
 #include "Button.hpp"
 #include "Bullet.hpp"
 #include "Background.hpp"
@@ -50,7 +49,7 @@
 class Level {
 
 public:
-    Level(int width, int height);
+    Level(float width, float height);
 
     ~Level();
 
@@ -66,7 +65,7 @@ public:
     // Renders our scene
     virtual void draw();
 
-    int getBossHealth();
+    float getBossHealth();
 
     void drawBackground();
 
@@ -83,10 +82,6 @@ public:
     int new_points;
 
 private:
-    // Generates a new turtle
-    bool spawn_turtle();
-
-
     // Generates a new fish
     //bool spawn_bullet(vec2 position, float angle, bool bullet_type, bool on_beat);
 
@@ -141,8 +136,8 @@ protected:
     int finished = 0;
     SpriteSheet spritesheet;
     BeatList *beatlist;
-    int beatPos = 0;
-    int lastBeat = 0;
+	std::vector<Beat>::size_type beatPos = 0;
+	std::vector<Beat>::size_type lastBeat = 0;
     int m_song;
     GLFWwindow *window;
     // Game entities
@@ -169,7 +164,7 @@ protected:
 
 class Level1 : public Level {
 public:
-    Level1(int width, int height) : Level(width, height) {};
+    Level1(float width, float height) : Level(width, height) {};
 
     ~Level1();
 
@@ -178,7 +173,7 @@ public:
 
 class Level2 : public Level {
 public:
-    Level2(int width, int height) : Level(width, height) {};
+    Level2(float width, float height) : Level(width, height) {};
 
     ~Level2();
 

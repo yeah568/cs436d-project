@@ -84,7 +84,6 @@ bool World::init(vec2 screen)
 	levelList.emplace_back(new MainMenu(screen.x, screen.y));
 	levelList.emplace_back(new Level1(screen.x, screen.y));
 	levelList.emplace_back(new Level2(screen.x, screen.y));
-	//levelList.emplace_back(new Level1(screen.x, screen.y, 3));
 	
 	return levelList[levelCounter]->init();
 }
@@ -140,20 +139,6 @@ void World::draw()
 	glClearColor(clear_color[0], clear_color[1], clear_color[2], 1.0);
 	glClearDepth(1.f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	// Fake projection matrix, scales with respect to window coordinates
-	// PS: 1.f / w in [1][1] is correct.. do you know why ? (:
-	float left = 0.f;// *-0.5;
-	float top = 0.f;// (float)h * -0.5;
-	float right = (float)w;// *0.5;
-	float bottom = (float)h;// *0.5;
-
-	float sx = 2.f / (right - left);
-	float sy = 2.f / (top - bottom);
-	float tx = -(right + left) / (right - left);
-	float ty = -(top + bottom) / (top - bottom);
-	mat3 projection_2D{ { sx, 0.f, 0.f },{ 0.f, sy, 0.f },{ tx, ty, 1.f } };
-	
 
 	levelList[levelCounter]->draw();
 
