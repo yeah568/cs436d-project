@@ -29,7 +29,7 @@ World::World()
 World::~World(){}
 
 // World initialization
-bool World::init(vec2 screen)
+bool World::init(vec2 screen, bool is_full_screen)
 {
 	//-------------------------------------------------------------------------
 	// GLFW / OGL Initialization
@@ -50,7 +50,19 @@ bool World::init(vec2 screen)
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
 	glfwWindowHint(GLFW_RESIZABLE, 0);
-	m_window = glfwCreateWindow((int)screen.x, (int)screen.y, "BeatCoin", nullptr, nullptr);
+	vec2 actual_screen;
+	if (is_full_screen)
+	{
+		const GLFWvidmode *mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+
+		m_window = glfwCreateWindow(mode->width, mode->height, "BeatCoin", glfwGetPrimaryMonitor(), nullptr);
+		actual_screen = {(float)mode->width, (float)mode->height};
+	}
+	else
+	{
+		m_window = glfwCreateWindow(screen.x, screen.y, "BeatCoin", nullptr, nullptr);
+		actual_screen = screen;
+	}
 	if (m_window == nullptr)
 		return false;
 	
@@ -74,8 +86,8 @@ bool World::init(vec2 screen)
     };
     glfwSetKeyCallback(m_window, key_redirect);
     glfwSetCursorPosCallback(m_window, cursor_pos_redirect);
-	levelList.emplace_back(new Level1(screen.x, screen.y));
-	levelList.emplace_back(new Level2(screen.x, screen.y));
+	levelList.emplace_back(new Level1(actual_screen.x, actual_screen.y));
+	levelList.emplace_back(new Level2(actual_screen.x, actual_screen.y));
 	
 	return levelList[levelCounter]->init();
 }
