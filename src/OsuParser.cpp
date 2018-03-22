@@ -20,10 +20,10 @@ OsuBeatmap OsuParser::parse() {
 
 	// check file version
 	getline(osufile, line);
-	if (line.compare("osu file format v14") != 0) {
-		// TODO jamesliu: return an error
-		return beatmap;
-	}
+	//if (line.compare("osu file format") != 0) {
+	//	// TODO jamesliu: return an error
+	//	return beatmap;
+	//}
 
 	while (getline(osufile, line))
 	{

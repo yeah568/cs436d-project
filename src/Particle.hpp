@@ -12,12 +12,16 @@ public:
 
 	vec2 getPosition();
 
-	void draw(const mat3 & projection);
+	void draw(const mat3& projection);
+	void draw(const mat3& projection, Effect& emitter_effect);
 
-	bool is_alive;
+
+	bool getIsAlive();
 private:
 	vec2 m_position;
+	bool is_alive;
 	vec2 m_velocity;
 	float m_lifespan;
+	float m_size;
 };
 
