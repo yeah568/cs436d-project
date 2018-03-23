@@ -213,6 +213,7 @@ public:
     Button exit_button;
     void on_mouse_click(vec2 pos);
     Button songselect_button;
+	void on_mouse_move(double xpos, double ypos);
 };
 
 class SongSelect : public Level {
