@@ -129,6 +129,7 @@ bool World::update(float elapsed_ms)
 		}
 		levelCounter++;
 		levelList[levelCounter]->init();
+
 	};
 	return levelList[levelCounter]->update(elapsed_ms);
 }

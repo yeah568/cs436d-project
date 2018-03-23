@@ -13,6 +13,8 @@ class Player : public Sprite
 	
 public:
   Player();
+
+	 bool init();
 	
 	// Update salmon position based on direction
 	// ms represents the number of milliseconds elapsed from the previous update() call

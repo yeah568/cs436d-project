@@ -130,7 +130,7 @@ bool Level::init(std::string song_path1, std::string osu_path, float boss_health
 	m_combo = 0;
 
 	m_level_state = RUNNING;
-   
+	finished = false;
 
 
     healthbar.set_texture(tm->get_texture("healthbar"));
@@ -177,7 +177,7 @@ bool Level3::init() {
     m_background.set_texture(tm->get_texture("healthbar"));
     return Level::init(song_path("PokemonTheme/00_poketv1open.mp3"),
                        song_path("PokemonTheme/Jason Paige - Pokemon Theme (TV Edit) (Ekaru) [Normal].osu"),
-                       375.0f);
+                       375.0f, 10.f);
 }
 bool Level2::init() {
 	m_background.set_texture(tm->get_texture("healthbar"));
@@ -246,7 +246,11 @@ void Level::handle_beat(float remaining_offset, Beat *curBeat, vec2 screen) {
 
 bool Level::update(float elapsed_ms)
 {
-  if ( music_channel == nullptr || FMOD_OK != music_channel->isPlaying(isPlaying)) {
+	if (m_level_state != RUNNING) {
+		return true;
+	}
+
+	if ( music_channel == nullptr || FMOD_OK != music_channel->isPlaying(isPlaying)) {
 	  system->playSound(music_level, 0, false, &music_channel);
 	  music_channel->setVolume(0.5);
 	}
@@ -323,8 +327,8 @@ bool Level::update(float elapsed_ms)
 			bullet_it = m_bullets.erase(bullet_it);
 			if (m_boss.get_health() <= 0) {
 				system->playSound(sound_boss_death, 0, false, &channel);
-				finished = 1;
 				new_points += 100;
+				m_level_state = WON;
 				return true;
 			}
 			break;
@@ -337,8 +341,6 @@ bool Level::update(float elapsed_ms)
 	}
 
 	m_player.update(elapsed_ms);
-	if (m_player.get_position().y > screen.y)
-		exit(0);
 	m_boss.update(elapsed_ms, screen, &m_bullets);
 	//Enemy::update_player_position(m_player.get_position());
 	float elapsed_modified_ms = elapsed_ms * m_current_speed;
@@ -372,6 +374,9 @@ bool Level::update(float elapsed_ms)
 			if (m_player.get_health() <= 0) {
 				system->playSound(sound_player_death, 0, false, &channel);
 				m_player.kill();
+				m_level_state = LOST;
+				music_channel->setPaused(true);
+				return true;
 				//printf("Player has died\n");
 			}
 			break;
@@ -523,11 +528,18 @@ void Level::draw()
 	}
 
 	m_comic_sans_renderer->setPosition({ 0 + 10, h - 10 });
-	m_exo_renderer->setPosition({screen.x/2.f,screen.y/2.f});
 	m_comic_sans_renderer->setColour({ 0.85f, 0.85f, 0.85f });
-	m_exo_renderer->setColour({0.85f,0.85f,0.85f});
 	m_comic_sans_renderer->renderString(projection_2D, std::to_string(m_combo) + "x");
-	m_exo_renderer->renderString(projection_2D, "Hello World");
+
+	if (m_level_state == LOST) {
+		float width = m_comic_sans_renderer->get_width_of_string("GAME OVER") * 0.5;
+		m_comic_sans_renderer->setPosition({ screen.x / 2.f - width, screen.y / 2.f });
+		m_comic_sans_renderer->renderString(projection_2D, "GAME OVER");
+
+		width = m_comic_sans_renderer->get_width_of_string("Press SPACE to continue") * 0.5;
+		m_comic_sans_renderer->setPosition({ screen.x / 2.f - width, screen.y / 2.f + 50});
+		m_comic_sans_renderer->renderString(projection_2D, "Press SPACE to continue");
+	}
 }
 
 // Should the game be over ?
@@ -581,6 +593,10 @@ void Level::on_key(int key, int action, int mod) {
             case GLFW_KEY_L:
                 on_arrow_key(right);
                 break;
+			case GLFW_KEY_SPACE:
+				if (m_level_state == LOST) {
+					finished = true;
+				}
         }
     }
 
