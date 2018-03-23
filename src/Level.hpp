@@ -44,6 +44,12 @@
 
 #endif
 
+enum LevelStates {
+	RUNNING,
+	PAUSED,
+	LOST,
+	WON
+};
 
 // Container for all our entities and game logic. Individual rendering / update is 
 // deferred to the relative update() methods
@@ -168,6 +174,7 @@ protected:
 	TextRenderer* m_comic_sans_renderer;
 	TextRenderer* m_exo_renderer;
 
+	LevelStates m_level_state;
 	int m_combo;
 };
 

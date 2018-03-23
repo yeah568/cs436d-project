@@ -129,6 +129,7 @@ bool Level::init(std::string song_path1, std::string osu_path, float boss_health
     m_current_speed = 1.f;
 	m_combo = 0;
 
+	m_level_state = RUNNING;
    
 
 
@@ -367,7 +368,7 @@ bool Level::update(float elapsed_ms)
 			m_particle_emitters.emplace_back(pe);
 			m_player.set_health(-1);
 			if (m_player.get_health() <= 0) {
-        system->playSound(sound_player_death, 0, false, &channel);
+				system->playSound(sound_player_death, 0, false, &channel);
 				//m_player.kill();
 				//printf("Player has died\n");
 			}
