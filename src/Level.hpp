@@ -107,7 +107,7 @@ private:
 
 protected:
 
-    bool init(std::string song_path, std::string osu_path, float boss_health);
+    bool init(std::string song_path, std::string osu_path, float boss_health, float player_health);
 
     TextureManager *tm;
     static Texture background_texture;
@@ -176,6 +176,7 @@ protected:
 
 	LevelStates m_level_state;
 	int m_combo;
+	float max_player_health;
 };
 
 class Level1 : public Level {
