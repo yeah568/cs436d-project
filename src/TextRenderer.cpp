@@ -88,6 +88,18 @@ void TextRenderer::setScale(vec2 scale) {
 	m_scale = scale;
 }
 
+float TextRenderer::get_width_of_string(std::string text) {
+	std::string::const_iterator c;
+	float return_value = 0.f;
+	Character ch;
+	for (c = text.begin(); c != text.end(); c++)
+	{
+		ch = characters[*c];
+		return_value += (ch.advance >> 6);
+	}
+	return return_value+ch.size.x;
+}
+
 void TextRenderer::renderString(const mat3& projection, std::string text) {
 
 	transform_begin();

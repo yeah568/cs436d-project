@@ -11,27 +11,27 @@ bool MainMenu::init() {
 
 	background.init();
 	play_button.init("Exo2-Light.ttf", "Play");
-//	exit_button.init("Exo2-Light.ttf", "Exit");
-//	songselect_button.init("Exo2-Light.ttf", "Song Select");
+	exit_button.init("Exo2-Light.ttf", "Exit");
+	songselect_button.init("Exo2-Light.ttf", "Song Select");
 //
-//	bbox temp = play_button.get_bounding_box();
+	bbox temp = play_button.get_bounding_box();
 	play_button.set_position({200.f, 200.f});
 
-//	songselect_button.set_position({ (float)screen.x / 2, (float)screen.y / 2 });
-//	songselect_button.set_rotation(0);
-//	songselect_button.set_scale({1.f,1.f});
+	songselect_button.set_position({ (float)screen.x / 2, (float)screen.y / 2 });
+	songselect_button.set_rotation(0);
+	songselect_button.set_scale({1.f,1.f});
 //
-//	temp = exit_button.get_bounding_box();
-//	exit_button.set_position({ 200.f, 850.f});
-//	background.set_scale({1.f,1.f});
-//	background.set_position({ (float)screen.x / 2, (float)screen.y / 2 });
-//	background.set_rotation(0);
+	temp = exit_button.get_bounding_box();
+	exit_button.set_position({ 200.f, 850.f});
+	background.set_scale({1.f,1.f});
+	background.set_position({ (float)screen.x / 2, (float)screen.y / 2 });
+	background.set_rotation(0);
 
 	play_button.set_scale({1.f,1.f});
 	play_button.set_rotation(0);
 
-//	exit_button.set_scale({1.f,1.f});
-//	exit_button.set_rotation(0);
+	exit_button.set_scale({1.f,1.f});
+	exit_button.set_rotation(0);
 	
 	return 1;
 	
@@ -54,9 +54,9 @@ void MainMenu::draw()
 	mat3 projection_2D{ { sx, 0.f, 0.f },{ 0.f, sy, 0.f },{ tx, ty, 1.f } };
 
 	background.draw(projection_2D);
-//	exit_button.draw(projection_2D);
+	exit_button.draw(projection_2D);
 	play_button.draw(projection_2D);
-//	songselect_button.draw(projection_2D);
+	songselect_button.draw(projection_2D);
 	
 }
 
