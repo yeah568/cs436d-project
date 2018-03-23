@@ -115,8 +115,7 @@ OsuBeatmap OsuParser::parse() {
 			trim(hitObjects);
 			beatmap.hitObjects = parseHitObjects(hitObjects);
 		}
-
-		std::cout << line << '\n';
+		printf("%s\n",line.c_str());
 	}
 	
 	return beatmap;
