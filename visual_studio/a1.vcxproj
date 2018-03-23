@@ -525,6 +525,7 @@
     <ClCompile Include="$(ProjectDir)..\src\BeatList.cpp" />
     <ClCompile Include="$(ProjectDir)..\src\Particle.cpp" />
     <ClCompile Include="$(ProjectDir)..\src\ParticleEmitter.cpp" />
+    <ClCompile Include="$(ProjectDir)..\src\Button.cpp" />
     <ClCompile Include="$(ProjectDir)..\src\SpriteSheet.cpp" />
     <ClCompile Include="$(ProjectDir)..\src\TextRenderer.cpp" />
   </ItemGroup>
