@@ -527,6 +527,7 @@
     <ClCompile Include="$(ProjectDir)..\src\Particle.cpp" />
     <ClCompile Include="$(ProjectDir)..\src\ParticleEmitter.cpp" />
     <ClCompile Include="..\src\SpriteSheet.cpp" />
+    <ClCompile Include="..\src\Button.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(ProjectDir)..\src\Sprite.hpp" />
@@ -539,6 +540,7 @@
     <ClInclude Include="..\src\Level.hpp" />
     <ClInclude Include="..\src\LevelList.hpp" />
     <ClInclude Include="..\src\SpriteSheet.hpp" />
+    <ClInclude Include="..\src\Button.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\Background.hpp" />
