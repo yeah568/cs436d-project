@@ -79,7 +79,7 @@ Structure* spawn_structure(int type, Boss* boss, vec2 position, Texture* texture
             break;
         case SHOOTING_STRUCTURE:
             new_structure = new Shooting_Structure;
-            scale = 3 * scale;
+            scale =  scale;
             break;
     }
     new_structure->set_texture(texture);

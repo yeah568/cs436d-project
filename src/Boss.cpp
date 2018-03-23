@@ -71,9 +71,9 @@ void Boss::set_slot(vec2 screen, Structure* structure) {
     if (structure_slots.left == nullptr) {
         structure_slots.left = structure;
         structure->set_position({screen.x/4.f, 300.f});
-    } else if (structure_slots.center == nullptr) {
-        structure_slots.center = structure;
-        structure->set_position({screen.x/4.f*2, 300.f});
+    //} else if (structure_slots.center == nullptr) {
+     //   structure_slots.center = structure;
+      //  structure->set_position({screen.x/4.f*2, 300.f});
     } else {
         structure_slots.right = structure;
         structure->set_position({screen.x/4.f*3, 300.f});
@@ -82,7 +82,7 @@ void Boss::set_slot(vec2 screen, Structure* structure) {
 
 void Boss::on_beat(Beat* beat, vec2 screen) {
 	int action;
-	if (m_structures->size() < 3)
+	if (m_structures->size() < 2)
 		action = rand() % 6;
 	else
 		action = rand() % 3;
@@ -101,22 +101,27 @@ void Boss::on_beat(Beat* beat, vec2 screen) {
 	}
 		break;
 	case 3: {
-		vec2 position = {screen.x/4.f*(1+m_structures->size()), 300.f};
+		vec2 position = { screen.x / 4.f, 300.f };
+		
+			
 		spawn_structure(HEALING_STRUCTURE, this, position, tm->get_texture("enemy0"), m_structures);
 		Structure* just_added = m_structures->back();
         set_slot(screen, just_added);
 	}
 		break;
 	case 4: {
-		vec2 position = {screen.x/4.f*(1+m_structures->size()), 300.f};
+		vec2 position = { screen.x / 4.f, 300.f };
+		
 		spawn_structure(BLACK_HOLE_STRUCTURE, this, position, tm->get_texture("enemy0"), m_structures);
         Structure* just_added = m_structures->back();
         set_slot(screen, just_added);
 	}
 		break;
 	case 5: {
-		vec2 position = {screen.x/4.f*(1+m_structures->size()), 300.f};
-		spawn_structure(SHOOTING_STRUCTURE, this, position, tm->get_texture("enemy0"), m_structures);
+		vec2 position;
+		position = { screen.x / 4.f, 300.f };
+		
+		spawn_structure(SHOOTING_STRUCTURE, this, position, tm->get_texture("enemy1"), m_structures);
         Structure* just_added = m_structures->back();
         set_slot(screen, just_added);
 	}
