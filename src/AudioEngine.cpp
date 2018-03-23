@@ -44,8 +44,16 @@ bool AudioEngine::init() {
     }
 
     result = master_channel_group->addGroup(music_channel_group);
+    if (result != FMOD_OK) {
+        printf("FMOD error! (%d) master_channel_group group error\n", result);
+        return false;
+    }
 
     result = master_channel_group->addGroup(effects_channel_group);
+    if (result != FMOD_OK) {
+        printf("FMOD error! (%d) master_channel_group group error\n", result);
+        return false;
+    }
 
     return true;
 
@@ -60,55 +68,57 @@ AudioEngine::~AudioEngine() {
 }
 
 bool AudioEngine::load_dsp() {
-    printf("LOAD DSP FUNCTION START");
 
-    result = system->createDSPByType(FMOD_DSP_TYPE_HIGHPASS, &dsphighpass);
-    if (result != FMOD_OK) {
-        printf("FMOD error! (%d) creation of DSP highpass filter of FMOD system failure\n", result);
-        return false;
-    }
-
-    result = system->createDSPByType(FMOD_DSP_TYPE_LOWPASS, &dsplowpass);
-    if (result != FMOD_OK) {
-        printf("FMOD error! (%d) creation of DSP lowpass filter of FMOD system failure\n", result);
-        return false;
-    }
+//    result = system->createDSPByType(FMOD_DSP_TYPE_HIGHPASS, &dsphighpass);
+//    if (result != FMOD_OK) {
+//        printf("FMOD error! (%d) creation of DSP highpass filter of FMOD system failure\n", result);
+//        return false;
+//    }
+//
+//    result = system->createDSPByType(FMOD_DSP_TYPE_LOWPASS, &dsplowpass);
+//    if (result != FMOD_OK) {
+//        printf("FMOD error! (%d) creation of DSP lowpass filter of FMOD system failure\n", result);
+//        return false;
+//    }
 
     result = system->createDSPByType(FMOD_DSP_TYPE_DISTORTION, &dspdistortion);
     if (result != FMOD_OK) {
         printf("FMOD error! (%d) creation of DSP distortion of FMOD system failure\n", result);
         return false;
     }
+
     result = system->createDSPByType(FMOD_DSP_TYPE_SFXREVERB, &dspreverb);
     if (result != FMOD_OK) {
         printf("FMOD error! (%d) creation of DSP reverb of FMOD system failure\n", result);
         return false;
     }
 
-    result = music_channel_group->addDSP(0, dsplowpass);
-    if (result != FMOD_OK) {
-        printf("FMOD error! (%d) addition of DSP lowpass filter to music channel\n", result);
-        return false;
-    }
+//    result = music_channel_group->addDSP(0, dsplowpass);
+//    if (result != FMOD_OK) {
+//        printf("FMOD error! (%d) addition of DSP lowpass filter to music channel\n", result);
+//        return false;
+//    }
+//
+//    result = music_channel_group->addDSP(0, dsphighpass);
+//    if (result != FMOD_OK) {
+//        printf("FMOD error! (%d) addition of DSP highpass filter to music channel\n", result);
+//        return false;
+//    }
 
-    result = music_channel_group->addDSP(0, dsphighpass);
-    if (result != FMOD_OK) {
-        printf("FMOD error! (%d) addition of DSP highpass filter to music channel\n", result);
-        return false;
-    }
     result = music_channel_group->addDSP(0, dspdistortion);
     if (result != FMOD_OK) {
         printf("FMOD error! (%d) addition of DSP distortion to music channel\n", result);
         return false;
     }
+
     result = music_channel_group->addDSP(0, dspreverb);
     if (result != FMOD_OK) {
         printf("FMOD error! (%d) addition of DSP reverb to music channel\n", result);
         return false;
     }
-
-    result = dsplowpass->setBypass(true);
-    result = dsphighpass->setBypass(true);
+//
+//    result = dsplowpass->setBypass(true);
+//    result = dsphighpass->setBypass(true);
     result = dspdistortion->setBypass(true);
     result = dspreverb->setBypass(true);
 
@@ -117,12 +127,12 @@ bool AudioEngine::load_dsp() {
 
 bool AudioEngine::destroy() {
 
-    result = music_channel->removeDSP(dsplowpass);
-    result = music_channel->removeDSP(dsphighpass);
-    result = music_channel->removeDSP(dspdistortion);
-    result = music_channel->removeDSP(dspreverb);
-    result = dsplowpass->release();
-    result = dsphighpass->release();
+//    result = music_channel_group->removeDSP(dsplowpass);
+//    result = music_channel_group->removeDSP(dsphighpass);
+    result = music_channel_group->removeDSP(dspdistortion);
+    result = music_channel_group->removeDSP(dspreverb);
+//    result = dsplowpass->release();
+//    result = dsphighpass->release();
     result = dspdistortion->release();
     result = dspreverb->release();
 
@@ -194,7 +204,7 @@ bool AudioEngine::destroy() {
 
 bool AudioEngine::load_sounds() {
 
-    result = system->createSound(audio_path("345551_enemy_Spawn.wav"), FMOD_DEFAULT, 0, &sound_player_hit);
+    result = system->createSound(audio_path("134768_player_hit.wav"), FMOD_DEFAULT, 0, &sound_player_hit);
     if (result != FMOD_OK) {
         printf("FMOD error! (%d) creating sound_player_hit FMOD failure\n", result);
         return false;
@@ -209,7 +219,7 @@ bool AudioEngine::load_sounds() {
         printf("FMOD error! (%d) creating sound_boss_death FMOD failure\n", result);
         return false;
     }
-    result = system->createSound(audio_path("345551_enemy_Spawn.wav"), FMOD_DEFAULT, 0, &sound_player_death);
+    result = system->createSound(audio_path("player_death_106595_119456.wav"), FMOD_DEFAULT, 0, &sound_player_death);
     if (result != FMOD_OK) {
         printf("FMOD error! (%d) creating sound_player_death FMOD failure\n", result);
         return false;
@@ -224,17 +234,17 @@ bool AudioEngine::load_sounds() {
         printf("FMOD error! (%d) creating sound_structure_death FMOD failure\n", result);
         return false;
     }
-    result = system->createSound(audio_path("345551_enemy_Spawn.wav"), FMOD_DEFAULT, 0, &sound_perfect_timing);
+    result = system->createSound(audio_path("13750_198850_perfect_timing.wav"), FMOD_DEFAULT, 0, &sound_perfect_timing);
     if (result != FMOD_OK) {
         printf("FMOD error! (%d) creating sound_perfect_timing FMOD failure\n", result);
         return false;
     }
-    result = system->createSound(audio_path("345551_enemy_Spawn.wav"), FMOD_DEFAULT, 0, &sound_good_timing);
+    result = system->createSound(audio_path("13750_good_timing.aif"), FMOD_DEFAULT, 0, &sound_good_timing);
     if (result != FMOD_OK) {
         printf("FMOD error! (%d) creating sound_good_timing FMOD failure\n", result);
         return false;
     }
-    result = system->createSound(audio_path("345551_enemy_Spawn.wav"), FMOD_DEFAULT, 0, &sound_bad_timing);
+    result = system->createSound(audio_path("13750__bad_timing.wav"), FMOD_DEFAULT, 0, &sound_bad_timing);
     if (result != FMOD_OK) {
         printf("FMOD error! (%d) creating sound_bad_timing FMOD failure\n", result);
         return false;
@@ -266,10 +276,7 @@ bool AudioEngine::is_playing(FMOD::Channel *channel) {
 
 void AudioEngine::play_music() {
     system->playSound(music_level, 0, false, &music_channel);
-    result = music_channel->setChannelGroup(music_channel_group);
-    if (result != FMOD_OK) {
-        printf("ERROR PLAYING MUSIC");
-    }
+    music_channel->setChannelGroup(music_channel_group);
 }
 
 FMOD::Channel *AudioEngine::get_music_channel() {
@@ -277,16 +284,19 @@ FMOD::Channel *AudioEngine::get_music_channel() {
 }
 
 void AudioEngine::set_distortion_bypass(bool toggle) {
-    result = dsplowpass->setBypass(toggle);
-//    result = dsphighpass->setBypass(toggle);
-    result = dspdistortion->setBypass(toggle);
-    result = dspreverb->setBypass(toggle);
-    if (result != FMOD_OK) {
-        printf("ERROR setting audio effects bypass");
-    }
+//    dsplowpass->setBypass(toggle);
+//    dsphighpass->setBypass(toggle);
+    dspdistortion->setBypass(toggle);
+    dspreverb->setBypass(toggle);
 
 }
 
+void AudioEngine::set_wetness_levels(float wetness) {
+//    dsplowpass->setWetDryMix(0.f, wetness, 1.f - wetness);
+//    dsphighpass->setWetDryMix(1.f - wetness, wetness, 1-wetness);
+    dspdistortion->setWetDryMix(wetness/3.f, wetness, 1.f - wetness);
+    dspreverb->setWetDryMix(wetness/3.f, wetness, 1.f - wetness);
+}
 void AudioEngine::play_boss_hit() {
     system->playSound(sound_boss_hit, 0, false, &sound_effects);
 }

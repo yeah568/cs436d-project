@@ -64,6 +64,7 @@ bool Level::init(std::string song_path, std::string osu_path, float boss_health)
     OsuBeatmap beatmap = parser->parse();
     beatlist = new BeatList(beatmap);
 
+
     //FMOD INIT AND LOAD SOUNDS
 
     if (!(audioEngine.init() &&
@@ -306,9 +307,12 @@ bool Level::update(float elapsed_ms) {
             little_enemy_it = m_little_enemies.erase(little_enemy_it);
             m_particle_emitters.emplace_back(pe);
             m_player.set_health(-1);
-            if (m_player.get_health() <= 5) {
-                printf("HEALTH BELOW THRESHOLD");
+            if (m_player.get_health() <= 4) {
                 audioEngine.set_distortion_bypass(false);
+                //set distortion proportional to distance to zero
+                float wetness = 1 - (m_player.get_health() / 5);
+                audioEngine.set_wetness_levels(wetness);
+
             } else {
                 audioEngine.set_distortion_bypass(true);
             }
