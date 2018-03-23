@@ -531,15 +531,28 @@ void Level::draw()
 	m_comic_sans_renderer->setColour({ 0.85f, 0.85f, 0.85f });
 	m_comic_sans_renderer->renderString(projection_2D, std::to_string(m_combo) + "x");
 
-	if (m_level_state == LOST) {
-		float width = m_comic_sans_renderer->get_width_of_string("GAME OVER") * 0.5;
+
+
+
+	if (m_level_state != RUNNING) {
+		float width;
+		std::string text;
+		if (m_level_state == LOST) {
+			text = "YOU LOSE";
+		}
+		else if (m_level_state == WON) {
+			text = "YOU WIN";
+		}
+
+		width = m_comic_sans_renderer->get_width_of_string(text) * 0.5;
 		m_comic_sans_renderer->setPosition({ screen.x / 2.f - width, screen.y / 2.f });
-		m_comic_sans_renderer->renderString(projection_2D, "GAME OVER");
+		m_comic_sans_renderer->renderString(projection_2D, text);
 
 		width = m_comic_sans_renderer->get_width_of_string("Press SPACE to continue") * 0.5;
-		m_comic_sans_renderer->setPosition({ screen.x / 2.f - width, screen.y / 2.f + 50});
+		m_comic_sans_renderer->setPosition({ screen.x / 2.f - width, screen.y / 2.f + 50 });
 		m_comic_sans_renderer->renderString(projection_2D, "Press SPACE to continue");
 	}
+
 }
 
 // Should the game be over ?
@@ -594,7 +607,7 @@ void Level::on_key(int key, int action, int mod) {
                 on_arrow_key(right);
                 break;
 			case GLFW_KEY_SPACE:
-				if (m_level_state == LOST) {
+				if (m_level_state == LOST || m_level_state == WON) {
 					finished = true;
 				}
         }
