@@ -13,6 +13,8 @@ class Player : public Sprite
 	
 public:
   Player();
+
+	 bool init();
 	
 	// Update salmon position based on direction
 	// ms represents the number of milliseconds elapsed from the previous update() call
@@ -46,7 +48,9 @@ public:
 
 	bool bullet_type;
 
-	void set_health(float delta) {m_health += std::min(5-get_health(),delta);};
+	void set_health(float delta) {m_health += delta;};
+
+	void set_health_abs(float health) { m_health = health; };
 
 	float get_health() {return m_health;};
 

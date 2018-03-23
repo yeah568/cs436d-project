@@ -25,6 +25,7 @@ public:
 	void setScale(vec2 scale);
 	void renderString(const mat3& projection, std::string text);
 	void draw(const mat3& projection);
+	float get_width_of_string(std::string text);
 private:
 	std::map<GLchar, Character> characters;
 	vec3 m_colour;

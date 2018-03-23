@@ -28,6 +28,12 @@ static const int HEALING_STRUCTURE = 0;
 static const int BLACK_HOLE_STRUCTURE = 1;
 static const int SHOOTING_STRUCTURE = 2;
 
+static const std::string EXO_FONT = "Exo2-Light.ttf";
+
+static const int LEFT_ALIGN = 1;
+static const int CENTER_ALIGN = 2;
+static const int RIGHT_ALIGN = 3;
+
 // Not much math is needed and there are already way too many libraries linked (:
 // If you want to do some overloads..
 struct vec2 { float x, y; };

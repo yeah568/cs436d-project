@@ -80,48 +80,112 @@ void Boss::set_slot(vec2 screen, Structure* structure) {
     }
 }
 
+void Boss::remove_structure(Structure* s, float current_time)
+{
+	if (Healing_Structure* h = dynamic_cast<Healing_Structure*>(s)) {
+		num_healing--;
+	}
+	else if (Shooting_Structure* h = dynamic_cast<Shooting_Structure*>(s)) {
+		num_shooting--;
+	}
+	else if (Black_Hole_Structure* h = dynamic_cast<Black_Hole_Structure*>(s)) {
+		num_black_hole--;
+	}
+	last_structure_destroyed_time = current_time;
+}
+
 void Boss::on_beat(Beat* beat, vec2 screen) {
-	int action;
-	if (m_structures->size() < 3)
-		action = rand() % 6;
-	else
-		action = rand() % 3;
+	Decision action = make_decision(beat);
 
 	switch (action) {
-	case 0:
+	case move_l:
 		move({ -10.f, 0.f });
 		break;
-	case 1:
+	case move_r:
 		move({ 10.f, 0.f });
 		break;
-	case 2: {
+	case spawn_enemy: {
 		vec2 position = { ((64.f + (float)beat->x) / 640.f) * screen.x,
 			((48.f + (float)beat->y) / 480.f) * screen.y * 0.67f };
 		spawn_little_enemy(position, tm->get_texture("enemy0"), m_little_enemies);
 	}
 		break;
-	case 3: {
-		vec2 position = {screen.x/4.f*(1+m_structures->size()), 300.f};
+	case spawn_heal: {
+		vec2 position = { screen.x / 4.f*(1 + m_structures->size()), 300.f };
 		spawn_structure(HEALING_STRUCTURE, this, position, tm->get_texture("enemy0"), m_structures);
 		Structure* just_added = m_structures->back();
-        set_slot(screen, just_added);
+		set_slot(screen, just_added);
+		num_healing++;
+		last_structure_spawned_time = beat->absoluteOffset;
 	}
 		break;
-	case 4: {
-		vec2 position = {screen.x/4.f*(1+m_structures->size()), 300.f};
+	case spawn_black_hole: {
+		vec2 position = { screen.x / 4.f*(1 + m_structures->size()), 300.f };
 		spawn_structure(BLACK_HOLE_STRUCTURE, this, position, tm->get_texture("enemy0"), m_structures);
-        Structure* just_added = m_structures->back();
-        set_slot(screen, just_added);
+		Structure* just_added = m_structures->back();
+		set_slot(screen, just_added);
+		num_black_hole++;
+		last_structure_spawned_time = beat->absoluteOffset;
 	}
 		break;
-	case 5: {
-		vec2 position = {screen.x/4.f*(1+m_structures->size()), 300.f};
+	case spawn_shoot: {
+		vec2 position = { screen.x / 4.f*(1 + m_structures->size()), 300.f };
 		spawn_structure(SHOOTING_STRUCTURE, this, position, tm->get_texture("enemy0"), m_structures);
-        Structure* just_added = m_structures->back();
-        set_slot(screen, just_added);
+		Structure* just_added = m_structures->back();
+		set_slot(screen, just_added);
+		num_shooting++;
+		last_structure_spawned_time = beat->absoluteOffset;
 	}
-		printf("Finished boss spawning structure\n");
 		break;
+	}
+}
+
+Decision Boss::make_decision(Beat* beat)
+{
+	int weights[DECISIONS_MAX];
+	int num_structures = m_structures->size();
+	weights[move_l] = 10 * (num_structures + 1);
+	weights[move_r] = 10 * (num_structures + 1);
+	weights[spawn_enemy] = 10 * (num_structures + 2);
+
+	int base_structure_weight = 20;
+	if (num_structures >= 3 ||
+		beat->absoluteOffset < last_structure_destroyed_time + STRUCTURE_DESTROYED_COOLDOWN ||
+		beat->absoluteOffset < last_structure_spawned_time + STRUCTURE_SPAWN_COOLDOWN) {
+		if (num_structures < 3) {
+			float cooldown = beat->absoluteOffset - std::max(last_structure_destroyed_time, last_structure_spawned_time);
+			printf("Cooldown: %f\n", cooldown);
+		}
+		// If structures are full or on cooldown, set weight to 0
+		base_structure_weight = 0;
+		weights[spawn_heal] = base_structure_weight;
+		weights[spawn_black_hole] = base_structure_weight;
+		weights[spawn_shoot] = base_structure_weight;
+	}
+	else {
+		// Add weight to structures based on how long it's been since last structure spawned
+		base_structure_weight += (beat->absoluteOffset - last_structure_spawned_time) / 1000;
+		float health_percent = m_health / total_health;
+		// Weigh healing more when health is low
+		weights[spawn_heal] = num_healing < MAX_HEALING_STRUCTURES ? base_structure_weight + (1 - health_percent) * 5 : 0;
+		weights[spawn_black_hole] = num_black_hole < MAX_BLACK_HOLES ? base_structure_weight : 0;
+		weights[spawn_shoot] = num_shooting < MAX_SHOOTING_STRUCTURES ? base_structure_weight : 0;
+	}
+
+	int weight_sums = 0;
+	printf("Decision weights: ");
+	for (int i = 0; i < DECISIONS_MAX; i++) {
+		printf("%d ", weights[i]);
+		weight_sums += weights[i];
+	}
+	printf("\n");
+	int random = rand() % weight_sums;
+	for (int i = 0; i < DECISIONS_MAX; i++) {
+		if (random < weights[i]) {
+			printf("Decision made: %d\n", i);
+			return (Decision) i;
+		}
+		random -= weights[i];
 	}
 }
 

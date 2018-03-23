@@ -5,11 +5,13 @@ TextRenderer::TextRenderer(std::string font_name, int size) {
 	FT_Library ft;
 	if (FT_Init_FreeType(&ft)) {
 		printf("ERROR::FREETYPE: Could not init FreeType Library\n");
+		exit(1);
 	}
 
 	FT_Face face;
 	if (FT_New_Face(ft, font_path(font_name).c_str(), 0, &face)) {
-		printf("ERROR::FREETYPE: Failed to load font");
+		printf("ERROR::FREETYPE: Failed to load font:\n%s\n", font_name.c_str());
+		exit(1);
 	}
 
 	FT_Set_Pixel_Sizes(face, 0, size);
@@ -86,6 +88,18 @@ void TextRenderer::setScale(vec2 scale) {
 	m_scale = scale;
 }
 
+float TextRenderer::get_width_of_string(std::string text) {
+	std::string::const_iterator c;
+	float return_value = 0.f;
+	Character ch;
+	for (c = text.begin(); c != text.end(); c++)
+	{
+		ch = characters[*c];
+		return_value += (ch.advance >> 6);
+	}
+	return return_value+ch.size.x;
+}
+
 void TextRenderer::renderString(const mat3& projection, std::string text) {
 
 	transform_begin();
@@ -137,7 +151,7 @@ void TextRenderer::renderString(const mat3& projection, std::string text) {
 		// Render glyph texture over quad
 		glBindTexture(GL_TEXTURE_2D, ch.textureID);
 		// Update content of VBO memory
-		glBindBuffer(GL_ARRAY_BUFFER, vao);
+		glBindBuffer(GL_ARRAY_BUFFER, vbo);
 		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		// Render quad
