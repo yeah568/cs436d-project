@@ -65,9 +65,11 @@ bool Level::init(std::string song_path, std::string osu_path, float boss_health)
     beatlist = new BeatList(beatmap);
 
     //FMOD INIT AND LOAD SOUNDS
+
     if (!(audioEngine.init() &&
           audioEngine.load_sounds() &&
-          audioEngine.load_music(song_path.c_str()))) {
+          audioEngine.load_music(song_path.c_str()) &&
+          audioEngine.load_dsp())) {
         printf("DID NOT LOAD FMOD\n");
         return false;
     }
@@ -304,6 +306,12 @@ bool Level::update(float elapsed_ms) {
             little_enemy_it = m_little_enemies.erase(little_enemy_it);
             m_particle_emitters.emplace_back(pe);
             m_player.set_health(-1);
+            if (m_player.get_health() <= 5) {
+                printf("HEALTH BELOW THRESHOLD");
+                audioEngine.set_distortion_bypass(false);
+            } else {
+                audioEngine.set_distortion_bypass(true);
+            }
             if (m_player.get_health() <= 0) {
                 audioEngine.play_player_death();
                 //m_player.kill();

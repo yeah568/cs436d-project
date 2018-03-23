@@ -29,6 +29,8 @@ public:
 
     bool load_music(std::string song_path);
 
+    bool load_dsp();
+
     bool update();
 
     void play_music();
@@ -36,6 +38,8 @@ public:
     FMOD::Channel *get_music_channel();
 
     bool is_playing(FMOD::Channel *channel);
+
+    void set_distortion_bypass(bool toggle);
 
     void play_boss_hit();
 
@@ -75,10 +79,14 @@ private:
     FMOD::Sound *sound_bad_timing;
     FMOD::System *system;
 
-    FMOD::DSP *dsphighpass = nullptr;
-    FMOD::DSP *dspdistortion = nullptr;
-    FMOD::DSP *dspreverb = nullptr;
-    FMOD::DSP *dsplowpass = nullptr;
+    FMOD::DSP *dsphighpass = 0;
+    FMOD::DSP *dspdistortion = 0;
+    FMOD::DSP *dspreverb = 0;
+    FMOD::DSP *dsplowpass = 0;
+
+    FMOD::ChannelGroup *music_channel_group;
+    FMOD::ChannelGroup *effects_channel_group;
+    FMOD::ChannelGroup *master_channel_group;
 };
 
 
