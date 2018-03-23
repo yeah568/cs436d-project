@@ -506,6 +506,7 @@
     <ClCompile Include="$(ProjectDir)..\src\CenterBeatCircle.cpp" />
     <ClCompile Include="$(ProjectDir)..\src\common.cpp" />
     <ClCompile Include="$(ProjectDir)..\src\World.cpp" />
+    <ClCompile Include="$(ProjectDir)..\src\MainMenu.cpp" />
     <ClCompile Include="$(ProjectDir)..\src\Background.cpp" />
     <ClCompile Include="$(ProjectDir)..\src\Spawner.cpp" />
     <ClCompile Include="$(ProjectDir)..\src\BossHealthBar.cpp" />
@@ -524,8 +525,10 @@
     <ClCompile Include="$(ProjectDir)..\src\BeatList.cpp" />
     <ClCompile Include="$(ProjectDir)..\src\Particle.cpp" />
     <ClCompile Include="$(ProjectDir)..\src\ParticleEmitter.cpp" />
+    <ClCompile Include="$(ProjectDir)..\src\Button.cpp" />
     <ClCompile Include="$(ProjectDir)..\src\SpriteSheet.cpp" />
     <ClCompile Include="$(ProjectDir)..\src\TextRenderer.cpp" />
+    <ClCompile Include="$(ProjectDir)..\src\SongSelect.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(ProjectDir)..\src\Sprite.hpp" />
@@ -545,6 +548,7 @@
     <ClCompile Include="$(ProjectDir)..\src\Particle.hpp" />
     <ClCompile Include="$(ProjectDir)..\src\ParticleEmitter.hpp" />
     <ClCompile Include="$(ProjectDir)..\src\TextRenderer.hpp" />
+    <ClCompile Include="$(ProjectDir)..\src\Button.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

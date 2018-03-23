@@ -1,6 +1,6 @@
 {
   "files.associations": {
-    "*.glsl": "javascript",
+    "*.glsl": "glsl",
     "vector": "cpp",
     "__config": "cpp",
     "__nullptr": "cpp",
@@ -32,6 +32,8 @@
     "tuple": "cpp",
     "type_traits": "cpp",
     "utility": "cpp",
-    "locale": "cpp"
+    "locale": "cpp",
+    "cmath": "cpp",
+    "valarray": "cpp"
   }
 }

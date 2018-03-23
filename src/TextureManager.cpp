@@ -28,7 +28,15 @@ void TextureManager::load_textures() {
     "blue_moving_beat",
 	"healthbar",
 	"enemy0",
-	"boss_health_bar"
+	"boss_health_bar",
+    "mainmenu",
+    "button",
+    "song_box",
+    "pokemon_songart",
+    "blends_songart",
+    "marblesoda_songart",
+	"enemy1",
+	"background2"
   };
 
   for (const auto& texture_name : texture_names)

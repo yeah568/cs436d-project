@@ -66,7 +66,7 @@ void spawn_little_enemy(vec2 position, Texture* texture, std::vector<LittleEnemy
 }
 
 Structure* spawn_structure(int type, Boss* boss, vec2 position, Texture* texture) {
-    printf("spawning structure\n");
+    //printf("spawning structure\n");
     Structure* new_structure;
     vec2 scale = {1.f, 1.f};
     switch (type) {
@@ -79,12 +79,12 @@ Structure* spawn_structure(int type, Boss* boss, vec2 position, Texture* texture
             break;
         case SHOOTING_STRUCTURE:
             new_structure = new Shooting_Structure;
-            scale = 3 * scale;
+            scale =  scale;
             break;
     }
     new_structure->set_texture(texture);
     if (!(new_structure->init(position, scale, 0))) {
-        printf("Issues\n");
+        printf("Structure couldnt init\n");
         return nullptr;
     }
     switch (type) {
@@ -92,7 +92,7 @@ Structure* spawn_structure(int type, Boss* boss, vec2 position, Texture* texture
             ((Healing_Structure*) new_structure)->set_boss(boss);
             break;
     }
-    printf("Finished\n");
+    //printf("Finished\n");
     return new_structure;
 }
 

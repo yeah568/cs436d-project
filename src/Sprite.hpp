@@ -14,14 +14,14 @@ public:
 
   virtual bool init();
   void destroy();
-  void draw(const mat3& projection) override;
+  virtual void draw(const mat3& projection) override;
   void draw_hitboxes(const mat3& projection);
 
   const vec2& get_position() const;
-  void set_position(const vec2& position);
+  virtual void set_position(const vec2& position);
 
   const vec2& get_scale() const;
-  void set_scale(const vec2& scale);
+  virtual void set_scale(const vec2& scale);
 
   float get_rotation() const;
   void set_rotation(float rotation);
