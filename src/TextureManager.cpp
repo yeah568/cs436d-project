@@ -34,7 +34,10 @@ void TextureManager::load_textures() {
     "song_box",
     "pokemon_songart",
     "blends_songart",
-    "marblesoda_songart"
+    "marblesoda_songart",
+    "pokemon_background",
+    "marblesoda_background",
+    "blends_background"
   };
 
   for (const auto& texture_name : texture_names)

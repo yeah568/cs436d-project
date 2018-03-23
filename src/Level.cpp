@@ -146,6 +146,10 @@ bool Level::init(std::string song_path1, std::string osu_path, float boss_health
 	m_background.set_scale({ 1.f, 1.f });
 	m_background.set_rotation(0);
 
+	bbox temp3 = m_background.get_bounding_box();
+	float bg_width = temp3.max_x - temp3.min_x;
+	float bg_height = temp3.max_y - temp3.min_y;
+	m_background.set_scale({screen.x/bg_width,screen.y/bg_height});
 
     if (!m_player.init()) {
         return false;
@@ -176,13 +180,13 @@ Level::~Level() {
 	delete m_big_noodle_renderer;
 }
 bool Level3::init() {
-    m_background.set_texture(tm->get_texture("healthbar"));
+    m_background.set_texture(tm->get_texture("pokemon_background"));
     return Level::init(song_path("PokemonTheme/00_poketv1open.mp3"),
                        song_path("PokemonTheme/Jason Paige - Pokemon Theme (TV Edit) (Ekaru) [Normal].osu"),
                        2.f, 10.f);
 }
 bool Level2::init() {
-	m_background.set_texture(tm->get_texture("healthbar"));
+	m_background.set_texture(tm->get_texture("marblesoda_background"));
     return Level::init(song_path("598830 Shawn Wasabi - Marble Soda/Marble Soda.wav"),
                        song_path("598830 Shawn Wasabi - Marble Soda/Shawn Wasabi - Marble Soda (Exa) [Normal].osu"),
                        1.5f, 10.f);
@@ -190,7 +194,7 @@ bool Level2::init() {
 
 // World initialization
 bool Level1::init() {
-	m_background.set_texture(tm->get_texture("character"));
+	m_background.set_texture(tm->get_texture("blends_background"));
     return Level::init(song_path("BlendS/BlendS.wav"),
                        song_path("BlendS/Blend A - Bon Appetit S (Meg) [Easy].osu"),
                        1.f, 10.f);
