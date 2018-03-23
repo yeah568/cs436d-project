@@ -173,7 +173,7 @@ bool Level3::init() {
     m_background.set_texture(tm->get_texture("healthbar"));
     return Level::init(song_path("PokemonTheme/00_poketv1open.mp3"),
                        song_path("PokemonTheme/Jason Paige - Pokemon Theme (TV Edit) (Ekaru) [Normal].osu"),
-                       375.0f);
+                       550.0f);
 }
 bool Level2::init() {
 	m_background.set_texture(tm->get_texture("healthbar"));
