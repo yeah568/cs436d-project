@@ -23,7 +23,10 @@ bool MainMenu::init() {
 //
 	temp = exit_button.get_bounding_box();
 	exit_button.set_position({ 200.f, 850.f});
-	background.set_scale({1.f,1.f});
+
+    background.set_scale({1.f,1.f});
+	temp = background.get_bounding_box();
+	background.set_scale({RETINA_SCALAR*screen.x/temp.max_x,RETINA_SCALAR*screen.y/temp.max_y});
 	background.set_position({ (float)screen.x / 2, (float)screen.y / 2 });
 	background.set_rotation(0);
 

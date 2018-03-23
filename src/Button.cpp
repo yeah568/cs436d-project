@@ -22,6 +22,20 @@ void Button::set_position(vec2 pos) {
     }
 }
 
+void SongButton::set_position(vec2 pos) {
+    Sprite::set_position(pos);
+    song_art.set_position(pos);
+    if (alignment==LEFT_ALIGN)
+        text_r->setPosition(pos);
+    else {
+        float width = text_r->get_width_of_string(text);
+        if (alignment==CENTER_ALIGN)
+            width *= 0.5;
+        vec2 temp = {width,0};
+        text_r->setPosition(pos - temp);
+    }
+}
+
 void Button::set_text_color(vec3 col) {
     text_r->setColour(col);
 }
@@ -34,7 +48,17 @@ bool Button::init(std::string font_name, std::string str_text) {
     return Sprite::init();
 }
 
+bool SongButton::init(std::string font_name, std::string str_text) {
+    Button::init(font_name, str_text);
+    return song_art.init();
+}
+
 void Button::draw(const mat3& projection) {
     Sprite::draw(projection);
     text_r->renderString(projection, text);
+}
+
+void SongButton::draw(const mat3& projection) {
+    Button::draw(projection);
+    song_art.draw(projection);
 }

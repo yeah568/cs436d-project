@@ -30,14 +30,11 @@ void TextureManager::load_textures() {
 	"enemy0",
 	"boss_health_bar",
     "mainmenu",
-    "exit_button",
-    "play_button",
-    "back_button",
-    "blends_song_box",
-    "marblesoda_song_box",
-    "pokemon_song_box",
-    "songselect_button",
-    "button"
+    "button",
+    "song_box",
+    "pokemon_songart",
+    "blends_songart",
+    "marblesoda_songart"
   };
 
   for (const auto& texture_name : texture_names)

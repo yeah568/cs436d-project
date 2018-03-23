@@ -10,14 +10,15 @@ bool SongSelect::init() {
 	back_button.init(EXO_FONT,"Back");
 
 	Button* temp = nullptr;
-	std::vector<std::pair<Texture*,std::string>> temp2;
-	temp2.emplace_back(std::make_pair(tm->get_texture("blends_song_box"),"Blend S"));
-	temp2.emplace_back(std::make_pair(tm->get_texture("marblesoda_song_box"),"Marble Soda"));
-    temp2.emplace_back(std::make_pair(tm->get_texture("pokemon_song_box"),"Pokemon Theme"));
+	// Background, song art, song name
+	std::vector<std::tuple<Texture*,Texture*,std::string>> temp2;
+	temp2.emplace_back(std::make_tuple(tm->get_texture("song_box"),tm->get_texture("blends_songart"),"Blend S"));
+	temp2.emplace_back(std::make_tuple(tm->get_texture("song_box"),tm->get_texture("marblesoda_songart"),"Marble Soda"));
+    temp2.emplace_back(std::make_tuple(tm->get_texture("song_box"),tm->get_texture("pokemon_songart"),"Pokemon Theme"));
 	for (int i=0; i<2; i++) {
 		temp = new Button();
 		temp->set_texture(std::get<0>(temp2[i]));
-		temp->init(EXO_FONT, std::get<1>(temp2[i]));
+		temp->init(EXO_FONT, std::get<2>(temp2[i]));
         temp->set_position({500.f, i*250.f + 250});
         temp->set_scale({1,1});
         temp->set_rotation(0);
