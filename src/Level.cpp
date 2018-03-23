@@ -47,14 +47,14 @@ Level::Level(float width, float height) : m_points(0), m_next_little_enemies_spa
     m_current_time = 0;
 }
 
-bool Level::init(std::string song_path1, std::string osu_path, float boss_health) {
+bool Level::init(std::string song_path1, std::string osu_path, float boss_health, float player_health) {
     OsuParser *parser;
     parser = new OsuParser(osu_path.c_str());
 
     OsuBeatmap beatmap = parser->parse();
     beatlist = new BeatList(beatmap);
 
-	m_comic_sans_renderer = new TextRenderer("BigNoodleTooOblique.ttf", 48);
+	m_big_noodle_renderer = new TextRenderer("BigNoodleTooOblique.ttf", 48);
 
     FMOD_RESULT result = FMOD::System_Create(&system);      // Create the main system object.
     if (result != FMOD_OK) {
@@ -128,14 +128,15 @@ bool Level::init(std::string song_path1, std::string osu_path, float boss_health
     m_current_speed = 1.f;
 	m_combo = 0;
 
-   
+	m_level_state = RUNNING;
+	finished = false;
 
 
     healthbar.set_texture(tm->get_texture("healthbar"));
-    healthbar.init(5);
-
-    healthbar.set_scale({0.6f, 0.7f});
-    healthbar.set_position({200, 50});
+    healthbar.init();
+	bbox hp_bbox = healthbar.get_bounding_box();
+    healthbar.set_scale({1.0f, 1.0f});
+    healthbar.set_position({ (hp_bbox.max_x - hp_bbox.min_x) / 2.0f, 200 });
     healthbar.set_rotation(0);
     m_background.init();
 	m_background.set_position({ (float)screen.x/ 2, (float)screen.y / 2 });
@@ -146,7 +147,9 @@ bool Level::init(std::string song_path1, std::string osu_path, float boss_health
     if (!m_player.init()) {
         return false;
     }
-    m_player.set_health(5);
+	max_player_health = player_health;
+    m_player.set_health_abs(max_player_health);
+	healthbar.update(1.f);
     if (m_boss.init(boss_health, &m_little_enemies, &m_structures)) {
         Structure::player_bullets = &m_bullets;
         Structure::enemy_bullets = &m_enemy_bullets;
@@ -167,19 +170,19 @@ bool Level::init(std::string song_path1, std::string osu_path, float boss_health
 }
 
 Level::~Level() {
-	delete m_comic_sans_renderer;
+	delete m_big_noodle_renderer;
 }
 bool Level3::init() {
     m_background.set_texture(tm->get_texture("healthbar"));
     return Level::init(song_path("PokemonTheme/00_poketv1open.mp3"),
                        song_path("PokemonTheme/Jason Paige - Pokemon Theme (TV Edit) (Ekaru) [Normal].osu"),
-                       550.0f);
+                       550.0f, 10.f);
 }
 bool Level2::init() {
 	m_background.set_texture(tm->get_texture("healthbar"));
     return Level::init(song_path("598830 Shawn Wasabi - Marble Soda/Marble Soda.wav"),
                        song_path("598830 Shawn Wasabi - Marble Soda/Shawn Wasabi - Marble Soda (Exa) [Normal].osu"),
-                       375.0f);
+                       375.0f, 10.f);
 }
 
 // World initialization
@@ -187,7 +190,7 @@ bool Level1::init() {
 	m_background.set_texture(tm->get_texture("character"));
     return Level::init(song_path("BlendS/BlendS.wav"),
                        song_path("BlendS/Blend A - Bon Appetit S (Meg) [Easy].osu"),
-                       250.0f);
+                       250.0f, 10.f);
 }
 
 // Releases all the associated resources
@@ -242,7 +245,11 @@ void Level::handle_beat(float remaining_offset, Beat *curBeat, vec2 screen) {
 
 bool Level::update(float elapsed_ms)
 {
-  if ( music_channel == nullptr || FMOD_OK != music_channel->isPlaying(isPlaying)) {
+	if (m_level_state != RUNNING) {
+		return true;
+	}
+
+	if ( music_channel == nullptr || FMOD_OK != music_channel->isPlaying(isPlaying)) {
 	  system->playSound(music_level, 0, false, &music_channel);
 	  music_channel->setVolume(0.5);
 	}
@@ -319,8 +326,8 @@ bool Level::update(float elapsed_ms)
 			bullet_it = m_bullets.erase(bullet_it);
 			if (m_boss.get_health() <= 0) {
 				system->playSound(sound_boss_death, 0, false, &channel);
-				finished = 1;
 				new_points += 100;
+				m_level_state = WON;
 				return true;
 			}
 			break;
@@ -333,8 +340,6 @@ bool Level::update(float elapsed_ms)
 	}
 
 	m_player.update(elapsed_ms);
-	if (m_player.get_position().y > screen.y)
-		exit(0);
 	m_boss.update(elapsed_ms, screen, &m_bullets);
 	//Enemy::update_player_position(m_player.get_position());
 	float elapsed_modified_ms = elapsed_ms * m_current_speed;
@@ -356,7 +361,7 @@ bool Level::update(float elapsed_ms)
 	for (auto little_enemy_it = m_little_enemies.begin(); little_enemy_it != m_little_enemies.end();) {
 		if (m_player.collides_with(*little_enemy_it)) {
       system->playSound(sound_player_hit, 0, false, &channel);
-			healthbar.update();
+			healthbar.update(m_player.get_health() / max_player_health);
 			auto pe = new ParticleEmitter(
 				little_enemy_it->get_position(),
 				100,
@@ -364,10 +369,13 @@ bool Level::update(float elapsed_ms)
 			pe->init();
 			little_enemy_it = m_little_enemies.erase(little_enemy_it);
 			m_particle_emitters.emplace_back(pe);
-			m_player.set_health(-1);
+			m_player.set_health(-0.5);
 			if (m_player.get_health() <= 0) {
-        system->playSound(sound_player_death, 0, false, &channel);
-				//m_player.kill();
+				system->playSound(sound_player_death, 0, false, &channel);
+				m_player.kill();
+				m_level_state = LOST;
+				music_channel->setPaused(true);
+				return true;
 				//printf("Player has died\n");
 			}
 			break;
@@ -421,7 +429,8 @@ bool Level::update(float elapsed_ms)
 							} else {
 								m_boss.structure_slots.right = nullptr;
 							}
-              system->playSound(sound_structure_death, 0, false, &channel);
+							system->playSound(sound_structure_death, 0, false, &channel);
+							m_boss.remove_structure(*structure_it, m_current_time);
 							structure_it = m_structures.erase(structure_it);
 						}
 						break;
@@ -517,9 +526,32 @@ void Level::draw()
 		m_player.draw_hitboxes(projection_2D);
 	}
 
-	m_comic_sans_renderer->setPosition({ 0 + 10, h - 10 });
-	m_comic_sans_renderer->setColour({ 0.85f, 0.85f, 0.85f });
-	m_comic_sans_renderer->renderString(projection_2D, std::to_string(m_combo) + "x");
+	m_big_noodle_renderer->setPosition({ 0 + 10, h - 10 });
+	m_big_noodle_renderer->setColour({ 0.85f, 0.85f, 0.85f });
+	m_big_noodle_renderer->renderString(projection_2D, std::to_string(m_combo) + "x");
+
+
+
+
+	if (m_level_state != RUNNING) {
+		float width;
+		std::string text;
+		if (m_level_state == LOST) {
+			text = "YOU LOSE";
+		}
+		else if (m_level_state == WON) {
+			text = "YOU WIN";
+		}
+
+		width = m_big_noodle_renderer->get_width_of_string(text) * 0.5;
+		m_big_noodle_renderer->setPosition({ screen.x / 2.f - width, screen.y / 2.f });
+		m_big_noodle_renderer->renderString(projection_2D, text);
+
+		width = m_big_noodle_renderer->get_width_of_string("Press SPACE to continue") * 0.5;
+		m_big_noodle_renderer->setPosition({ screen.x / 2.f - width, screen.y / 2.f + 50 });
+		m_big_noodle_renderer->renderString(projection_2D, "Press SPACE to continue");
+	}
+
 }
 
 // Should the game be over ?
@@ -573,6 +605,10 @@ void Level::on_key(int key, int action, int mod) {
             case GLFW_KEY_L:
                 on_arrow_key(right);
                 break;
+			case GLFW_KEY_SPACE:
+				if (m_level_state == LOST || m_level_state == WON) {
+					finished = true;
+				}
         }
     }
 

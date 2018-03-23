@@ -44,6 +44,12 @@
 
 #endif
 
+enum LevelStates {
+	RUNNING,
+	PAUSED,
+	LOST,
+	WON
+};
 
 // Container for all our entities and game logic. Individual rendering / update is 
 // deferred to the relative update() methods
@@ -101,7 +107,7 @@ private:
 
 protected:
 
-    bool init(std::string song_path, std::string osu_path, float boss_health);
+    bool init(std::string song_path, std::string osu_path, float boss_health, float player_health);
 
     TextureManager *tm;
     static Texture background_texture;
@@ -165,9 +171,11 @@ protected:
     Boss m_boss;
 	std::vector<ParticleEmitter*> m_particle_emitters;
 
-	TextRenderer* m_comic_sans_renderer;
+	TextRenderer* m_big_noodle_renderer;
 
+	LevelStates m_level_state;
 	int m_combo;
+	float max_player_health;
 };
 
 class Level1 : public Level {
