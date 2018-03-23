@@ -528,6 +528,9 @@
     <ClCompile Include="$(ProjectDir)..\src\Button.cpp" />
     <ClCompile Include="$(ProjectDir)..\src\SpriteSheet.cpp" />
     <ClCompile Include="$(ProjectDir)..\src\TextRenderer.cpp" />
+    <ClCompile Include="$(ProjectDir)..\src\SongSelect.cpp" />
+    <ClCompile Include="$(ProjectDir)..\src\Button.cpp" />
+    <ClCompile Include="$(ProjectDir)..\src\MainMenu.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(ProjectDir)..\src\Sprite.hpp" />
@@ -547,6 +550,8 @@
     <ClCompile Include="$(ProjectDir)..\src\Particle.hpp" />
     <ClCompile Include="$(ProjectDir)..\src\ParticleEmitter.hpp" />
     <ClCompile Include="$(ProjectDir)..\src\TextRenderer.hpp" />
+    <ClCompile Include="$(ProjectDir)..\src\SongSelect.hpp" />
+    <ClCompile Include="$(ProjectDir)..\src\Button.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

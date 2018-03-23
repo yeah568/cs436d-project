@@ -67,6 +67,9 @@ public:
     virtual void draw();
 
     float getBossHealth();
+    static std::vector<Level*>* levelList;
+
+	virtual void on_mouse_scroll(vec2 offset);
 
     void drawBackground();
 
@@ -163,6 +166,7 @@ protected:
 	std::vector<ParticleEmitter*> m_particle_emitters;
 
 	TextRenderer* m_comic_sans_renderer;
+	TextRenderer* m_exo_renderer;
 
 	int m_combo;
 };
@@ -185,6 +189,15 @@ public:
     bool init();
 };
 
+class Level3 : public Level {
+public:
+    Level3(int width, int height) : Level(width, height) {};
+
+    ~Level3();
+
+    bool init();
+};
+
 class MainMenu : public Level {
 public: 
 	MainMenu(int width, int height) : Level(width, height) {};
@@ -198,6 +211,23 @@ public:
 	Background background;
     Button play_button;
     Button exit_button;
+    void on_mouse_click(vec2 pos);
+    Button songselect_button;
+};
+
+class SongSelect : public Level {
+public:
+    SongSelect(int width, int height) : Level(width, height) {};
+    ~SongSelect();
+    bool init();
+    void destroy();
+    bool update(float ms);
+    void draw();
+	void on_mouse_scroll(vec2 offset);
+    // TODO: replace with m_background from Level
+    Background background;
+    std::vector<Button*> song_boxes;
+    Button back_button;
     void on_mouse_click(vec2 pos);
 };
 

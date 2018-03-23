@@ -87,15 +87,21 @@ bool World::init(vec2 screen, bool is_full_screen)
 	auto cursor_button_redirect = [](GLFWwindow *wnd, int _0, int _1, int _2) {
 		((World *)glfwGetWindowUserPointer(wnd))->on_mouse_button(wnd, _0, _1, _2);
 	};
+	auto scroll_redirect = [](GLFWwindow *wnd, double _0, double _1) {
+		((World *)glfwGetWindowUserPointer(wnd))->on_mouse_scroll(wnd, _0, _1);
+	};
     glfwSetKeyCallback(m_window, key_redirect);
     glfwSetCursorPosCallback(m_window, cursor_pos_redirect);
 	glfwSetMouseButtonCallback(m_window, cursor_button_redirect);
+	glfwSetScrollCallback(m_window, scroll_redirect);
 	TextureManager* tm = TextureManager::get_instance();
 	//return levelList[levelCounter].init
 	//Level1* level = new Level1(screen.x, screen.y);
+	Level::levelList = &levelList;
 	levelList.emplace_back(new MainMenu(screen.x, screen.y));
-	levelList.emplace_back(new Level1(screen.x, screen.y));
-	levelList.emplace_back(new Level2(screen.x, screen.y));
+	//levelList.emplace_back(new Level1(screen.x, screen.y));
+	//levelList.emplace_back(new Level2(screen.x, screen.y));
+	//levelList.emplace_back(new Level1(screen.x, screen.y, 3));
 	
 	return levelList[levelCounter]->init();
 }
@@ -209,4 +215,9 @@ void World::on_mouse_button(GLFWwindow* window, int button, int action, int mods
 		glfwGetCursorPos(window, &xpos, &ypos);
 		levelList[levelCounter]->on_mouse_click({(float)xpos, (float)ypos});
 	}
+}
+
+void World::on_mouse_scroll(GLFWwindow* window, double xoff, double yoff) {
+	printf("Scroll Y: %f\n",yoff);
+	levelList[levelCounter]->on_mouse_scroll({(float)xoff, (float)yoff});
 }
