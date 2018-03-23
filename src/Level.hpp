@@ -171,7 +171,7 @@ protected:
     Boss m_boss;
 	std::vector<ParticleEmitter*> m_particle_emitters;
 
-	TextRenderer* m_comic_sans_renderer;
+	TextRenderer* m_big_noodle_renderer;
 	TextRenderer* m_exo_renderer;
 
 	LevelStates m_level_state;

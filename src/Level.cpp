@@ -54,7 +54,7 @@ bool Level::init(std::string song_path1, std::string osu_path, float boss_health
     OsuBeatmap beatmap = parser->parse();
     beatlist = new BeatList(beatmap);
 
-	m_comic_sans_renderer = new TextRenderer("BigNoodleTooOblique.ttf", 48);
+	m_big_noodle_renderer = new TextRenderer("BigNoodleTooOblique.ttf", 48);
     m_exo_renderer = new TextRenderer("Exo2-Light.ttf", 48);
 
     FMOD_RESULT result = FMOD::System_Create(&system);      // Create the main system object.
@@ -171,7 +171,7 @@ bool Level::init(std::string song_path1, std::string osu_path, float boss_health
 }
 
 Level::~Level() {
-	delete m_comic_sans_renderer;
+	delete m_big_noodle_renderer;
 }
 bool Level3::init() {
     m_background.set_texture(tm->get_texture("healthbar"));
@@ -527,9 +527,9 @@ void Level::draw()
 		m_player.draw_hitboxes(projection_2D);
 	}
 
-	m_comic_sans_renderer->setPosition({ 0 + 10, h - 10 });
-	m_comic_sans_renderer->setColour({ 0.85f, 0.85f, 0.85f });
-	m_comic_sans_renderer->renderString(projection_2D, std::to_string(m_combo) + "x");
+	m_big_noodle_renderer->setPosition({ 0 + 10, h - 10 });
+	m_big_noodle_renderer->setColour({ 0.85f, 0.85f, 0.85f });
+	m_big_noodle_renderer->renderString(projection_2D, std::to_string(m_combo) + "x");
 
 
 
@@ -544,13 +544,13 @@ void Level::draw()
 			text = "YOU WIN";
 		}
 
-		width = m_comic_sans_renderer->get_width_of_string(text) * 0.5;
-		m_comic_sans_renderer->setPosition({ screen.x / 2.f - width, screen.y / 2.f });
-		m_comic_sans_renderer->renderString(projection_2D, text);
+		width = m_big_noodle_renderer->get_width_of_string(text) * 0.5;
+		m_big_noodle_renderer->setPosition({ screen.x / 2.f - width, screen.y / 2.f });
+		m_big_noodle_renderer->renderString(projection_2D, text);
 
-		width = m_comic_sans_renderer->get_width_of_string("Press SPACE to continue") * 0.5;
-		m_comic_sans_renderer->setPosition({ screen.x / 2.f - width, screen.y / 2.f + 50 });
-		m_comic_sans_renderer->renderString(projection_2D, "Press SPACE to continue");
+		width = m_big_noodle_renderer->get_width_of_string("Press SPACE to continue") * 0.5;
+		m_big_noodle_renderer->setPosition({ screen.x / 2.f - width, screen.y / 2.f + 50 });
+		m_big_noodle_renderer->renderString(projection_2D, "Press SPACE to continue");
 	}
 
 }
