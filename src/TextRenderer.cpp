@@ -139,7 +139,7 @@ void TextRenderer::renderString(const mat3& projection, std::string text) {
 		// Render glyph texture over quad
 		glBindTexture(GL_TEXTURE_2D, ch.textureID);
 		// Update content of VBO memory
-		glBindBuffer(GL_ARRAY_BUFFER, vao);
+		glBindBuffer(GL_ARRAY_BUFFER, vbo);
 		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		// Render quad
