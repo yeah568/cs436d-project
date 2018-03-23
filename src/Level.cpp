@@ -328,6 +328,7 @@ bool Level::update(float elapsed_ms)
 				system->playSound(sound_boss_death, 0, false, &channel);
 				new_points += 100;
 				m_level_state = WON;
+				music_channel->setPaused(true);
 				return true;
 			}
 			break;
