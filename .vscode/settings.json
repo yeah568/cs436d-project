@@ -33,6 +33,7 @@
     "type_traits": "cpp",
     "utility": "cpp",
     "locale": "cpp",
-    "cmath": "cpp"
+    "cmath": "cpp",
+    "valarray": "cpp"
   }
 }

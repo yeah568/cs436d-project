@@ -55,7 +55,6 @@ bool Level::init(std::string song_path1, std::string osu_path, float boss_health
     beatlist = new BeatList(beatmap);
 
 	m_comic_sans_renderer = new TextRenderer("BigNoodleTooOblique.ttf", 48);
-    m_exo_renderer = new TextRenderer("Exo2-Light.ttf", 48);
 
     FMOD_RESULT result = FMOD::System_Create(&system);      // Create the main system object.
     if (result != FMOD_OK) {
@@ -454,7 +453,7 @@ bool Level::update(float elapsed_ms)
 	return true;
 }
 
-void Level::on_mouse_scroll(vec2 offset) {
+void Level::on_mouse_scroll(GLFWwindow* window, vec2 offset) {
 
 }
 
@@ -519,11 +518,8 @@ void Level::draw()
 	}
 
 	m_comic_sans_renderer->setPosition({ 0 + 10, h - 10 });
-	m_exo_renderer->setPosition({screen.x/2.f,screen.y/2.f});
 	m_comic_sans_renderer->setColour({ 0.85f, 0.85f, 0.85f });
-	m_exo_renderer->setColour({0.85f,0.85f,0.85f});
 	m_comic_sans_renderer->renderString(projection_2D, std::to_string(m_combo) + "x");
-	m_exo_renderer->renderString(projection_2D, "Hello World");
 }
 
 // Should the game be over ?

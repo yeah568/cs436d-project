@@ -21,11 +21,6 @@
 #define audio_path(name) data_path "/audio/" name
 #define mesh_path(name) data_path "/meshes/" name
 #define song_path(name) data_path "/songs/" name
-#if __APPLE__
-static const float RETINA_SCALAR = 0.5f;
-#else
-static const float RETINA_SCALAR = 1.f;
-#endif
 
 std::string font_path(std::string name);
 

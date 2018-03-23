@@ -218,6 +218,5 @@ void World::on_mouse_button(GLFWwindow* window, int button, int action, int mods
 }
 
 void World::on_mouse_scroll(GLFWwindow* window, double xoff, double yoff) {
-	printf("Scroll Y: %f\n",yoff);
-	levelList[levelCounter]->on_mouse_scroll({(float)xoff, (float)yoff});
+	levelList[levelCounter]->on_mouse_scroll(window, {(float)xoff, (float)yoff});
 }

@@ -14,28 +14,28 @@ bool MainMenu::init() {
 	exit_button.init("Exo2-Light.ttf", "Exit");
 	songselect_button.init("Exo2-Light.ttf", "Song Select");
 //
-	bbox temp = play_button.get_bounding_box();
-	play_button.set_position({200.f, 200.f});
-
-	songselect_button.set_position({ (float)screen.x / 2, (float)screen.y / 2 });
-	songselect_button.set_rotation(0);
-	songselect_button.set_scale({1.f,1.f});
-//
-	temp = exit_button.get_bounding_box();
-	exit_button.set_position({ 200.f, 850.f});
-
-    background.set_scale({1.f,1.f});
-	temp = background.get_bounding_box();
-	background.set_scale({RETINA_SCALAR*screen.x/temp.max_x,RETINA_SCALAR*screen.y/temp.max_y});
-	background.set_position({ (float)screen.x / 2, (float)screen.y / 2 });
-	background.set_rotation(0);
-
-	play_button.set_scale({1.f,1.f});
-	play_button.set_rotation(0);
-
 	exit_button.set_scale({1.f,1.f});
 	exit_button.set_rotation(0);
-	
+	play_button.set_scale({1.f,1.f});
+	play_button.set_rotation(0);
+	songselect_button.set_rotation(0);
+	songselect_button.set_scale({1.f,1.f});
+
+	play_button.set_position({200.f, 200.f});
+
+	songselect_button.set_position({ 200.f, (float)screen.y / 2 });
+
+	exit_button.set_position({ 200.f, 850.f});
+
+	background.set_scale({1.f,1.f});
+	background.set_rotation(0);
+	background.set_position({ (float)screen.x / 2, (float)screen.y / 2 });
+
+	bbox temp = background.get_bounding_box();
+	float bg_width = temp.max_x - temp.min_x;
+	float bg_height = temp.max_y - temp.min_y;
+	background.set_scale({screen.x/bg_width,screen.y/bg_height});
+
 	return 1;
 	
 }
