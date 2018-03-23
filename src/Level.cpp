@@ -47,7 +47,7 @@ Level::Level(float width, float height) : m_points(0), m_next_little_enemies_spa
     m_current_time = 0;
 }
 
-bool Level::init(std::string song_path1, std::string osu_path, float boss_health, float player_health) {
+bool Level::init(std::string song_path1, std::string osu_path, float boss_health_multiplier, float player_health) {
     OsuParser *parser;
     parser = new OsuParser(osu_path.c_str());
 
@@ -76,6 +76,9 @@ bool Level::init(std::string song_path1, std::string osu_path, float boss_health
         printf("FMOD error! (%d) creating sound FMOD failure\n", result);
         return false;
     }
+	unsigned int boss_health = 0;
+	music_level->getLength(&boss_health, FMOD_TIMEUNIT_MS);
+	boss_health *= boss_health_multiplier/1000;
     result = system->createSound(audio_path("345551_enemy_Spawn.wav"), FMOD_DEFAULT, 0, &sound_player_hit);
     if (result != FMOD_OK) {
         printf("FMOD error! (%d) creating sound FMOD failure\n", result);
@@ -150,7 +153,7 @@ bool Level::init(std::string song_path1, std::string osu_path, float boss_health
 	max_player_health = player_health;
     m_player.set_health_abs(max_player_health);
 	healthbar.update(1.f);
-    if (m_boss.init(boss_health, &m_little_enemies, &m_structures)) {
+    if (m_boss.init((float)boss_health, &m_little_enemies, &m_structures)) {
         Structure::player_bullets = &m_bullets;
         Structure::enemy_bullets = &m_enemy_bullets;
         Structure::player = &m_player;
@@ -176,13 +179,13 @@ bool Level3::init() {
     m_background.set_texture(tm->get_texture("healthbar"));
     return Level::init(song_path("PokemonTheme/00_poketv1open.mp3"),
                        song_path("PokemonTheme/Jason Paige - Pokemon Theme (TV Edit) (Ekaru) [Normal].osu"),
-                       550.0f, 10.f);
+                       2.f, 10.f);
 }
 bool Level2::init() {
 	m_background.set_texture(tm->get_texture("healthbar"));
     return Level::init(song_path("598830 Shawn Wasabi - Marble Soda/Marble Soda.wav"),
                        song_path("598830 Shawn Wasabi - Marble Soda/Shawn Wasabi - Marble Soda (Exa) [Normal].osu"),
-                       375.0f, 10.f);
+                       1.5f, 10.f);
 }
 
 // World initialization
@@ -190,7 +193,7 @@ bool Level1::init() {
 	m_background.set_texture(tm->get_texture("character"));
     return Level::init(song_path("BlendS/BlendS.wav"),
                        song_path("BlendS/Blend A - Bon Appetit S (Meg) [Easy].osu"),
-                       250.0f, 10.f);
+                       1.f, 10.f);
 }
 
 // Releases all the associated resources

@@ -88,17 +88,19 @@ bool SongSelect::update(float ms) { return 1; };
 
 void SongSelect::on_mouse_click(vec2 pos) {
 	for (auto& l_btn : song_boxes)
-		if (l_btn->was_clicked(pos))
-			if (l_btn->get_text()=="Blend S") {
+		if (l_btn->was_clicked(pos)) {
+			if (l_btn->get_text() == "Blend S") {
 				finished = 1;
 				levelList->emplace_back(new Level1(screen.x, screen.y));
-			} else if (l_btn->get_text()=="Pokemon Theme") {
+			} else if (l_btn->get_text() == "Pokemon Theme") {
 				finished = 1;
 				levelList->emplace_back(new Level3(screen.x, screen.y));
-			} else if (l_btn->get_text()=="Marble Soda") {
+			} else if (l_btn->get_text() == "Marble Soda") {
 				finished = 1;
 				levelList->emplace_back(new Level2(screen.x, screen.y));
 			}
+			levelList->emplace_back(new SongSelect(screen.x, screen.y));
+		}
 
 	if (back_button.was_clicked(pos)) {
 		finished = 1;

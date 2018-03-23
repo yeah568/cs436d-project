@@ -107,7 +107,7 @@ private:
 
 protected:
 
-    bool init(std::string song_path, std::string osu_path, float boss_health, float player_health);
+    bool init(std::string song_path, std::string osu_path, float boss_health_multiplier, float player_health);
 
     TextureManager *tm;
     static Texture background_texture;
