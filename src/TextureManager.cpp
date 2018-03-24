@@ -34,6 +34,7 @@ void TextureManager::load_textures() {
     "song_box",
     "pokemon_songart",
     "blends_songart",
+	"enemy1",
     "marblesoda_songart",
     "pokemon_background",
     "marblesoda_background",
