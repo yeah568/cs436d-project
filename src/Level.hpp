@@ -77,6 +77,7 @@ public:
     virtual void draw();
 
     float getBossHealth();
+	std::string getScoreString();
     static std::vector<Level*>* levelList;
 
 	virtual void on_mouse_scroll(GLFWwindow* window, vec2 offset);
