@@ -97,8 +97,6 @@ public:
 
 	void vibrate_controller(int controller, float duration, unsigned short left_speed, unsigned short right_speed);
 
-    int new_points;
-
 private:
     void handle_beat(float remaining_offset, Beat *curBeat, vec2 screen);
 
@@ -180,6 +178,8 @@ protected:
 	LevelStates m_level_state;
 	int m_combo;
 	float max_player_health;
+
+	unsigned int m_score;
 };
 
 class Level1 : public Level {

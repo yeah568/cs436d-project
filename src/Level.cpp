@@ -13,6 +13,7 @@
 #include <string.h>
 #include <cassert>
 #include <sstream>
+#include <iomanip>
 
 Texture Level::background_texture;
 
@@ -130,6 +131,7 @@ bool Level::init(std::string song_path1, std::string osu_path, float boss_health
 
     m_current_speed = 1.f;
 	m_combo = 0;
+	m_score = 0;
 
 	m_level_state = RUNNING;
 	finished = false;
@@ -335,7 +337,7 @@ bool Level::update(float elapsed_ms)
 			bullet_it = m_bullets.erase(bullet_it);
 			if (m_boss.get_health() <= 0) {
 				system->playSound(sound_boss_death, 0, false, &channel);
-				new_points += 100;
+				m_score += m_combo * 1000;
 				m_level_state = WON;
 				music_channel->setPaused(true);
 				return true;
@@ -410,7 +412,7 @@ bool Level::update(float elapsed_ms)
 							false);
 						pe->init();
 						m_particle_emitters.emplace_back(pe);
-						new_points += (bullet_it->get_damage() == 100 ? 15 : 10);
+						m_score += m_combo * (bullet_it->get_damage() == 100 ? 150 : 100);
 						little_enemy_it = m_little_enemies.erase(little_enemy_it);
 						bullet_it = m_bullets.erase(bullet_it);
 						removed_enemy = true;
@@ -540,9 +542,14 @@ void Level::draw()
 	m_big_noodle_renderer->setPosition({ 0 + 10, h - 10 });
 	m_big_noodle_renderer->setColour({ 0.85f, 0.85f, 0.85f });
 	m_big_noodle_renderer->renderString(projection_2D, std::to_string(m_combo) + "x");
+	
+	std::stringstream score_ss;
+	score_ss << std::setfill('0') << std::setw(9) << m_score;
+	std::string score_string = score_ss.str();
 
-
-
+	float width = m_big_noodle_renderer->get_width_of_string(score_string);
+	m_big_noodle_renderer->setPosition({ screen.x - width - 10, screen.y - 10 });
+	m_big_noodle_renderer->renderString(projection_2D, score_string);
 
 	if (m_level_state != RUNNING) {
 		float width;
