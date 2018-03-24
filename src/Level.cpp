@@ -82,13 +82,17 @@ bool Level::init(std::string song_path, std::string osu_path, float boss_health_
     healthbar.init();
 	bbox hp_bbox = healthbar.get_bounding_box();
     healthbar.set_scale({1.0f, 1.0f});
-    healthbar.set_position({ (hp_bbox.max_x - hp_bbox.min_x) / 2.0f, 200 });
+    healthbar.set_position({ (hp_bbox.max_x - hp_bbox.min_x) / 2.0f, 50 });
     healthbar.set_rotation(0);
     m_background.init();
 	m_background.set_position({ (float)screen.x/ 2, (float)screen.y / 2 });
 	m_background.set_scale({ 1.f, 1.f });
 	m_background.set_rotation(0);
 
+	bbox temp3 = m_background.get_bounding_box();
+	float bg_width = temp3.max_x - temp3.min_x;
+	float bg_height = temp3.max_y - temp3.min_y;
+	m_background.set_scale({screen.x/bg_width,screen.y/bg_height});
 
     if (!m_player.init()) {
         return false;
@@ -119,14 +123,14 @@ Level::~Level() {
 	delete m_big_noodle_renderer;
 }
 bool Level3::init() {
-    m_background.set_texture(tm->get_texture("healthbar"));
+    m_background.set_texture(tm->get_texture("pokemon_background"));
     return Level::init(song_path("PokemonTheme/00_poketv1open.mp3"),
                        song_path("PokemonTheme/Jason Paige - Pokemon Theme (TV Edit) (Ekaru) [Normal].osu"),
                        2.f, 10.f);
 }
 
 bool Level2::init() {
-    m_background.set_texture(tm->get_texture("marblesoda_background"));
+	m_background.set_texture(tm->get_texture("marblesoda_background"));
     return Level::init(song_path("598830 Shawn Wasabi - Marble Soda/Marble Soda.wav"),
                        song_path("598830 Shawn Wasabi - Marble Soda/Shawn Wasabi - Marble Soda (Exa) [Normal].osu"),
                        1.5f, 10.f);
@@ -134,7 +138,7 @@ bool Level2::init() {
 
 // World initialization
 bool Level1::init() {
-    m_background.set_texture(tm->get_texture("blends_background"));
+	m_background.set_texture(tm->get_texture("blends_background"));
     return Level::init(song_path("BlendS/BlendS.wav"),
                        song_path("BlendS/Blend A - Bon Appetit S (Meg) [Easy].osu"),
                        1.f, 10.f);
@@ -237,7 +241,7 @@ bool Level::update(float elapsed_ms)
 	while (beatcircle_it != m_beatcircles.end()) {
 		float delta = m_current_time - beatcircle_it->get_offset();
 		if (delta > bad_timing) {
-			printf("MISS\n");
+			//printf("MISS\n");
 			m_combo = 0;
 			beatcircle_it = m_beatcircles.erase(beatcircle_it);
 		}
@@ -297,6 +301,7 @@ bool Level::update(float elapsed_ms)
 	for (auto little_enemy_it = m_little_enemies.begin(); little_enemy_it != m_little_enemies.end();) {
 		if (m_player.collides_with(*little_enemy_it)) {
             audioEngine.play_player_hit();
+  		vibrate_controller(0, 500.f, 32000, 32000);
 			healthbar.update(m_player.get_health() / max_player_health);
 			auto pe = new ParticleEmitter(
 				little_enemy_it->get_position(),
@@ -620,7 +625,7 @@ void Level::on_arrow_key(Dir dir) {
         }
 
         if (delta <= perfect_timing) {
-            printf("PERFECT with delta %f\n", delta);
+            //printf("PERFECT with delta %f\n", delta);
             spawn_player_bullet(salmon_pos, player_angle, {0.5, 0.5}, 10.f, 5000.f, texture, &m_bullets);
 
             audioEngine.play_perfect_timing();
@@ -629,7 +634,7 @@ void Level::on_arrow_key(Dir dir) {
 			m_combo++;
             break;
         } else if (delta <= good_timing) {
-            printf("GOOD with delta %f\n", delta);
+            //printf("GOOD with delta %f\n", delta);
             spawn_player_bullet(salmon_pos, player_angle, {0.5, 0.5}, 5.f, 1500.f, texture, &m_bullets);
 
             audioEngine.play_good_timing();
@@ -638,7 +643,7 @@ void Level::on_arrow_key(Dir dir) {
 			m_combo++;
             break;
         } else if (delta <= bad_timing) {
-            printf("BAD with delta %f\n", delta);
+            //printf("BAD with delta %f\n", delta);
             spawn_player_bullet(salmon_pos, player_angle, {1.f, 1.f}, 3.f, 800.f, texture, &m_bullets);
             audioEngine.play_bad_timing();
             m_beatcircles.erase(beatcircle_it);
@@ -658,6 +663,91 @@ void Level::on_mouse_move(double xpos, double ypos) {
     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     m_player.set_mouse((float) xpos, (float) ypos);
+}
+
+
+void Level::handle_controller(float elapsed_ms) {
+#if _WIN32
+	ZeroMemory(&controller_state, sizeof(XINPUT_STATE));
+
+	if (XInputGetState(0, &controller_state) != ERROR_SUCCESS) {
+		return;
+	}
+
+	bool A_button_pressed = ((controller_state.Gamepad.wButtons & XINPUT_GAMEPAD_A) != 0);
+	bool B_button_pressed = ((controller_state.Gamepad.wButtons & XINPUT_GAMEPAD_B) != 0);
+	bool X_button_pressed = ((controller_state.Gamepad.wButtons & XINPUT_GAMEPAD_X) != 0);
+	bool Y_button_pressed = ((controller_state.Gamepad.wButtons & XINPUT_GAMEPAD_Y) != 0);
+	bool dpad_down_pressed = ((controller_state.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_DOWN) != 0);
+	bool dpad_right_pressed = ((controller_state.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_RIGHT) != 0);
+	bool dpad_up_pressed = ((controller_state.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_UP) != 0);
+	bool dpad_left_pressed = ((controller_state.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_LEFT) != 0);
+
+	if (A_button_pressed || dpad_down_pressed) {
+		on_arrow_key(down);
+	}
+	if (B_button_pressed || dpad_right_pressed) {
+		on_arrow_key(right);
+	}
+	if (Y_button_pressed || dpad_up_pressed) {
+		on_arrow_key(up);
+	}
+	if (X_button_pressed || dpad_left_pressed) {
+		on_arrow_key(left);
+	}
+
+	float leftTrigger = controller_state.Gamepad.bLeftTrigger / 255.f;
+	float rightTrigger = controller_state.Gamepad.bRightTrigger / 255.f;
+
+	float LX = controller_state.Gamepad.sThumbLX;
+
+	//determine how far the controller is pushed
+	float magnitude = std::abs(LX);
+
+	//determine the direction the controller is pushed
+	float normalizedLX = LX / magnitude;
+
+	float normalizedMagnitude = 0;
+
+	//check if the controller is outside a circular dead zone
+	if (magnitude > XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE)
+	{
+		//clip the magnitude at its expected maximum value
+		if (magnitude > 32767) magnitude = 32767;
+
+		//adjust magnitude relative to the end of the dead zone
+		magnitude -= XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE;
+
+		//optionally normalize the magnitude with respect to its expected range
+		//giving a magnitude value of 0.0 to 1.0
+		normalizedMagnitude = magnitude / (32767 - XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE);
+	}
+	else //if the controller is in the deadzone zero out the magnitude
+	{
+		magnitude = 0.0;
+		normalizedMagnitude = 0.0;
+	}
+
+	m_player.set_movement_dir({ normalizedLX * normalizedMagnitude, 0.f });
+
+	vibration_remaining -= elapsed_ms;
+	if (vibration_remaining <= 0) {
+		vibrate_controller(0, 0, 0, 0);
+	}
+#endif
+	return;
+}
+
+void Level::vibrate_controller(int controller, float duration, unsigned short left_speed, unsigned short right_speed) {
+#if _WIN32
+	vibration_remaining = duration;
+	XINPUT_VIBRATION vibration;
+	ZeroMemory(&vibration, sizeof(XINPUT_VIBRATION));
+	vibration.wLeftMotorSpeed = left_speed; // use any value between 0-65535 here
+	vibration.wRightMotorSpeed = right_speed; // use any value between 0-65535 here
+	XInputSetState(controller, &vibration);
+#endif;
+	return;
 }
 
 

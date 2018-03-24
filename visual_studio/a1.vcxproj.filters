@@ -29,7 +29,6 @@
     <ClCompile Include="$(ProjectDir)..\src\Structure.cpp" />
     <ClCompile Include="$(ProjectDir)..\src\SpriteSheet.cpp" />
     <ClCompile Include="$(ProjectDir)..\src\TextRenderer.cpp" />
-    <ClCompile Include="$(ProjectDir)..\src\TextRenderer.hpp" />
     <ClCompile Include="$(ProjectDir)..\src\MainMenu.cpp" />
     <ClCompile Include="$(ProjectDir)..\src\Button.cpp" />
     <ClCompile Include="$(ProjectDir)..\src\SongSelect.cpp" />
@@ -49,6 +48,7 @@
     <ClInclude Include="$(ProjectDir)..\src\Boss.hpp" />
     <ClInclude Include="$(ProjectDir)..\src\Enemy.hpp" />
     <ClInclude Include="$(ProjectDir)..\src\Bullet.hpp" />
+    <ClInclude Include="$(ProjectDir)..\src\TextRenderer.hpp" />
     <ClCompile Include="$(ProjectDir)..\src\Button.hpp" />
     <ClCompile Include="$(ProjectDir)..\src\SongSelect.hpp" />
   </ItemGroup>

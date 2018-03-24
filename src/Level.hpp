@@ -45,6 +45,9 @@
 
 #endif
 
+#if _WIN32
+#include <xinput.h>
+#endif
 
 enum LevelStates {
 	RUNNING,
@@ -92,20 +95,21 @@ public:
 
     virtual void on_mouse_click(vec2 pos) {};
 
+	void handle_controller(float elapsed_ms);
+
+	void vibrate_controller(int controller, float duration, unsigned short left_speed, unsigned short right_speed);
+
     int new_points;
 
 private:
-    // Generates a new fish
-    //bool spawn_bullet(vec2 position, float angle, bool bullet_type, bool on_beat);
-
-    //bool spawn_beat_circle(int dir, float pos, float speed);
-
     void handle_beat(float remaining_offset, Beat *curBeat, vec2 screen);
 
-    //bool spawn_enemy(vec2 position);
-
-    //bool spawn_little_enemy();
     void on_arrow_key(Dir dir);
+
+	float vibration_remaining;
+#if _WIN32
+	XINPUT_STATE controller_state;
+#endif
 
 protected:
 

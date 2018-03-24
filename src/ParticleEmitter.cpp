@@ -1,5 +1,4 @@
 #include "ParticleEmitter.hpp"
-
 #include <stdlib.h>
 #include <vector>
 
