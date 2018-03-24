@@ -41,6 +41,8 @@ public:
 
     void set_distortion_bypass(bool toggle);
 
+    void set_wetness_levels(float wetness);
+
     void play_boss_hit();
 
     void play_boss_death();
@@ -58,6 +60,10 @@ public:
     void play_good_timing();
 
     void play_bad_timing();
+
+    void set_music_pause(bool toggle);
+
+    void get_music_length(unsigned int *length, FMOD_TIMEUNIT lengthtype);
 
 private:
 
@@ -79,10 +85,10 @@ private:
     FMOD::Sound *sound_bad_timing;
     FMOD::System *system;
 
-    FMOD::DSP *dsphighpass = 0;
+//    FMOD::DSP *dsphighpass = 0;
     FMOD::DSP *dspdistortion = 0;
     FMOD::DSP *dspreverb = 0;
-    FMOD::DSP *dsplowpass = 0;
+//    FMOD::DSP *dsplowpass = 0;
 
     FMOD::ChannelGroup *music_channel_group;
     FMOD::ChannelGroup *effects_channel_group;

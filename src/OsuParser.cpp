@@ -20,10 +20,10 @@ OsuBeatmap OsuParser::parse() {
 
 	// check file version
 	getline(osufile, line);
-	if (line.compare("osu file format v14") != 0) {
-		// TODO jamesliu: return an error
-		return beatmap;
-	}
+	//if (line.compare("osu file format") != 0) {
+	//	// TODO jamesliu: return an error
+	//	return beatmap;
+	//}
 
 	while (getline(osufile, line))
 	{
@@ -115,8 +115,7 @@ OsuBeatmap OsuParser::parse() {
 			trim(hitObjects);
 			beatmap.hitObjects = parseHitObjects(hitObjects);
 		}
-
-		std::cout << line << '\n';
+		printf("%s\n",line.c_str());
 	}
 	
 	return beatmap;
@@ -329,7 +328,8 @@ TimingPoint OsuParser::parseTimingPoint(std::string timingPoint)
 	tp.sampleIndex = stoi(parts.at(4));
 	tp.volume = stoi(parts.at(5));
 	tp.inherited = !!stoi(parts.at(6));
-	tp.kialMode = !!stoi(parts.at(7));
+	if (parts.size() >= 8)
+		tp.kialMode = !!stoi(parts.at(7));
 	
 	return tp;
 }

@@ -332,3 +332,11 @@ void AudioEngine::play_good_timing() {
 void AudioEngine::play_bad_timing() {
     system->playSound(sound_bad_timing, 0, false, &sound_effects);
 }
+
+void AudioEngine::set_music_pause(bool toggle) {
+    music_channel_group->setPaused(toggle);
+}
+
+void AudioEngine::get_music_length(unsigned int *length, FMOD_TIMEUNIT lengthtype) {
+    music_level->getLength(length, lengthtype);
+}

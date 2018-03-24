@@ -29,7 +29,7 @@ World::World()
 World::~World(){}
 
 // World initialization
-bool World::init(vec2 screen)
+bool World::init(vec2 screen, bool is_full_screen)
 {
 	//-------------------------------------------------------------------------
 	// GLFW / OGL Initialization
@@ -50,7 +50,19 @@ bool World::init(vec2 screen)
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
 	glfwWindowHint(GLFW_RESIZABLE, 0);
-	m_window = glfwCreateWindow((int)screen.x, (int)screen.y, "BeatCoin", nullptr, nullptr);
+	vec2 actual_screen;
+	if (is_full_screen)
+	{
+		const GLFWvidmode *mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+
+		m_window = glfwCreateWindow(mode->width, mode->height, "BeatCoin", glfwGetPrimaryMonitor(), nullptr);
+		actual_screen = {(float)mode->width, (float)mode->height};
+	}
+	else
+	{
+		m_window = glfwCreateWindow(screen.x, screen.y, "BeatCoin", nullptr, nullptr);
+		actual_screen = screen;
+	}
 	if (m_window == nullptr)
 		return false;
 	
@@ -72,13 +84,23 @@ bool World::init(vec2 screen)
     auto cursor_pos_redirect = [](GLFWwindow *wnd, double _0, double _1) {
         ((World *) glfwGetWindowUserPointer(wnd))->on_mouse_move(wnd, _0, _1);
     };
+	auto cursor_button_redirect = [](GLFWwindow *wnd, int _0, int _1, int _2) {
+		((World *)glfwGetWindowUserPointer(wnd))->on_mouse_button(wnd, _0, _1, _2);
+	};
+	auto scroll_redirect = [](GLFWwindow *wnd, double _0, double _1) {
+		((World *)glfwGetWindowUserPointer(wnd))->on_mouse_scroll(wnd, _0, _1);
+	};
     glfwSetKeyCallback(m_window, key_redirect);
     glfwSetCursorPosCallback(m_window, cursor_pos_redirect);
+	glfwSetMouseButtonCallback(m_window, cursor_button_redirect);
+	glfwSetScrollCallback(m_window, scroll_redirect);
 	TextureManager* tm = TextureManager::get_instance();
 	//return levelList[levelCounter].init
 	//Level1* level = new Level1(screen.x, screen.y);
-	levelList.emplace_back(new Level1(screen.x, screen.y));
-	levelList.emplace_back(new Level2(screen.x, screen.y));
+	Level::levelList = &levelList;
+	levelList.emplace_back(new MainMenu(screen.x, screen.y));
+	//levelList.emplace_back(new Level1(screen.x, screen.y));
+	//levelList.emplace_back(new Level2(screen.x, screen.y));
 	//levelList.emplace_back(new Level1(screen.x, screen.y, 3));
 	
 	return levelList[levelCounter]->init();
@@ -107,6 +129,7 @@ bool World::update(float elapsed_ms)
 		}
 		levelCounter++;
 		levelList[levelCounter]->init();
+
 	};
 	return levelList[levelCounter]->update(elapsed_ms);
 }
@@ -135,20 +158,6 @@ void World::draw()
 	glClearColor(clear_color[0], clear_color[1], clear_color[2], 1.0);
 	glClearDepth(1.f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	// Fake projection matrix, scales with respect to window coordinates
-	// PS: 1.f / w in [1][1] is correct.. do you know why ? (:
-	float left = 0.f;// *-0.5;
-	float top = 0.f;// (float)h * -0.5;
-	float right = (float)w;// *0.5;
-	float bottom = (float)h;// *0.5;
-
-	float sx = 2.f / (right - left);
-	float sy = 2.f / (top - bottom);
-	float tx = -(right + left) / (right - left);
-	float ty = -(top + bottom) / (top - bottom);
-	mat3 projection_2D{ { sx, 0.f, 0.f },{ 0.f, sy, 0.f },{ tx, ty, 1.f } };
-	
 
 	levelList[levelCounter]->draw();
 
@@ -197,4 +206,18 @@ void World::on_mouse_move(GLFWwindow *window, double xpos, double ypos) {
     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 	levelList[levelCounter]->on_mouse_move(xpos, ypos);
+}
+
+void World::on_mouse_button(GLFWwindow* window, int button, int action, int mods)
+{
+	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+		printf("Clicking");
+		double xpos, ypos;
+		glfwGetCursorPos(window, &xpos, &ypos);
+		levelList[levelCounter]->on_mouse_click({(float)xpos, (float)ypos});
+	}
+}
+
+void World::on_mouse_scroll(GLFWwindow* window, double xoff, double yoff) {
+	levelList[levelCounter]->on_mouse_scroll(window, {(float)xoff, (float)yoff});
 }

@@ -8,8 +8,8 @@
 #include <gl3w.h>
 #include <GLFW/glfw3.h>
 
-// Simple utility macros to avoid mistyping directory name, name has to be a string literal
-// audio_path("audio.ogg") -> data/audio/audio.ogg
+//// Simple utility macros to avoid mistyping directory name, name has to be a string literal
+//// audio_path("audio.ogg") -> data/audio/audio.ogg
 #ifdef _MSC_VER
   #define data_path "../data"
   #define shader_path(name) "../shaders/" name
@@ -22,9 +22,17 @@
 #define mesh_path(name) data_path "/meshes/" name
 #define song_path(name) data_path "/songs/" name
 
+std::string font_path(std::string name);
+
 static const int HEALING_STRUCTURE = 0;
 static const int BLACK_HOLE_STRUCTURE = 1;
 static const int SHOOTING_STRUCTURE = 2;
+
+static const std::string EXO_FONT = "Exo2-Light.ttf";
+
+static const int LEFT_ALIGN = 1;
+static const int CENTER_ALIGN = 2;
+static const int RIGHT_ALIGN = 3;
 
 // Not much math is needed and there are already way too many libraries linked (:
 // If you want to do some overloads..
