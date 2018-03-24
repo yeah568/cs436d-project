@@ -48,7 +48,7 @@ Level::Level(float width, float height) : m_points(0), m_next_little_enemies_spa
     m_current_time = 0;
 }
 
-bool Level::init(std::string song_path1, std::string osu_path, float boss_health_multiplier, float player_health) {
+bool Level::init(std::string song_path, std::string osu_path, float boss_health_multiplier, float player_health) {
     OsuParser *parser;
     parser = new OsuParser(osu_path.c_str());
 
@@ -57,77 +57,20 @@ bool Level::init(std::string song_path1, std::string osu_path, float boss_health
 
 	m_big_noodle_renderer = new TextRenderer("BigNoodleTooOblique.ttf", 48);
 
-    FMOD_RESULT result = FMOD::System_Create(&system);      // Create the main system object.
-    if (result != FMOD_OK) {
-        printf("FMOD error! (%d) creation of FMOD system failure\n", result);
-        return false;
-    }
-    result = system->init(32, FMOD_INIT_NORMAL, 0);    // Initialize FMOD.
-    if (result != FMOD_OK) {
-        printf("FMOD error! (%d) initialization of FMOD system failure\n", result);
-        return false;
-    }
-    music_channel = nullptr;
-    channel = nullptr;
-    isPlaying = new bool(false);
-    //can turn on looping for songs?
-    result = system->createSound(song_path1.c_str(), FMOD_DEFAULT, 0,
-                                 &music_level);
-    if (result != FMOD_OK) {
-        printf("FMOD error! (%d) creating sound FMOD failure\n", result);
-        return false;
-    }
-	unsigned int boss_health = 0;
-	music_level->getLength(&boss_health, FMOD_TIMEUNIT_MS);
-	boss_health *= boss_health_multiplier/1000;
-    result = system->createSound(audio_path("345551_enemy_Spawn.wav"), FMOD_DEFAULT, 0, &sound_player_hit);
-    if (result != FMOD_OK) {
-        printf("FMOD error! (%d) creating sound FMOD failure\n", result);
-        return false;
-    }
-    result = system->createSound(audio_path("345551_enemy_Spawn.wav"), FMOD_DEFAULT, 0, &sound_boss_hit);
-    if (result != FMOD_OK) {
-        printf("FMOD error! (%d) creating sound FMOD failure\n", result);
-        return false;
-    }
-    result = system->createSound(audio_path("345551_enemy_Spawn.wav"), FMOD_DEFAULT, 0, &sound_boss_death);
-    if (result != FMOD_OK) {
-        printf("FMOD error! (%d) creating sound FMOD failure\n", result);
-        return false;
-    }
-    result = system->createSound(audio_path("345551_enemy_Spawn.wav"), FMOD_DEFAULT, 0, &sound_player_death);
-    if (result != FMOD_OK) {
-        printf("FMOD error! (%d) creating sound FMOD failure\n", result);
-        return false;
-    }
-    result = system->createSound(audio_path("345551_enemy_Spawn.wav"), FMOD_DEFAULT, 0, &sound_enemy_hit);
-    if (result != FMOD_OK) {
-        printf("FMOD error! (%d) creating sound FMOD failure\n", result);
-        return false;
-    }
-    result = system->createSound(audio_path("345551_enemy_Spawn.wav"), FMOD_DEFAULT, 0, &sound_structure_death);
-    if (result != FMOD_OK) {
-        printf("FMOD error! (%d) creating sound FMOD failure\n", result);
-        return false;
-    }
-    result = system->createSound(audio_path("345551_enemy_Spawn.wav"), FMOD_DEFAULT, 0, &sound_perfect_timing);
-    if (result != FMOD_OK) {
-        printf("FMOD error! (%d) creating sound FMOD failure\n", result);
-        return false;
-    }
-    result = system->createSound(audio_path("345551_enemy_Spawn.wav"), FMOD_DEFAULT, 0, &sound_good_timing);
-    if (result != FMOD_OK) {
-        printf("FMOD error! (%d) creating sound FMOD failure\n", result);
-        return false;
-    }
-    result = system->createSound(audio_path("345551_enemy_Spawn.wav"), FMOD_DEFAULT, 0, &sound_bad_timing);
-    if (result != FMOD_OK) {
-        printf("FMOD error! (%d) creating sound FMOD failure\n", result);
-        return false;
-    }
+    //FMOD INIT AND LOAD SOUNDS
 
+    if (!(audioEngine.init() &&
+          audioEngine.load_sounds() &&
+          audioEngine.load_music(song_path.c_str()) &&
+          audioEngine.load_dsp())) {
+        printf("DID NOT LOAD FMOD\n");
+        return false;
+    }
     printf("FMOD loaded sounds and music");
 
+    unsigned int boss_health = 0;
+    audioEngine.get_music_length(&boss_health, FMOD_TIMEUNIT_MS);
+    boss_health *= boss_health_multiplier/1000;
 
     m_current_speed = 1.f;
 	m_combo = 0;
@@ -187,6 +130,7 @@ bool Level3::init() {
                        song_path("PokemonTheme/Jason Paige - Pokemon Theme (TV Edit) (Ekaru) [Normal].osu"),
                        2.f, 10.f);
 }
+
 bool Level2::init() {
 	m_background.set_texture(tm->get_texture("marblesoda_background"));
     return Level::init(song_path("598830 Shawn Wasabi - Marble Soda/Marble Soda.wav"),
@@ -204,19 +148,6 @@ bool Level1::init() {
 
 // Releases all the associated resources
 void Level::destroy() {
-    music_level->release();
-    sound_player_hit->release();
-    sound_boss_hit->release();
-    sound_enemy_hit->release();
-    sound_boss_death->release();
-    sound_player_death->release();
-    sound_structure_death->release();
-    sound_perfect_timing->release();
-    sound_good_timing->release();
-    sound_bad_timing->release();
-    system->close();
-    system->release();
-
 
     m_player.destroy();
     m_boss.destroy();
@@ -240,6 +171,9 @@ void Level::destroy() {
     m_little_enemies.clear();
     m_structures.clear();
     m_beatcircles.clear();
+
+    audioEngine.destroy();
+
 }
 
 
@@ -258,15 +192,11 @@ bool Level::update(float elapsed_ms)
 		return true;
 	}
 
- 	handle_controller(elapsed_ms);
-
-	if ( music_channel == nullptr || FMOD_OK != music_channel->isPlaying(isPlaying)) {
-	  system->playSound(music_level, 0, false, &music_channel);
-	  music_channel->setVolume(0.5);
-	}
-	else {
-		m_current_time += elapsed_ms;
-	}
+    if (!(audioEngine.is_playing(audioEngine.get_music_channel()))) {
+        audioEngine.play_music();
+    } else {
+        m_current_time += elapsed_ms;
+    }
 
 	m_boss_health_bar.set_health_percentage(m_boss.get_health()/m_boss.get_total_health());
 	float remaining_offset = elapsed_ms;
@@ -330,16 +260,16 @@ bool Level::update(float elapsed_ms)
 	{
 		if (m_boss.collides_with(*bullet_it))
 		{
-			system->playSound(sound_boss_hit, 0, false, &channel);
+            audioEngine.play_boss_hit();
 			//printf("Boss hit by bullet\n");
 			m_boss.set_health(-bullet_it->get_damage());
 			m_boss_health_bar.set_health_percentage(m_boss.get_health()/m_boss.get_total_health());
 			bullet_it = m_bullets.erase(bullet_it);
 			if (m_boss.get_health() <= 0) {
-				system->playSound(sound_boss_death, 0, false, &channel);
+                audioEngine.play_boss_death();
 				m_score += m_combo * 1000;
 				m_level_state = WON;
-				music_channel->setPaused(true);
+                audioEngine.set_music_pause(true);
 				return true;
 			}
 			break;
@@ -353,7 +283,7 @@ bool Level::update(float elapsed_ms)
 
 	m_player.update(elapsed_ms);
 	m_boss.update(elapsed_ms, screen, &m_bullets);
-	//Enemy::update_player_position(m_player.get_position());
+	//Enemy::.date_player_position(m_player.get_position());
 	float elapsed_modified_ms = elapsed_ms * m_current_speed;
 
 	for (auto& bullet : m_bullets)
@@ -372,8 +302,8 @@ bool Level::update(float elapsed_ms)
 	}
 	for (auto little_enemy_it = m_little_enemies.begin(); little_enemy_it != m_little_enemies.end();) {
 		if (m_player.collides_with(*little_enemy_it)) {
+            audioEngine.play_player_hit();
   		vibrate_controller(0, 500.f, 32000, 32000);
-      system->playSound(sound_player_hit, 0, false, &channel);
 			healthbar.update(m_player.get_health() / max_player_health);
 			auto pe = new ParticleEmitter(
 				little_enemy_it->get_position(),
@@ -383,11 +313,20 @@ bool Level::update(float elapsed_ms)
 			little_enemy_it = m_little_enemies.erase(little_enemy_it);
 			m_particle_emitters.emplace_back(pe);
 			m_player.set_health(-0.5);
+            if (m_player.get_health() <= max_player_health/2.f) {
+                audioEngine.set_distortion_bypass(false);
+                //set distortion proportional to distance to zero
+                float wetness = 1 - (m_player.get_health() / max_player_health);
+                audioEngine.set_wetness_levels(wetness);
+
+            } else {
+                audioEngine.set_distortion_bypass(true);
+            }
 			if (m_player.get_health() <= 0) {
-				system->playSound(sound_player_death, 0, false, &channel);
+                audioEngine.play_player_death();
 				m_player.kill();
 				m_level_state = LOST;
-				music_channel->setPaused(true);
+                audioEngine.set_music_pause(true);
 				return true;
 				//printf("Player has died\n");
 			}
@@ -405,7 +344,7 @@ bool Level::update(float elapsed_ms)
 			if (m_little_enemies.size() > 0){
 				for (auto little_enemy_it = m_little_enemies.begin(); little_enemy_it != m_little_enemies.end();) {
 					if (little_enemy_it->collides_with(*bullet_it)) {
-            system->playSound(sound_enemy_hit, 0, false, &channel);
+                        audioEngine.play_enemy_hit();
 						auto pe = new ParticleEmitter(
 							little_enemy_it->get_position(),
 							100,
@@ -442,7 +381,7 @@ bool Level::update(float elapsed_ms)
 							} else {
 								m_boss.structure_slots.right = nullptr;
 							}
-							system->playSound(sound_structure_death, 0, false, &channel);
+                            audioEngine.play_structure_death();
 							m_boss.remove_structure(*structure_it, m_current_time);
 							structure_it = m_structures.erase(structure_it);
 						}
@@ -471,7 +410,10 @@ bool Level::update(float elapsed_ms)
 			++pe_it;
 		}
 	}
-  system->update();
+
+
+    audioEngine.update();
+
 	return true;
 }
 
@@ -673,12 +615,15 @@ void Level::on_key(int key, int action, int mod) {
 
 void Level::on_arrow_key(Dir dir) {
     float player_angle = m_player.get_rotation() + 1.57f;
+
     vec2 salmon_pos = m_player.get_position();
     Texture *texture = tm->get_texture(m_player.bullet_type ? "bullet_1" : "bullet_2");
     auto beatcircle_it = m_beatcircles.begin();
     while (beatcircle_it != m_beatcircles.end()) {
         float abs_offset = beatcircle_it->get_offset();
+
         float delta = std::abs(m_current_time - abs_offset);
+
         if (delta > bad_timing) {
             break;
         }
@@ -691,7 +636,8 @@ void Level::on_arrow_key(Dir dir) {
         if (delta <= perfect_timing) {
             //printf("PERFECT with delta %f\n", delta);
             spawn_player_bullet(salmon_pos, player_angle, {0.5, 0.5}, 10.f, 5000.f, texture, &m_bullets);
-            system->playSound(sound_perfect_timing, 0, false, &channel);
+
+            audioEngine.play_perfect_timing();
             m_beatcircles.erase(beatcircle_it);
             m_player.bullet_type = !m_player.bullet_type;
 			m_combo++;
@@ -699,7 +645,8 @@ void Level::on_arrow_key(Dir dir) {
         } else if (delta <= good_timing) {
             //printf("GOOD with delta %f\n", delta);
             spawn_player_bullet(salmon_pos, player_angle, {0.5, 0.5}, 5.f, 1500.f, texture, &m_bullets);
-            system->playSound(sound_good_timing, 0, false, &channel);
+
+            audioEngine.play_good_timing();
             m_beatcircles.erase(beatcircle_it);
             m_player.bullet_type = !m_player.bullet_type;
 			m_combo++;
@@ -707,7 +654,7 @@ void Level::on_arrow_key(Dir dir) {
         } else if (delta <= bad_timing) {
             //printf("BAD with delta %f\n", delta);
             spawn_player_bullet(salmon_pos, player_angle, {1.f, 1.f}, 3.f, 800.f, texture, &m_bullets);
-            system->playSound(sound_bad_timing, 0, false, &channel);
+            audioEngine.play_bad_timing();
             m_beatcircles.erase(beatcircle_it);
             m_player.bullet_type = !m_player.bullet_type;
 			m_combo = 0;
