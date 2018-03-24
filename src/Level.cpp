@@ -13,6 +13,7 @@
 #include <string.h>
 #include <cassert>
 #include <sstream>
+#include <iomanip>
 
 Texture Level::background_texture;
 
@@ -73,6 +74,7 @@ bool Level::init(std::string song_path, std::string osu_path, float boss_health_
 
     m_current_speed = 1.f;
 	m_combo = 0;
+	m_score = 0;
 
 	m_level_state = RUNNING;
 	finished = false;
@@ -265,7 +267,7 @@ bool Level::update(float elapsed_ms)
 			bullet_it = m_bullets.erase(bullet_it);
 			if (m_boss.get_health() <= 0) {
                 audioEngine.play_boss_death();
-				new_points += 100;
+				m_score += m_combo * 1000;
 				m_level_state = WON;
                 audioEngine.set_music_pause(true);
 				return true;
@@ -349,7 +351,7 @@ bool Level::update(float elapsed_ms)
 							false);
 						pe->init();
 						m_particle_emitters.emplace_back(pe);
-						new_points += (bullet_it->get_damage() == 100 ? 15 : 10);
+						m_score += m_combo * (bullet_it->get_damage() == 100 ? 150 : 100);
 						little_enemy_it = m_little_enemies.erase(little_enemy_it);
 						bullet_it = m_bullets.erase(bullet_it);
 						removed_enemy = true;
@@ -483,8 +485,10 @@ void Level::draw()
 	m_big_noodle_renderer->setColour({ 0.85f, 0.85f, 0.85f });
 	m_big_noodle_renderer->renderString(projection_2D, std::to_string(m_combo) + "x");
 
-
-
+	std::string score_string = getScoreString();
+	float width = m_big_noodle_renderer->get_width_of_string(score_string);
+	m_big_noodle_renderer->setPosition({ screen.x - width - 10, screen.y - 10 });
+	m_big_noodle_renderer->renderString(projection_2D, score_string);
 
 	if (m_level_state != RUNNING) {
 		float width;
@@ -500,8 +504,13 @@ void Level::draw()
 		m_big_noodle_renderer->setPosition({ screen.x / 2.f - width, screen.y / 2.f });
 		m_big_noodle_renderer->renderString(projection_2D, text);
 
-		width = m_big_noodle_renderer->get_width_of_string("Press SPACE to continue") * 0.5;
+		text = "FINAL SCORE: " + score_string;
+		width = m_big_noodle_renderer->get_width_of_string(text) * 0.5;
 		m_big_noodle_renderer->setPosition({ screen.x / 2.f - width, screen.y / 2.f + 50 });
+		m_big_noodle_renderer->renderString(projection_2D, text);
+
+		width = m_big_noodle_renderer->get_width_of_string("Press SPACE to continue") * 0.5;
+		m_big_noodle_renderer->setPosition({ screen.x / 2.f - width, screen.y / 2.f + 100 });
 		m_big_noodle_renderer->renderString(projection_2D, "Press SPACE to continue");
 	}
 
@@ -750,7 +759,12 @@ void Level::vibrate_controller(int controller, float duration, unsigned short le
 	return;
 }
 
-
 float Level::getBossHealth() {
     return m_boss.get_health();
+}
+
+std::string Level::getScoreString() {
+	std::stringstream score_ss;
+	score_ss << std::setfill('0') << std::setw(9) << m_score;
+	return score_ss.str();
 }

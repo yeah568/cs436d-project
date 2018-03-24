@@ -116,10 +116,6 @@ void World::destroy()
 // Update our game world
 bool World::update(float elapsed_ms)
 {
-	if (levelList[levelCounter]->new_points > 0) {
-		m_points += levelList[levelCounter]->new_points;
-		levelList[levelCounter]->new_points = 0;
-	}
 	if (levelList[levelCounter]->is_over()) 
 	{	
 		if (levelCounter == levelList.size()-1) {
