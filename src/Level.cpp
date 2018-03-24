@@ -134,7 +134,7 @@ bool Level::init(std::string song_path1, std::string osu_path, float boss_health
 	m_level_state = RUNNING;
 	finished = false;
 
-
+	bpm = 0;
     healthbar.set_texture(tm->get_texture("healthbar"));
     healthbar.init();
 	bbox hp_bbox = healthbar.get_bounding_box();
@@ -244,7 +244,7 @@ void Level::destroy() {
 void Level::handle_beat(float remaining_offset, Beat *curBeat, vec2 screen) {
     remaining_offset -= curBeat->relativeOffset;
 
-    m_player.scale_by(1.3f);
+    //m_player.set_scale(1.5f);
     m_boss.on_beat(curBeat, screen);
 }
 
@@ -265,7 +265,33 @@ bool Level::update(float elapsed_ms)
 	else {
 		m_current_time += elapsed_ms;
 	}
-
+	bpm += elapsed_ms;
+	printf("Powerup 2 %f\n", m_player.powerUp2_time);
+	if (bpm > 400.f) {
+		if (m_player.powerUp1_time > 0 || m_player.powerUp2_time > 0 || m_player.powerUp3_time > 0) {
+			m_player.set_scale(1.5f);
+			bpm = 0;
+		}
+		if (m_player.powerUp1_time > 0) {
+			if (m_player.m_health < 10) {
+				m_player.m_health += 1;
+				healthbar.update(m_player.get_health() / max_player_health);
+			}
+		}
+		if (m_player.powerUp3_time > 1) {
+			printf("its greater than 0");
+			Texture *texture = tm->get_texture(m_player.bullet_type ? "bullet_1" : "bullet_2");
+			spawn_player_bullet(m_player.get_position(), m_player.get_rotation(), { 0.5, 0.5 }, 10.f, 500.f, texture, &m_bullets);
+			m_player.bullet_type = !m_player.bullet_type;
+			spawn_player_bullet(m_player.get_position(), m_player.get_rotation(), { 0.5, 0.5 }, 10.f, 500.f, texture, &m_bullets);
+			m_player.bullet_type = !m_player.bullet_type;
+			bpm = 0;
+			
+		};
+			
+			
+	}
+	
 	m_boss_health_bar.set_health_percentage(m_boss.get_health()/m_boss.get_total_health());
 	float remaining_offset = elapsed_ms;
 
@@ -276,7 +302,7 @@ bool Level::update(float elapsed_ms)
 		// We should spawn a beat circle such that when the beat circle gets to the
 		// center circle, this event coincides with
 		// curBeat->offset <= remaining_offset
-		float some_fixed_spawn_distance = 500.0f;
+		float some_fixed_spawn_distance = 650.0f;
 		float beat_spawn_time = 1668.f;
 		float speed = some_fixed_spawn_distance / beat_spawn_time;
 		if (curBeat->absoluteOffset <= m_current_time + beat_spawn_time && !curBeat->spawned) {
@@ -442,6 +468,14 @@ bool Level::update(float elapsed_ms)
 							}
 							system->playSound(sound_structure_death, 0, false, &channel);
 							m_boss.remove_structure(*structure_it, m_current_time);
+							switch ((*structure_it)->type) {
+								case 0:
+									m_player.powerUp1_time = 5000;
+								case 1:
+									m_player.powerUp3_time = 5000;
+								case 2:
+									m_player.powerUp2_time = 5000;
+							}
 							structure_it = m_structures.erase(structure_it);
 						}
 						break;

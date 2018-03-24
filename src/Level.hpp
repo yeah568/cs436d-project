@@ -163,7 +163,7 @@ protected:
 
     float m_current_speed;
     float m_next_little_enemies_spawn;
-
+	float bpm;
     float m_current_time;
 
 //    Mix_Music *m_background_music;
@@ -215,6 +215,7 @@ public:
 	
 
 	~MainMenu();
+	
 	bool init();
 	void destroy();
 	bool update(float ms);

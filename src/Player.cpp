@@ -16,7 +16,10 @@ Player::Player()
 
 bool Player::init() {
 	Sprite::init();
-
+	powerUp1_time = 0;
+	powerUp2_time = 0;
+	powerUp3_time = 0;
+	
 	m_scale.x = -1.f;
 	m_scale.y = 1.f;
 	m_is_alive = true;
@@ -47,19 +50,22 @@ void Player::update(float ms)
 		
 		move({ normalized_movement.x * 10, normalized_movement.y * 10 });
 	}
+	if (powerUp1_time > 0) {
+		powerUp1_time -= ms;
+	}
+	if (powerUp3_time > 0) {
+		powerUp3_time -= ms;
+	}
+	if (powerUp2_time > 0) {
+		powerUp2_time -= ms;
+	}
 
-	if (std::abs(m_scale.x * 0.95) < 1.f) {
-		m_scale.x = -0.5f;
-	}
-	else {
-		m_scale.x *= 0.9f;
-	}
-
-	if (std::abs(m_scale.y * 0.95) < 1.f) {
-		m_scale.y = 0.5f;
-	}
-	else {
-		m_scale.y *= 0.9f;
+	
+	printf("player scale %f", m_scale.x);
+	if (std::abs(m_scale.x) > 1.f) {
+		printf("adjusting scale");
+		m_scale.x *= 0.99;
+		m_scale.y *= 0.99;
 	}
 }
 

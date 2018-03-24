@@ -26,7 +26,7 @@ public:
 	virtual void update(float ms);
 
 	void scale_by(float scale);
-	
+	int type;
 	int health;
 
 
