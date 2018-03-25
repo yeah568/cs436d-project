@@ -137,3 +137,7 @@ void SongSelect::on_mouse_move(double xpos, double ypos) {
 		back_button.set_text_color({0,1.f,0});
 	}
 }
+
+std::string SongSelect::getTitleText() {
+	return "Song Select";
+}

@@ -103,3 +103,7 @@ void MainMenu::on_mouse_move(double xpos, double ypos) {
 		songselect_button.set_text_color({0,1,0});
 	}
 }
+
+std::string MainMenu::getTitleText() {
+	return "Main Menu";
+}

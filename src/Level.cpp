@@ -55,6 +55,10 @@ bool Level::init(std::string song_path, std::string osu_path, float boss_health_
     OsuBeatmap beatmap = parser->parse();
     beatlist = new BeatList(beatmap);
 
+	setTitleText(beatmap);
+
+	delete parser;
+
 	m_big_noodle_renderer = new TextRenderer("BigNoodleTooOblique.ttf", 48);
 
     //FMOD INIT AND LOAD SOUNDS
@@ -767,4 +771,15 @@ std::string Level::getScoreString() {
 	std::stringstream score_ss;
 	score_ss << std::setfill('0') << std::setw(9) << m_score;
 	return score_ss.str();
+}
+
+void Level::setTitleText(OsuBeatmap beatmap) {
+	std::stringstream title_ss;
+	title_ss << beatmap.metadata.title << " - " << beatmap.metadata.artist;
+	m_title_text = title_ss.str();
+}
+
+std::string Level::getTitleText() {
+	return m_title_text;
+	
 }

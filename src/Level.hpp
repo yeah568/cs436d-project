@@ -96,14 +96,18 @@ public:
 
     virtual void on_mouse_click(vec2 pos) {};
 
-	void handle_controller(float elapsed_ms);
-
-	void vibrate_controller(int controller, float duration, unsigned short left_speed, unsigned short right_speed);
+	virtual std::string getTitleText();
 
 private:
     void handle_beat(float remaining_offset, Beat *curBeat, vec2 screen);
 
     void on_arrow_key(Dir dir);
+
+	void setTitleText(OsuBeatmap beatmap);
+
+	void handle_controller(float elapsed_ms);
+
+	void vibrate_controller(int controller, float duration, unsigned short left_speed, unsigned short right_speed);
 
 	float vibration_remaining;
 #if _WIN32
@@ -174,6 +178,7 @@ protected:
 	float max_player_health;
 
 	unsigned int m_score;
+	std::string m_title_text;
 };
 
 class Level1 : public Level {
@@ -219,6 +224,7 @@ public:
     void on_mouse_click(vec2 pos);
     Button songselect_button;
 	void on_mouse_move(double xpos, double ypos);
+	std::string getTitleText();
 };
 
 class SongSelect : public Level {
@@ -236,6 +242,7 @@ public:
 	void on_mouse_click(vec2 pos);
 	void on_mouse_scroll(GLFWwindow* window, vec2 offset);
 	void on_mouse_move(double xpos, double ypos);
+	std::string getTitleText();
 };
 
 #endif
