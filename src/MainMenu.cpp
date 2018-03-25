@@ -70,7 +70,7 @@ void MainMenu::destroy() {
 	songselect_button.destroy();
 }
 
-bool MainMenu::update(float ms) { return 1; };
+bool MainMenu::update(float ms) { return 1; }
 
 
 void MainMenu::on_mouse_click(vec2 pos) {

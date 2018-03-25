@@ -759,7 +759,7 @@ void Level::vibrate_controller(int controller, float duration, unsigned short le
 	vibration.wLeftMotorSpeed = left_speed; // use any value between 0-65535 here
 	vibration.wRightMotorSpeed = right_speed; // use any value between 0-65535 here
 	XInputSetState(controller, &vibration);
-#endif;
+#endif
 	return;
 }
 

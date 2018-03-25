@@ -83,7 +83,7 @@ void SongSelect::destroy() {
 	back_button.destroy();
 }
 
-bool SongSelect::update(float ms) { return 1; };
+bool SongSelect::update(float ms) { return 1; }
 
 
 void SongSelect::on_mouse_click(vec2 pos) {
