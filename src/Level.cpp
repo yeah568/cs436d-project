@@ -504,16 +504,16 @@ void Level::draw()
 			text = "YOU WIN";
 		}
 
-		width = m_big_noodle_renderer->get_width_of_string(text) * 0.5;
+		width = m_big_noodle_renderer->get_width_of_string(text) * 0.5f;
 		m_big_noodle_renderer->setPosition({ screen.x / 2.f - width, screen.y / 2.f });
 		m_big_noodle_renderer->renderString(projection_2D, text);
 
 		text = "FINAL SCORE: " + score_string;
-		width = m_big_noodle_renderer->get_width_of_string(text) * 0.5;
+		width = m_big_noodle_renderer->get_width_of_string(text) * 0.5f;
 		m_big_noodle_renderer->setPosition({ screen.x / 2.f - width, screen.y / 2.f + 50 });
 		m_big_noodle_renderer->renderString(projection_2D, text);
 
-		width = m_big_noodle_renderer->get_width_of_string("Press SPACE to continue") * 0.5;
+		width = m_big_noodle_renderer->get_width_of_string("Press SPACE to continue") * 0.5f;
 		m_big_noodle_renderer->setPosition({ screen.x / 2.f - width, screen.y / 2.f + 100 });
 		m_big_noodle_renderer->renderString(projection_2D, "Press SPACE to continue");
 	}

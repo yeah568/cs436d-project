@@ -50,14 +50,14 @@ bool SongSelect::init() {
 }
 void SongSelect::draw()
 {
-	int w = screen.x;
-	int h = screen.y;
+	float w = screen.x;
+	float h = screen.y;
 	// Fake projection matrix, scales with respect to window coordinates
 	// PS: 1.f / w in [1][1] is correct.. do you know why ? (:
 	float left = 0.f;// *-0.5;
 	float top = 0.f;// (float)h * -0.5;
-	float right = (float)w;// *0.5;
-	float bottom = (float)h;// *0.5;
+	float right = w;// *0.5;
+	float bottom = h;// *0.5;
 
 	float sx = 2.f / (right - left);
 	float sy = 2.f / (top - bottom);

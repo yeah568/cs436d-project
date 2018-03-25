@@ -201,7 +201,7 @@ public:
 
 class Level3 : public Level {
 public:
-    Level3(int width, int height) : Level(width, height) {};
+    Level3(float width, float height) : Level(width, height) {};
 
     ~Level3();
 
@@ -210,7 +210,7 @@ public:
 
 class MainMenu : public Level {
 public: 
-	MainMenu(int width, int height) : Level(width, height) {};
+	MainMenu(float width, float height) : Level(width, height) {};
 	
 
 	~MainMenu();
@@ -229,7 +229,7 @@ public:
 
 class SongSelect : public Level {
 public:
-    SongSelect(int width, int height) : Level(width, height) {};
+    SongSelect(float width, float height) : Level(width, height) {};
     ~SongSelect();
     bool init();
     void destroy();

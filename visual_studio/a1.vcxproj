@@ -92,8 +92,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)/$(Configuration)/$(Platform)</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)/tmp/$(Configuration)/$(Platform)</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)/$(Configuration)/$(Platform)/</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)/tmp/$(Configuration)/$(Platform)/</IntDir>
     <LocalDebuggerWorkingDirectory Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)</LocalDebuggerWorkingDirectory>
     <LocalDebuggerWorkingDirectory Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(projectDir)</LocalDebuggerWorkingDirectory>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">beatcoin</TargetName>
@@ -142,8 +142,8 @@
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">true</GenerateManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>$(ProjectDir)/$(Configuration)/$(Platform)</OutDir>
-    <IntDir>$(ProjectDir)/tmp/$(Configuration)/$(Platform)</IntDir>
+    <OutDir>$(ProjectDir)/$(Configuration)/$(Platform)/</OutDir>
+    <IntDir>$(ProjectDir)/tmp/$(Configuration)/$(Platform)/</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">
     <OutDir>$(ProjectDir)/$(Configuration)/$(Platform)</OutDir>
