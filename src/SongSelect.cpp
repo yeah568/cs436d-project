@@ -3,10 +3,10 @@
 //std::vector<Level*>* Level::levelList;
 
 bool SongSelect::init() {
-	background.set_texture(tm->get_texture("mainmenu"));
+	m_background.set_texture(tm->get_texture("mainmenu"));
 	back_button.set_texture(tm->get_texture("button"));
 
-	background.init();
+	m_background.init();
 	back_button.init(EXO_FONT,"Back");
 
 	SongButton* temp = nullptr;
@@ -33,14 +33,14 @@ bool SongSelect::init() {
 
 	back_button.set_position({ 200.f, 850.f});
 
-	background.set_scale({1,1});
-	background.set_rotation(0);
-	background.set_position({ (float)screen.x / 2, (float)screen.y / 2 });
+	m_background.set_scale({1,1});
+	m_background.set_rotation(0);
+	m_background.set_position({ (float)screen.x / 2, (float)screen.y / 2 });
 
-	bbox temp3 = background.get_bounding_box();
+	bbox temp3 = m_background.get_bounding_box();
 	float bg_width = temp3.max_x - temp3.min_x;
 	float bg_height = temp3.max_y - temp3.min_y;
-	background.set_scale({screen.x/bg_width,screen.y/bg_height});
+	m_background.set_scale({screen.x/bg_width,screen.y/bg_height});
 
 	back_button.set_scale({1,1});
 	back_button.set_rotation(0);
@@ -65,7 +65,7 @@ void SongSelect::draw()
 	float ty = -(top + bottom) / (top - bottom);
 	mat3 projection_2D{ { sx, 0.f, 0.f },{ 0.f, sy, 0.f },{ tx, ty, 1.f } };
 
-	background.draw(projection_2D);
+	m_background.draw(projection_2D);
     bbox temp;
 	for (auto& btn : song_boxes) {
         temp = btn->get_bounding_box();
@@ -77,7 +77,7 @@ void SongSelect::draw()
 }
 
 void SongSelect::destroy() { 
-	background.destroy();
+	m_background.destroy();
 	for (auto& btn : song_boxes)
 		btn->destroy();
 	back_button.destroy();
@@ -91,13 +91,13 @@ void SongSelect::on_mouse_click(vec2 pos) {
 		if (l_btn->was_clicked(pos)) {
 			if (l_btn->get_text() == "Blend S") {
 				finished = 1;
-				levelList->emplace_back(new Level1(screen.x, screen.y));
+				levelList->emplace_back(new GameLevel(screen.x, screen.y,&LEVEL1));
 			} else if (l_btn->get_text() == "Pokemon Theme") {
 				finished = 1;
-				levelList->emplace_back(new Level3(screen.x, screen.y));
+				levelList->emplace_back(new GameLevel(screen.x, screen.y,&LEVEL3));
 			} else if (l_btn->get_text() == "Marble Soda") {
 				finished = 1;
-				levelList->emplace_back(new Level2(screen.x, screen.y));
+				levelList->emplace_back(new GameLevel(screen.x, screen.y,&LEVEL2));
 			}
 			levelList->emplace_back(new SongSelect(screen.x, screen.y));
 		}

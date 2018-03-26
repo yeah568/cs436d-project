@@ -56,45 +56,77 @@ enum LevelStates {
 	WON
 };
 
+struct LevelTemplate {
+    std::string background;
+    std::string song_path;
+    std::string osu_path;
+
+    // X means X hp per second of song
+    float boss_hp_multiplier;
+    float player_health;
+};
+static const LevelTemplate LEVEL3 = {"pokemon_background",song_path("PokemonTheme/00_poketv1open.mp3"),
+song_path("PokemonTheme/Jason Paige - Pokemon Theme (TV Edit) (Ekaru) [Normal].osu"),2.f, 10.f};
+
+static const LevelTemplate LEVEL2 = {"marblesoda_background",song_path("598830 Shawn Wasabi - Marble Soda/Marble Soda.wav"),
+song_path("598830 Shawn Wasabi - Marble Soda/Shawn Wasabi - Marble Soda (Exa) [Normal].osu"),1.5f, 10.f};
+
+static const LevelTemplate LEVEL1 = {"blends_background",song_path("BlendS/BlendS.wav"),
+song_path("BlendS/Blend A - Bon Appetit S (Meg) [Easy].osu"),1.f, 10.f};
+
+static const std::vector<const LevelTemplate*> ALL_LEVELS({&LEVEL1,&LEVEL2,&LEVEL3});
+
 // Container for all our entities and game logic. Individual rendering / update is 
 // deferred to the relative update() methods
 class Level {
+public:
+Level(float width, float height) {screen = {width, height};tm=TextureManager::get_instance();};
+virtual bool init() = 0;
+virtual void destroy() = 0;
+virtual bool update(float ms) = 0;
+virtual void draw()=0;
+virtual bool is_over() const {return finished==1;};
+
+virtual void on_key(int key, int action, int mod) {};
+virtual void on_mouse_move(double xpos, double ypos) {};
+virtual void on_mouse_scroll(GLFWwindow* window, vec2 offset) {};
+virtual void on_mouse_click(vec2 pos) {};
+
+static std::vector<Level*>* levelList;
+
+protected:
+int finished = 0;
+vec2 screen;
+TextureManager *tm;
+Background m_background;
+GLFWwindow *window;
+};
+
+
+class GameLevel : public Level {
 
 public:
 
-    Level(float width, float height);
+    GameLevel(float width, float height, const LevelTemplate* lt);
 
-    ~Level();
+    ~GameLevel();
 
     // Creates a window, sets up events and begins the game
-    virtual bool init()=0;
+    bool init();
 
     // Releases all associated resources
-    virtual void destroy();
+    void destroy();
 
     // Steps the game ahead by ms milliseconds
-    virtual bool update(float ms);
+    bool update(float ms);
 
     // Renders our scene
-    virtual void draw();
+    void draw();
 
-    float getBossHealth();
 	std::string getScoreString();
-    static std::vector<Level*>* levelList;
-
-	virtual void on_mouse_scroll(GLFWwindow* window, vec2 offset);
-
-    void drawBackground();
-
-    // Should the game be over ?
-    bool is_over() const;
 
     // !!! INPUT CALLBACK FUNCTIONS
-    virtual void on_key(int key, int action, int mod);
-
-    virtual void on_mouse_move(double xpos, double ypos);
-
-    virtual void on_mouse_click(vec2 pos) {};
+    void on_key(int key, int action, int mod);
 
 	void handle_controller(float elapsed_ms);
 
@@ -110,15 +142,8 @@ private:
 	XINPUT_STATE controller_state;
 #endif
 
-protected:
-
-    bool init(std::string song_path, std::string osu_path, float boss_health);
-
     AudioEngine audioEngine;
-    bool init(std::string song_path, std::string osu_path, float boss_health_multiplier, float player_health);
-
-    TextureManager *tm;
-    static Texture background_texture;
+    LevelTemplate level_info;
     static bool show_hitboxes;
 
     static CenterBeatCircle blue_center_beat_circle;
@@ -136,7 +161,6 @@ protected:
 
     BossHealthBar m_boss_health_bar;
     HealthBar healthbar;
-    int finished = 0;
     SpriteSheet spritesheet;
     BeatList *beatlist;
 
@@ -144,12 +168,9 @@ protected:
 	std::vector<Beat>::size_type lastBeat = 0;
 
     int m_song;
-    GLFWwindow *window;
     // Game entities
     std::vector<PlayerBullet> m_bullets;
     std::vector<EnemyBullet> m_enemy_bullets;
-    Background m_background;
-    vec2 screen;
     std::vector<BeatCircle> m_beatcircles;
 
     float m_current_speed;
@@ -174,33 +195,6 @@ protected:
 	float max_player_health;
 
 	unsigned int m_score;
-};
-
-class Level1 : public Level {
-public:
-    Level1(float width, float height) : Level(width, height) {};
-
-    ~Level1();
-
-    bool init();
-};
-
-class Level2 : public Level {
-public:
-    Level2(float width, float height) : Level(width, height) {};
-
-    ~Level2();
-
-    bool init();
-};
-
-class Level3 : public Level {
-public:
-    Level3(int width, int height) : Level(width, height) {};
-
-    ~Level3();
-
-    bool init();
 };
 
 class MainMenu : public Level {
@@ -229,8 +223,6 @@ public:
     void destroy();
     bool update(float ms);
     void draw();
-    // TODO: replace with m_background from Level
-    Background background;
 	std::vector<SongButton*> song_boxes;
 	Button back_button;
 	void on_mouse_click(vec2 pos);

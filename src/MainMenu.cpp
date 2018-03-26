@@ -76,9 +76,9 @@ bool MainMenu::update(float ms) { return 1; };
 void MainMenu::on_mouse_click(vec2 pos) {
 	if (play_button.was_clicked(pos)) {
 		finished = 1;
-		levelList->emplace_back(new Level1(screen.x, screen.y));
-		levelList->emplace_back(new Level2(screen.x, screen.y));
-        levelList->emplace_back(new Level3(screen.x, screen.y));
+		for (auto l : ALL_LEVELS) {
+			levelList->emplace_back(new GameLevel(screen.x, screen.y, l));
+		}
 		levelList->emplace_back(new MainMenu(screen.x, screen.y));
 	}
 	else if (exit_button.was_clicked(pos))

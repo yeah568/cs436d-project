@@ -15,17 +15,15 @@
 #include <sstream>
 #include <iomanip>
 
-Texture Level::background_texture;
-
-CenterBeatCircle Level::blue_center_beat_circle;
-CenterBeatCircle Level::orange_center_beat_circle;
-Player Level::m_player;
+CenterBeatCircle GameLevel::blue_center_beat_circle;
+CenterBeatCircle GameLevel::orange_center_beat_circle;
+Player GameLevel::m_player;
 
 //C++_rng
-std::default_random_engine Level::m_rng;
-std::uniform_real_distribution<float> Level::m_dist;//default:0..1
+std::default_random_engine GameLevel::m_rng;
+std::uniform_real_distribution<float> GameLevel::m_dist;//default:0..1
 
-bool Level::show_hitboxes = false;
+bool GameLevel::show_hitboxes = false;
 
 // Same as static in c, local to compilation unit
 namespace {
@@ -36,21 +34,20 @@ namespace {
     }
 }
 
-Level::Level(float width, float height) : m_points(0), m_next_little_enemies_spawn(0.f) {
-    screen.x = width;
-    screen.y = height;
+GameLevel::GameLevel(float width, float height, const LevelTemplate* lt) : Level(width, height), m_points(0), m_next_little_enemies_spawn(0.f) {
     m_rng = std::default_random_engine(std::random_device()());
+    level_info = *lt;
     tm = TextureManager::get_instance();
     m_player.set_texture(tm->get_texture("character"));
     m_boss.set_texture(tm->get_texture("boss0"));
     m_boss_health_bar.set_texture(tm->get_texture("boss_health_bar"));
-    m_points = 0;
+    m_background.set_texture(tm->get_texture(level_info.background));
     m_current_time = 0;
 }
 
-bool Level::init(std::string song_path, std::string osu_path, float boss_health_multiplier, float player_health) {
+bool GameLevel::init() {
     OsuParser *parser;
-    parser = new OsuParser(osu_path.c_str());
+    parser = new OsuParser(level_info.osu_path.c_str());
 
     OsuBeatmap beatmap = parser->parse();
     beatlist = new BeatList(beatmap);
@@ -61,7 +58,7 @@ bool Level::init(std::string song_path, std::string osu_path, float boss_health_
 
     if (!(audioEngine.init() &&
           audioEngine.load_sounds() &&
-          audioEngine.load_music(song_path.c_str()) &&
+          audioEngine.load_music(level_info.song_path.c_str()) &&
           audioEngine.load_dsp())) {
         printf("DID NOT LOAD FMOD\n");
         return false;
@@ -70,7 +67,7 @@ bool Level::init(std::string song_path, std::string osu_path, float boss_health_
 
     unsigned int boss_health = 0;
     audioEngine.get_music_length(&boss_health, FMOD_TIMEUNIT_MS);
-    boss_health *= boss_health_multiplier/1000;
+    boss_health *= level_info.boss_hp_multiplier/1000;
 
     m_current_speed = 1.f;
 	m_combo = 0;
@@ -99,7 +96,7 @@ bool Level::init(std::string song_path, std::string osu_path, float boss_health_
     if (!m_player.init()) {
         return false;
     }
-	max_player_health = player_health;
+	max_player_health = level_info.player_health;
     m_player.set_health_abs(max_player_health);
 	healthbar.update(1.f);
     if (m_boss.init((float)boss_health, &m_little_enemies, &m_structures)) {
@@ -121,33 +118,12 @@ bool Level::init(std::string song_path, std::string osu_path, float boss_health_
     return false;
 }
 
-Level::~Level() {
+GameLevel::~GameLevel() {
 	delete m_big_noodle_renderer;
-}
-bool Level3::init() {
-    m_background.set_texture(tm->get_texture("pokemon_background"));
-    return Level::init(song_path("PokemonTheme/00_poketv1open.mp3"),
-                       song_path("PokemonTheme/Jason Paige - Pokemon Theme (TV Edit) (Ekaru) [Normal].osu"),
-                       2.f, 10.f);
-}
-
-bool Level2::init() {
-	m_background.set_texture(tm->get_texture("marblesoda_background"));
-    return Level::init(song_path("598830 Shawn Wasabi - Marble Soda/Marble Soda.wav"),
-                       song_path("598830 Shawn Wasabi - Marble Soda/Shawn Wasabi - Marble Soda (Exa) [Normal].osu"),
-                       1.5f, 10.f);
-}
-
-// World initialization
-bool Level1::init() {
-	m_background.set_texture(tm->get_texture("blends_background"));
-    return Level::init(song_path("BlendS/BlendS.wav"),
-                       song_path("BlendS/Blend A - Bon Appetit S (Meg) [Easy].osu"),
-                       1.f, 10.f);
 }
 
 // Releases all the associated resources
-void Level::destroy() {
+void GameLevel::destroy() {
 
     m_player.destroy();
     m_boss.destroy();
@@ -177,7 +153,7 @@ void Level::destroy() {
 }
 
 
-void Level::handle_beat(float remaining_offset, Beat *curBeat, vec2 screen) {
+void GameLevel::handle_beat(float remaining_offset, Beat *curBeat, vec2 screen) {
     remaining_offset -= curBeat->relativeOffset;
 
     m_player.scale_by(1.3f);
@@ -186,7 +162,7 @@ void Level::handle_beat(float remaining_offset, Beat *curBeat, vec2 screen) {
 
 // Update our game world
 
-bool Level::update(float elapsed_ms)
+bool GameLevel::update(float elapsed_ms)
 {
 	if (m_level_state != RUNNING) {
 		return true;
@@ -417,12 +393,8 @@ bool Level::update(float elapsed_ms)
 	return true;
 }
 
-void Level::on_mouse_scroll(GLFWwindow* window, vec2 offset) {
-
-}
-
 // Render our game world
-void Level::draw()
+void GameLevel::draw()
 {
 	float w = screen.x;
 	float h = screen.y;
@@ -516,14 +488,8 @@ void Level::draw()
 
 }
 
-// Should the game be over ?
-bool Level::is_over() const {
-    // TODO: Implement Me
-    return finished;
-}
-
 // On key callback
-void Level::on_key(int key, int action, int mod) {
+void GameLevel::on_key(int key, int action, int mod) {
     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     // HANDLE SALMON MOVEMENT HERE
     // key is of 'type' GLFW_KEY_
@@ -613,7 +579,7 @@ void Level::on_key(int key, int action, int mod) {
     m_current_speed = fmax(0.f, m_current_speed);
 }
 
-void Level::on_arrow_key(Dir dir) {
+void GameLevel::on_arrow_key(Dir dir) {
     float player_angle = m_player.get_rotation() + 1.57f;
 
     vec2 salmon_pos = m_player.get_position();
@@ -664,18 +630,7 @@ void Level::on_arrow_key(Dir dir) {
     }
 }
 
-void Level::on_mouse_move(double xpos, double ypos) {
-    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    // HANDLE SALMON ROTATION HERE
-    // xpos and ypos are relative to the top-left of the window, the salmon's
-    // default facing direction is (1, 0)
-    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    m_player.set_mouse((float) xpos, (float) ypos);
-}
-
-
-void Level::handle_controller(float elapsed_ms) {
+void GameLevel::handle_controller(float elapsed_ms) {
 #if _WIN32
 	ZeroMemory(&controller_state, sizeof(XINPUT_STATE));
 
@@ -747,7 +702,7 @@ void Level::handle_controller(float elapsed_ms) {
 	return;
 }
 
-void Level::vibrate_controller(int controller, float duration, unsigned short left_speed, unsigned short right_speed) {
+void GameLevel::vibrate_controller(int controller, float duration, unsigned short left_speed, unsigned short right_speed) {
 #if _WIN32
 	vibration_remaining = duration;
 	XINPUT_VIBRATION vibration;
@@ -759,11 +714,7 @@ void Level::vibrate_controller(int controller, float duration, unsigned short le
 	return;
 }
 
-float Level::getBossHealth() {
-    return m_boss.get_health();
-}
-
-std::string Level::getScoreString() {
+std::string GameLevel::getScoreString() {
 	std::stringstream score_ss;
 	score_ss << std::setfill('0') << std::setw(9) << m_score;
 	return score_ss.str();
