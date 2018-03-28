@@ -15,13 +15,12 @@ PlayerBullet* spawn_player_bullet(vec2 position, float angle, vec2 scale, float 
 	{
 		
 		bullet->set_position(position);
-		bullet->set_rotation(angle);
+		//bullet->set_rotation(angle);
 		bullet->set_scale(scale);
 		bullet->m_movement_dir = { -10, 20 };
 
 		return bullet;
 	}
-	fprintf(stderr, "Failed to spawn fish");
 	return nullptr;
 }
 
@@ -72,16 +71,21 @@ Structure* spawn_structure(int type, Boss* boss, vec2 position, Texture* texture
     switch (type) {
         case HEALING_STRUCTURE:
             new_structure = new Healing_Structure;
+			
 			new_structure->type = 0;
+			
             break;
         case BLACK_HOLE_STRUCTURE:
             new_structure = new Black_Hole_Structure;
+
 			new_structure->type = 1;
+			
             scale = 0.5 * scale;
             break;
         case SHOOTING_STRUCTURE:
             new_structure = new Shooting_Structure;
 			new_structure->type = 2;
+		
             scale =  scale;
             break;
     }

@@ -23,6 +23,8 @@ public:
 	void set_damage(float dmg);
 
 	float get_speed();
+
+	void set_velocity(vec2 v);
 	
 	void set_speed(float spd);
 

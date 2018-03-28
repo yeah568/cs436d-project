@@ -53,17 +53,14 @@ void Player::update(float ms)
 	if (powerUp1_time > 0) {
 		powerUp1_time -= ms;
 	}
-	if (powerUp3_time > 0) {
-		powerUp3_time -= ms;
-	}
 	if (powerUp2_time > 0) {
 		powerUp2_time -= ms;
 	}
 
 	
-	printf("player scale %f", m_scale.x);
+
 	if (std::abs(m_scale.x) > 1.f) {
-		printf("adjusting scale");
+	
 		m_scale.x *= 0.99;
 		m_scale.y *= 0.99;
 	}

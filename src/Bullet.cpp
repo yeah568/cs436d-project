@@ -36,6 +36,10 @@ float Bullet::get_damage()
 	return m_damage;
 }
 
+void Bullet::set_velocity(vec2 v) {
+	velocity = v;
+}
+
 void Bullet::set_damage(float dmg)
 {
 	m_damage = dmg;

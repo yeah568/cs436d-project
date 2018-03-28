@@ -266,7 +266,7 @@ bool Level::update(float elapsed_ms)
 		m_current_time += elapsed_ms;
 	}
 	bpm += elapsed_ms;
-	printf("Powerup 2 %f\n", m_player.powerUp2_time);
+	
 	if (bpm > 400.f) {
 		if (m_player.powerUp1_time > 0 || m_player.powerUp2_time > 0 || m_player.powerUp3_time > 0) {
 			m_player.set_scale(1.5f);
@@ -278,16 +278,23 @@ bool Level::update(float elapsed_ms)
 				healthbar.update(m_player.get_health() / max_player_health);
 			}
 		}
-		if (m_player.powerUp3_time > 1) {
-			printf("its greater than 0");
+		
+		if (m_player.powerUp2_time > 1) {
+			
 			Texture *texture = tm->get_texture(m_player.bullet_type ? "bullet_1" : "bullet_2");
-			spawn_player_bullet(m_player.get_position(), m_player.get_rotation(), { 0.5, 0.5 }, 10.f, 500.f, texture, &m_bullets);
+			PlayerBullet* b = spawn_player_bullet(m_player.get_position(), m_player.get_rotation(), { 0.5, 0.5 }, 10.f, 500.f, texture);
+			b->set_velocity({ -0.7f,-1 });
+			m_bullets.emplace_back(*b);
+			
 			m_player.bullet_type = !m_player.bullet_type;
-			spawn_player_bullet(m_player.get_position(), m_player.get_rotation(), { 0.5, 0.5 }, 10.f, 500.f, texture, &m_bullets);
-			m_player.bullet_type = !m_player.bullet_type;
-			bpm = 0;
+			b = spawn_player_bullet(m_player.get_position(), m_player.get_rotation(), { 0.5, 0.5 }, 10.f, 500.f, texture);
+			b->set_velocity({ 0.7f,-1 });
+			m_bullets.emplace_back(*b);
 			
 		};
+
+		
+		
 			
 			
 	}
@@ -468,14 +475,22 @@ bool Level::update(float elapsed_ms)
 							}
 							system->playSound(sound_structure_death, 0, false, &channel);
 							m_boss.remove_structure(*structure_it, m_current_time);
+							printf("Type: %d", (*structure_it)->type);
 							switch ((*structure_it)->type) {
 								case 0:
+									
 									m_player.powerUp1_time = 5000;
+									break;
 								case 1:
-									m_player.powerUp3_time = 5000;
-								case 2:
+									
 									m_player.powerUp2_time = 5000;
+									break;
+								case 2:
+									
+									m_player.powerUp3_time = 5000;
+									break;
 							}
+							
 							structure_it = m_structures.erase(structure_it);
 						}
 						break;
