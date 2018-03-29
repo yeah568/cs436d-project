@@ -22,6 +22,7 @@
 #include "TextureManager.hpp"
 #include "AudioEngine.hpp"
 #include "TextRenderer.hpp"
+#include <tinydir.h>
 
 // external
 //#include "fmod.hpp"
@@ -207,13 +208,53 @@ public:
 	void destroy();
 	bool update(float ms);
 	void draw();
-	Background background;
     Button play_button;
     Button exit_button;
     void on_mouse_click(vec2 pos);
     Button songselect_button;
 	void on_mouse_move(double xpos, double ypos);
 };
+
+class CustomMenu : public Level {
+public: 
+	CustomMenu(int width, int height) : Level(width, height) {};
+
+	~CustomMenu();
+	bool init();
+	void destroy();
+	bool update(float ms);
+	void draw();
+    Button local_button;
+    Button download_button;
+    Button back_button;
+    void on_mouse_click(vec2 pos);
+	void on_mouse_move(double xpos, double ypos);
+};
+
+class CustomLocalMenu : public Level {
+public: 
+	CustomLocalMenu(int width, int height) : Level(width, height), current_path(EXO_FONT,48) {};
+	
+
+	~CustomLocalMenu();
+	bool init();
+	void destroy();
+	bool update(float ms);
+	void draw();
+    Button next_button;
+    Button back_button;
+    void on_directory_change();
+    void on_mouse_click(vec2 pos);
+    std::vector<Button> directory_contents;
+    TextRenderer current_path;
+	void on_mouse_move(double xpos, double ypos);
+    void on_mouse_scroll(GLFWwindow* window, vec2 offset);
+    float ms_since_last_click;
+
+private:
+    tinydir_dir dir;
+};
+
 
 class SongSelect : public Level {
 public:
@@ -228,6 +269,7 @@ public:
 	void on_mouse_click(vec2 pos);
 	void on_mouse_scroll(GLFWwindow* window, vec2 offset);
 	void on_mouse_move(double xpos, double ypos);
+    Button custom_local_button;
 };
 
 #endif

@@ -34,6 +34,8 @@ static const int LEFT_ALIGN = 1;
 static const int CENTER_ALIGN = 2;
 static const int RIGHT_ALIGN = 3;
 
+static const int DOUBLE_CLICK_DELAY = 500;
+
 // Not much math is needed and there are already way too many libraries linked (:
 // If you want to do some overloads..
 struct vec2 { float x, y; };

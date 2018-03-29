@@ -4,12 +4,12 @@
 std::vector<Level*>* Level::levelList;
 
 bool MainMenu::init() {
-	background.set_texture(tm->get_texture("mainmenu"));
+	m_background.set_texture(tm->get_texture("mainmenu"));
 	play_button.set_texture(tm->get_texture("button"));
 	exit_button.set_texture(tm->get_texture("button"));
 	songselect_button.set_texture(tm->get_texture("button"));
 
-	background.init();
+	m_background.init();
 	play_button.init("Exo2-Light.ttf", "Play");
 	exit_button.init("Exo2-Light.ttf", "Exit");
 	songselect_button.init("Exo2-Light.ttf", "Song Select");
@@ -27,14 +27,14 @@ bool MainMenu::init() {
 
 	exit_button.set_position({ 200.f, 850.f});
 
-	background.set_scale({1.f,1.f});
-	background.set_rotation(0);
-	background.set_position({ (float)screen.x / 2, (float)screen.y / 2 });
+	m_background.set_scale({1.f,1.f});
+	m_background.set_rotation(0);
+	m_background.set_position({ (float)screen.x / 2, (float)screen.y / 2 });
 
-	bbox temp = background.get_bounding_box();
+	bbox temp = m_background.get_bounding_box();
 	float bg_width = temp.max_x - temp.min_x;
 	float bg_height = temp.max_y - temp.min_y;
-	background.set_scale({screen.x/bg_width,screen.y/bg_height});
+	m_background.set_scale({screen.x/bg_width,screen.y/bg_height});
 
 	return 1;
 	
@@ -56,7 +56,7 @@ void MainMenu::draw()
 	float ty = -(top + bottom) / (top - bottom);
 	mat3 projection_2D{ { sx, 0.f, 0.f },{ 0.f, sy, 0.f },{ tx, ty, 1.f } };
 
-	background.draw(projection_2D);
+	m_background.draw(projection_2D);
 	exit_button.draw(projection_2D);
 	play_button.draw(projection_2D);
 	songselect_button.draw(projection_2D);
@@ -64,7 +64,7 @@ void MainMenu::draw()
 }
 
 void MainMenu::destroy() { 
-	background.destroy();
+	m_background.destroy();
 	play_button.destroy();
 	exit_button.destroy();
 	songselect_button.destroy();

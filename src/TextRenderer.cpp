@@ -97,7 +97,7 @@ float TextRenderer::get_width_of_string(std::string text) {
 		ch = characters[*c];
 		return_value += (ch.advance >> 6);
 	}
-	return return_value+ch.size.x;
+	return return_value+ch.size.x+ch.bearing.x - (ch.advance >> 6);
 }
 
 void TextRenderer::renderString(const mat3& projection, std::string text) {

@@ -26,7 +26,8 @@ void SongButton::set_position(vec2 pos) {
     float songart_width = song_art.get_bounding_box().max_x - song_art.get_bounding_box().min_x;
     vec2 temp = {-button_width/2.f+16.f+songart_width/2.f, 0};
     song_art.set_position(pos+temp);
-    text_r->setPosition(pos);
+    temp = {song_art.get_bounding_box().max_x+10,pos.y};
+    text_r->setPosition(temp);
     // if (alignment==LEFT_ALIGN)
     //     text_r->setPosition(pos);
     // else {

@@ -15,6 +15,7 @@ virtual void draw(const mat3& projection);
 void set_text_alignment(int align) {alignment = align;};
 std::string get_text() {return text;};
 virtual void set_scale(vec2 scale);
+bool was_clicked_before = false;
 protected:
     std::string text;
     int alignment;
