@@ -216,8 +216,29 @@ public:
 	Background background;
     Button play_button;
     Button exit_button;
+	Button leaderboard;
+
     void on_mouse_click(vec2 pos);
     Button songselect_button;
+	void on_mouse_move(double xpos, double ypos);
+};
+
+class Leaderboard : public Level {
+public:
+	Leaderboard(int width, int height) : Level(width, height) {};
+
+
+	~Leaderboard();
+	bool init();
+	void destroy();
+	bool update(float ms);
+	void draw();
+	Background background;
+	Button play_button;
+	Button exit_button;
+	void on_mouse_click(vec2 pos);
+	std::vector<Button*> entries;
+	Button songselect_button;
 	void on_mouse_move(double xpos, double ypos);
 };
 
@@ -236,6 +257,24 @@ public:
 	void on_mouse_click(vec2 pos);
 	void on_mouse_scroll(GLFWwindow* window, vec2 offset);
 	void on_mouse_move(double xpos, double ypos);
+};
+
+class EndScreen : public Level {
+public:
+	EndScreen(int width, int height) : Level(width, height) {};
+	~EndScreen();
+	bool init();
+	void destroy();
+	bool update(float ms);
+	void draw();
+	// TODO: replace with m_background from Level
+	Background background;
+	Button input_button;
+	Button exit_button;
+	void on_mouse_click(vec2 pos);
+	//void on_mouse_scroll(GLFWwindow* window, vec2 offset);
+	void on_mouse_move(double xpos, double ypos);
+	void on_key(int key, int action, int mod);
 };
 
 #endif

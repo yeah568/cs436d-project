@@ -530,6 +530,8 @@
     <ClCompile Include="$(ProjectDir)..\src\TextRenderer.cpp" />
     <ClCompile Include="$(ProjectDir)..\src\SongSelect.cpp" />
     <ClCompile Include="$(ProjectDir)..\src\AudioEngine.cpp" />
+    <ClCompile Include="..\src\EndScreen.cpp" />
+    <ClCompile Include="..\src\Leaderboard.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(ProjectDir)..\src\AudioEngine.hpp" />
@@ -551,6 +553,7 @@
     <ClCompile Include="$(ProjectDir)..\src\ParticleEmitter.hpp" />
     <ClCompile Include="$(ProjectDir)..\src\TextRenderer.hpp" />
     <ClCompile Include="$(ProjectDir)..\src\Button.hpp" />
+    <ClInclude Include="..\src\Leaderboard.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
