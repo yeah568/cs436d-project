@@ -75,6 +75,8 @@ public:
     // Steps the game ahead by ms milliseconds
     virtual bool update(float ms);
 
+	void fire_ult();
+
     // Renders our scene
     virtual void draw();
 
@@ -174,6 +176,8 @@ protected:
 	float max_player_health;
 
 	unsigned int m_score;
+
+	float m_ultimate_charge;
 };
 
 class Level1 : public Level {

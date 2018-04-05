@@ -13,7 +13,6 @@ PlayerBullet* spawn_player_bullet(vec2 position, float angle, vec2 scale, float 
 	bullet->set_texture(texture);
 	if (bullet->init(dmg, spd))
 	{
-		
 		bullet->set_position(position);
 		bullet->set_rotation(angle);
 		bullet->set_scale(scale);

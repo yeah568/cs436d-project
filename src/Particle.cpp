@@ -30,7 +30,6 @@ void Particle::update(float elapsed_ms) {
 		return;
 	}
 
-
 	float fd_x = -m_velocity.x * 0.5f * p * Cd * A * pow(m_velocity.x, 2);
 	float fd_y = -m_velocity.y * 0.5f * p * Cd * A * pow(m_velocity.y, 2);
 	float a_x = fd_x / m;

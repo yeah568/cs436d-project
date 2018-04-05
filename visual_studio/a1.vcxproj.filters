@@ -33,6 +33,7 @@
     <ClCompile Include="$(ProjectDir)..\src\Button.cpp" />
     <ClCompile Include="$(ProjectDir)..\src\SongSelect.cpp" />
     <ClCompile Include="$(ProjectDir)..\src\AudioEngine.cpp" />
+    <ClCompile Include="$(ProjectDir)..\src\TextRenderer.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(ProjectDir)..\src\AudioEngine.hpp" />
@@ -50,8 +51,6 @@
     <ClInclude Include="$(ProjectDir)..\src\Boss.hpp" />
     <ClInclude Include="$(ProjectDir)..\src\Enemy.hpp" />
     <ClInclude Include="$(ProjectDir)..\src\Bullet.hpp" />
-    <ClInclude Include="$(ProjectDir)..\src\TextRenderer.hpp" />
     <ClCompile Include="$(ProjectDir)..\src\Button.hpp" />
-    <ClCompile Include="$(ProjectDir)..\src\SongSelect.hpp" />
   </ItemGroup>
 </Project>

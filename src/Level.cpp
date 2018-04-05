@@ -46,6 +46,7 @@ Level::Level(float width, float height) : m_points(0), m_next_little_enemies_spa
     m_boss_health_bar.set_texture(tm->get_texture("boss_health_bar"));
     m_points = 0;
     m_current_time = 0;
+	m_ultimate_charge = 0;
 }
 
 bool Level::init(std::string song_path, std::string osu_path, float boss_health_multiplier, float player_health) {
@@ -265,6 +266,7 @@ bool Level::update(float elapsed_ms)
 			m_boss.set_health(-bullet_it->get_damage());
 			m_boss_health_bar.set_health_percentage(m_boss.get_health()/m_boss.get_total_health());
 			bullet_it = m_bullets.erase(bullet_it);
+			m_ultimate_charge += 7.f;
 			if (m_boss.get_health() <= 0) {
                 audioEngine.play_boss_death();
 				m_score += m_combo * 1000;
@@ -350,6 +352,7 @@ bool Level::update(float elapsed_ms)
 							100,
 							false);
 						pe->init();
+						m_ultimate_charge += 5.f;
 						m_particle_emitters.emplace_back(pe);
 						m_score += m_combo * (bullet_it->get_damage() == 100 ? 150 : 100);
 						little_enemy_it = m_little_enemies.erase(little_enemy_it);
@@ -411,6 +414,10 @@ bool Level::update(float elapsed_ms)
 		}
 	}
 
+	// clamp ult charge
+	if (m_ultimate_charge > 100.f) {
+		m_ultimate_charge = 100.f;
+	}
 
     audioEngine.update();
 
@@ -418,7 +425,24 @@ bool Level::update(float elapsed_ms)
 }
 
 void Level::on_mouse_scroll(GLFWwindow* window, vec2 offset) {
+}
 
+void Level::fire_ult() {
+	if (m_ultimate_charge >= 100.f) {
+		m_ultimate_charge = 0.f;
+
+		vec2 player_pos = m_player.get_position();
+		float player_angle = 1.57f;
+		Texture *texture = tm->get_texture("bullet_1");
+
+		float angle_step = 3.14f / 6;
+
+		spawn_player_bullet(player_pos, player_angle - 2 * angle_step, { 0.5, 0.5 }, 5.f, 1500.f, texture, &m_bullets);
+		spawn_player_bullet(player_pos, player_angle - angle_step, { 0.5, 0.5 }, 5.f, 1500.f, texture, &m_bullets);
+		spawn_player_bullet(player_pos, player_angle, { 0.5, 0.5 }, 5.f, 1500.f, texture, &m_bullets);
+		spawn_player_bullet(player_pos, player_angle + angle_step, { 0.5, 0.5 }, 5.f, 1500.f, texture, &m_bullets);
+		spawn_player_bullet(player_pos, player_angle + 2 * angle_step, { 0.5, 0.5 }, 5.f, 1500.f, texture, &m_bullets);
+	}
 }
 
 // Render our game world
@@ -489,6 +513,13 @@ void Level::draw()
 	float width = m_big_noodle_renderer->get_width_of_string(score_string);
 	m_big_noodle_renderer->setPosition({ screen.x - width - 10, screen.y - 10 });
 	m_big_noodle_renderer->renderString(projection_2D, score_string);
+
+	std::stringstream ult_ss;
+	ult_ss << (int)m_ultimate_charge << "%";
+	std::string ult_charge_string = ult_ss.str();
+	width = m_big_noodle_renderer->get_width_of_string(ult_charge_string) * 0.5;
+	m_big_noodle_renderer->setPosition({ screen.x / 2.f - width / 2, screen.y - 10 });
+	m_big_noodle_renderer->renderString(projection_2D, ult_charge_string);
 
 	if (m_level_state != RUNNING) {
 		float width;
@@ -571,6 +602,9 @@ void Level::on_key(int key, int action, int mod) {
 				if (m_level_state == LOST || m_level_state == WON) {
 					finished = true;
 				}
+			case GLFW_KEY_E:
+				fire_ult();
+				break;
         }
     }
 
@@ -641,6 +675,7 @@ void Level::on_arrow_key(Dir dir) {
             m_beatcircles.erase(beatcircle_it);
             m_player.bullet_type = !m_player.bullet_type;
 			m_combo++;
+			m_ultimate_charge += 2.f;
             break;
         } else if (delta <= good_timing) {
             //printf("GOOD with delta %f\n", delta);
@@ -650,6 +685,7 @@ void Level::on_arrow_key(Dir dir) {
             m_beatcircles.erase(beatcircle_it);
             m_player.bullet_type = !m_player.bullet_type;
 			m_combo++;
+			m_ultimate_charge += 1.f;
             break;
         } else if (delta <= bad_timing) {
             //printf("BAD with delta %f\n", delta);
@@ -705,8 +741,15 @@ void Level::handle_controller(float elapsed_ms) {
 		on_arrow_key(left);
 	}
 
+	if ((controller_state.Gamepad.wButtons & XINPUT_GAMEPAD_START) != 0) {
+		if (m_level_state == LOST || m_level_state == WON) {
+			finished = true;
+		}
+	}
+
 	float leftTrigger = controller_state.Gamepad.bLeftTrigger / 255.f;
 	float rightTrigger = controller_state.Gamepad.bRightTrigger / 255.f;
+
 
 	float LX = controller_state.Gamepad.sThumbLX;
 
