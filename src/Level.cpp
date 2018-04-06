@@ -208,6 +208,7 @@ bool Level::update(float elapsed_ms)
 		return true;
 	}
 
+	handle_controller(elapsed_ms);
 
 	m_boss_health_bar.set_health_percentage(m_boss.get_health()/m_boss.get_total_health());
 	float remaining_offset = elapsed_ms;
