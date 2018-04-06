@@ -16,11 +16,11 @@ PlayerBullet* spawn_player_bullet(vec2 position, float angle, vec2 scale, float 
 		bullet->set_position(position);
 		bullet->set_rotation(angle);
 		bullet->set_scale(scale);
-		bullet->m_movement_dir = { (float)cos(angle), (float)-sin(angle) };
+		bullet->set_movement_dir({ (float)cos(angle), (float)-sin(angle) });
 
 		return bullet;
 	}
-	fprintf(stderr, "Failed to spawn fish");
+	fprintf(stderr, "Failed to spawn bullet");
 	return nullptr;
 }
 
