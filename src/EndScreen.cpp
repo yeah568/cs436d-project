@@ -79,12 +79,7 @@ bool EndScreen::update(float ms) { return 1; };
 
 void EndScreen::on_mouse_click(vec2 pos) {
 	if (exit_button.was_clicked(pos)) {
-		// read in leaderboard text file
-		// append text in the button + their score to whatever holds leaderboard text
-		// sort
-		// write it out
-		levelList->emplace_back(new MainMenu(screen.x, screen.y));
-		finished = 1;
+        write_score();
 	}
 
 }
@@ -95,6 +90,18 @@ void EndScreen::on_mouse_move(double xpos, double ypos) {
 	if (exit_button.was_clicked(pos)) {
 		exit_button.set_text_color({ 0,1,0 });
 	}
+}
+
+void EndScreen::write_score() {
+    std::string c = input_button.get_text();
+
+    std::ofstream outfile;
+    outfile.open(LEADERBOARD_PATH.c_str(), std::ios::app);
+    outfile << c << "||" << m_score;
+    outfile << std::endl;
+    outfile.close();
+    m_score = 0;
+    finished = 1;
 }
 
 void EndScreen::on_key(int key, int action, int mod) {
@@ -113,14 +120,7 @@ void EndScreen::on_key(int key, int action, int mod) {
 		input_button.set_text(input_button.get_text().substr(0, input_button.get_text().size() - 1));
 	}
 	else if (key == 257 && action == GLFW_PRESS) {
-		std::string c = input_button.get_text();
-		
-		std::ofstream outfile;
-		outfile.open("leaderboard.txt", std::ios::app);
-		outfile << c;
-		outfile << std::endl;
-		outfile.close();
-		
+		write_score();
 	}
 	else {
 		return;

@@ -32,3 +32,9 @@ void set_scale(vec2 scale);
 private:
     Sprite song_art;
 };
+
+class LeaderboardEntry : public Button {
+public:
+    LeaderboardEntry() : Button() {};
+    int score;
+};

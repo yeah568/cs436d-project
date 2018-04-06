@@ -100,6 +100,8 @@ public:
 
 	void vibrate_controller(int controller, float duration, unsigned short left_speed, unsigned short right_speed);
 
+	static unsigned int m_score;
+
 private:
     void handle_beat(float remaining_offset, Beat *curBeat, vec2 screen);
 
@@ -172,8 +174,6 @@ protected:
 	LevelStates m_level_state;
 	int m_combo;
 	float max_player_health;
-
-	unsigned int m_score;
 };
 
 class Level1 : public Level {
@@ -237,8 +237,9 @@ public:
 	Button play_button;
 	Button exit_button;
 	void on_mouse_click(vec2 pos);
-	std::vector<Button*> entries;
+	std::vector<LeaderboardEntry*> entries;
 	Button songselect_button;
+	int parse_score(std::string parsable);
 	void on_mouse_move(double xpos, double ypos);
 };
 
@@ -271,6 +272,7 @@ public:
 	Background background;
 	Button input_button;
 	Button exit_button;
+	void write_score();
 	void on_mouse_click(vec2 pos);
 	//void on_mouse_scroll(GLFWwindow* window, vec2 offset);
 	void on_mouse_move(double xpos, double ypos);

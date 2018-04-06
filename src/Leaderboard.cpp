@@ -7,9 +7,11 @@ struct S {
 	char a[256];
 };
 
+bool sortByScore(const LeaderboardEntry* lhs, const LeaderboardEntry* rhs) { return lhs->score > rhs->score; }
+
 bool Leaderboard::init() {
 	std::ifstream inFile;
-	inFile.open("leaderboard.txt");
+	inFile.open(LEADERBOARD_PATH.c_str());
 	if (!inFile) {
 		printf("issues");
 	}
@@ -52,12 +54,14 @@ bool Leaderboard::init() {
 	float bg_height = temp.max_y - temp.min_y;
 	background.set_scale({ screen.x / bg_width,screen.y / bg_height });
 
-	Button* entry = nullptr;
+	LeaderboardEntry* entry = nullptr;
 	float sb_width = 0;
 	float sb_height = 0;
 	for (int i = 0; i<names.size(); i++) {
-		entry = new Button();
+		entry = new LeaderboardEntry();
 		entry->set_texture(tm->get_texture("button"));
+		std::string file_text(names[i].a);
+		entry->score = parse_score(file_text);
 		entry->init(EXO_FONT, names[i].a);
 		entry->set_scale({ 1,1 });
 		entry->set_rotation(0);
@@ -67,9 +71,27 @@ bool Leaderboard::init() {
 		entry->set_position({ screen.x - 16 - sb_width / 2.f, i*sb_height + sb_height / 2.f });
 		entries.emplace_back(entry);
 	}
-
+	sort(entries.begin(), entries.end(), sortByScore);
+	for (int j = 0; j<entries.size(); j++) {
+		entry = entries[j];
+		sb_width = entry->get_bounding_box().max_x - entry->get_bounding_box().min_x;
+		sb_height = entry->get_bounding_box().max_y - entry->get_bounding_box().min_y;
+		entry->set_position({ screen.x - 16 - sb_width / 2.f, j*sb_height + sb_height / 2.f });
+	}
 	return 1;
 
+}
+
+int Leaderboard::parse_score(std::string parsable) {
+	int result=0;
+	std::string str2("||");
+	std::size_t found = parsable.find(str2);
+	if (found!=std::string::npos) {
+		std::string str3 = parsable.substr(found+2,parsable.length()-found-2);
+		result = atoi(str3.c_str());
+	}
+
+	return result;
 }
 void Leaderboard::draw()
 {

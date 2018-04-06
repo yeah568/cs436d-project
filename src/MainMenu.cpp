@@ -87,6 +87,8 @@ void MainMenu::on_mouse_click(vec2 pos) {
 		levelList->emplace_back(new Level1(screen.x, screen.y));
 		levelList->emplace_back(new Level2(screen.x, screen.y));
         levelList->emplace_back(new Level3(screen.x, screen.y));
+		levelList->emplace_back(new EndScreen(screen.x, screen.y));
+		levelList->emplace_back(new Leaderboard(screen.x, screen.y));
 		levelList->emplace_back(new MainMenu(screen.x, screen.y));
 	}
 	else if (exit_button.was_clicked(pos))
@@ -96,7 +98,7 @@ void MainMenu::on_mouse_click(vec2 pos) {
 		finished = 1;
 	}
 	else if (leaderboard.was_clicked(pos)) {
-		levelList->emplace_back(new EndScreen(screen.x, screen.y));
+		levelList->emplace_back(new Leaderboard(screen.x, screen.y));
 		finished = 1;
 	}
 
