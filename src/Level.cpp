@@ -266,7 +266,7 @@ bool Level::update(float elapsed_ms)
 			m_boss.set_health(-bullet_it->get_damage());
 			m_boss_health_bar.set_health_percentage(m_boss.get_health()/m_boss.get_total_health());
 			bullet_it = m_bullets.erase(bullet_it);
-			m_ultimate_charge += 7.f;
+			m_ultimate_charge += 3.f;
 			if (m_boss.get_health() <= 0) {
                 audioEngine.play_boss_death();
 				m_score += m_combo * 1000;
@@ -352,7 +352,7 @@ bool Level::update(float elapsed_ms)
 							100,
 							false);
 						pe->init();
-						m_ultimate_charge += 5.f;
+						m_ultimate_charge += 2.f;
 						m_particle_emitters.emplace_back(pe);
 						m_score += m_combo * (bullet_it->get_damage() == 100 ? 150 : 100);
 						little_enemy_it = m_little_enemies.erase(little_enemy_it);
@@ -682,7 +682,7 @@ void Level::on_arrow_key(Dir dir) {
             m_beatcircles.erase(beatcircle_it);
             m_player.bullet_type = !m_player.bullet_type;
 			m_combo++;
-			m_ultimate_charge += 2.f;
+			m_ultimate_charge += 1.f;
             break;
         } else if (delta <= good_timing) {
             //printf("GOOD with delta %f\n", delta);
@@ -692,7 +692,7 @@ void Level::on_arrow_key(Dir dir) {
             m_beatcircles.erase(beatcircle_it);
             m_player.bullet_type = !m_player.bullet_type;
 			m_combo++;
-			m_ultimate_charge += 1.f;
+			m_ultimate_charge += 0.5f;
             break;
         } else if (delta <= bad_timing) {
             //printf("BAD with delta %f\n", delta);
