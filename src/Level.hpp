@@ -272,6 +272,7 @@ public:
 	Background background;
 	Button input_button;
 	Button exit_button;
+	Button EnterName;
 	void write_score();
 	void on_mouse_click(vec2 pos);
 	//void on_mouse_scroll(GLFWwindow* window, vec2 offset);

@@ -27,7 +27,7 @@ bool MainMenu::init() {
 
 	play_button.set_position({200.f, 200.f});
 
-	songselect_button.set_position({ 200.f, (float)screen.y / 2 });
+	songselect_button.set_position({ 200.f, (float)screen.y / 2 - 50 });
 
 	exit_button.set_position({ 200.f, 850.f});
 

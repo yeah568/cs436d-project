@@ -7,12 +7,12 @@ bool EndScreen::init() {
 	background.set_texture(tm->get_texture("mainmenu"));
 	exit_button.set_texture(tm->get_texture("button"));
 	input_button.set_texture(tm->get_texture("button"));
-
+	EnterName.set_texture(tm->get_texture("button"));
 	background.init();
 
-	exit_button.init("Exo2-Light.ttf", "Back");
+	exit_button.init("Exo2-Light.ttf", "Continue");
 	input_button.init("Exo2-Light.ttf", " ");
-
+	EnterName.init("Exo2-Light.ttf", "Enter Name:");
 	//
 	exit_button.set_scale({ 1.f,1.f });
 	exit_button.set_rotation(0);
@@ -22,8 +22,11 @@ bool EndScreen::init() {
 	input_button.set_scale({ 1.f,1.f });
 	input_button.set_rotation(0);
 
-	input_button.set_position({ 400.f, 850.f });
+	input_button.set_position({ (float)screen.x/2, (float)screen.y/2 });
 
+	EnterName.set_scale({ 1.f, 0.7f });
+	EnterName.set_rotation(0);
+	EnterName.set_position({ (float)screen.x / 2, (float)screen.y / 2 - 150.f });
 
 	background.set_scale({ 1.f,1.f });
 	background.set_rotation(0);
@@ -65,6 +68,7 @@ void EndScreen::draw()
 	background.draw(projection_2D);
 	exit_button.draw(projection_2D);
 	input_button.draw(projection_2D);
+	EnterName.draw(projection_2D);
 
 }
 
@@ -72,6 +76,7 @@ void EndScreen::destroy() {
 	background.destroy();
 	exit_button.destroy();
 	input_button.destroy();
+	EnterName.destroy();
 }
 
 bool EndScreen::update(float ms) { return 1; };
@@ -110,14 +115,17 @@ void EndScreen::on_key(int key, int action, int mod) {
 	if (key >= 65 && key <= 90 && action == GLFW_PRESS) {
 		temp = (char)key;
 		input_button.set_text(input_button.get_text() + temp);
+		input_button.set_position({ (float)screen.x / 2, (float)screen.y / 2 });
 	}
 	// Numbers
 	else if (key >= 48 && key <= 57 && action == GLFW_PRESS) {
 		temp = (char)key;
 		input_button.set_text(input_button.get_text() + temp);
+		input_button.set_position({ (float)screen.x / 2, (float)screen.y / 2 });
 	}
 	else if (key == 259 && action == GLFW_PRESS) {
 		input_button.set_text(input_button.get_text().substr(0, input_button.get_text().size() - 1));
+		input_button.set_position({ (float)screen.x / 2, (float)screen.y / 2 });
 	}
 	else if (key == 257 && action == GLFW_PRESS) {
 		write_score();
