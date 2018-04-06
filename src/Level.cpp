@@ -55,6 +55,10 @@ bool Level::init(std::string song_path, std::string osu_path, float boss_health_
     OsuBeatmap beatmap = parser->parse();
     beatlist = new BeatList(beatmap);
 
+	setTitleText(beatmap);
+
+	delete parser;
+
 	m_big_noodle_renderer = new TextRenderer("BigNoodleTooOblique.ttf", 48);
 
     //FMOD INIT AND LOAD SOUNDS
@@ -500,16 +504,16 @@ void Level::draw()
 			text = "YOU WIN";
 		}
 
-		width = m_big_noodle_renderer->get_width_of_string(text) * 0.5;
+		width = m_big_noodle_renderer->get_width_of_string(text) * 0.5f;
 		m_big_noodle_renderer->setPosition({ screen.x / 2.f - width, screen.y / 2.f });
 		m_big_noodle_renderer->renderString(projection_2D, text);
 
 		text = "FINAL SCORE: " + score_string;
-		width = m_big_noodle_renderer->get_width_of_string(text) * 0.5;
+		width = m_big_noodle_renderer->get_width_of_string(text) * 0.5f;
 		m_big_noodle_renderer->setPosition({ screen.x / 2.f - width, screen.y / 2.f + 50 });
 		m_big_noodle_renderer->renderString(projection_2D, text);
 
-		width = m_big_noodle_renderer->get_width_of_string("Press SPACE to continue") * 0.5;
+		width = m_big_noodle_renderer->get_width_of_string("Press SPACE to continue") * 0.5f;
 		m_big_noodle_renderer->setPosition({ screen.x / 2.f - width, screen.y / 2.f + 100 });
 		m_big_noodle_renderer->renderString(projection_2D, "Press SPACE to continue");
 	}
@@ -755,7 +759,7 @@ void Level::vibrate_controller(int controller, float duration, unsigned short le
 	vibration.wLeftMotorSpeed = left_speed; // use any value between 0-65535 here
 	vibration.wRightMotorSpeed = right_speed; // use any value between 0-65535 here
 	XInputSetState(controller, &vibration);
-#endif;
+#endif
 	return;
 }
 
@@ -767,4 +771,15 @@ std::string Level::getScoreString() {
 	std::stringstream score_ss;
 	score_ss << std::setfill('0') << std::setw(9) << m_score;
 	return score_ss.str();
+}
+
+void Level::setTitleText(OsuBeatmap beatmap) {
+	std::stringstream title_ss;
+	title_ss << beatmap.metadata.title << " - " << beatmap.metadata.artist;
+	m_title_text = title_ss.str();
+}
+
+std::string Level::getTitleText() {
+	return m_title_text;
+	
 }
