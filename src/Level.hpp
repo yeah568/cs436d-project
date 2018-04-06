@@ -237,10 +237,12 @@ public:
 	Button play_button;
 	Button exit_button;
 	void on_mouse_click(vec2 pos);
+	TextRenderer* title;
 	std::vector<LeaderboardEntry*> entries;
 	Button songselect_button;
 	int parse_score(std::string parsable);
 	void on_mouse_move(double xpos, double ypos);
+    void on_mouse_scroll(GLFWwindow* window, vec2 offset);
 };
 
 class SongSelect : public Level {

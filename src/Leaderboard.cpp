@@ -21,9 +21,11 @@ bool Leaderboard::init() {
 	while (inFile.getline(s.a, 256)) {
 		names.emplace_back(s);
 	}
-	
-	
 	inFile.close();
+
+	title = new TextRenderer("Exo2-Light.ttf", 48);
+	int title_width = title->get_width_of_string("Leaderboard");
+	title->setPosition({screen.x/33.f, 50});
 	/*
 	std::ofstream outfile;
 	outfile.open("leaderboard.txt", std::ios::trunc);
@@ -121,6 +123,7 @@ void Leaderboard::draw()
 
 			btn->draw(projection_2D);
 	}
+	title->renderString(projection_2D, "Leaderboard");
 
 }
 
@@ -147,5 +150,14 @@ void Leaderboard::on_mouse_move(double xpos, double ypos) {
 	exit_button.set_text_color({ 1,1,1 });
 	if (exit_button.was_clicked(pos)) {
 		exit_button.set_text_color({ 0,1,0 });
+	}
+}
+
+
+void Leaderboard::on_mouse_scroll(GLFWwindow* window, vec2 offset){
+	vec2 temp;
+	for (auto lbe : entries) {
+		temp = lbe->get_position();
+		lbe->set_position({temp.x,temp.y+offset.y});
 	}
 }
