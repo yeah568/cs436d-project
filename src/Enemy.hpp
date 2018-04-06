@@ -33,5 +33,5 @@ public:
 
 private:
 	
-	float MAX_ROTATION_PER_SEC = 3.14 / 6; // 30deg
+	float MAX_ROTATION_PER_SEC = 3.14f / 6.f; // 30deg
 };
