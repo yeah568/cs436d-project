@@ -160,6 +160,7 @@ protected:
     float m_next_little_enemies_spawn;
 
     float m_current_time;
+	unsigned int m_music_length;
 
 //    Mix_Music *m_background_music;
 //    Mix_Chunk *m_player_dead_sound;
