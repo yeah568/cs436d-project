@@ -129,6 +129,10 @@ bool World::update(float elapsed_ms)
 		levelCounter++;
 		levelList[levelCounter]->init();
 
+		// Updating window title with points
+		std::stringstream title_ss;
+		title_ss << "Beatcoin - " << levelList[levelCounter]->getTitleText();
+		glfwSetWindowTitle(m_window, title_ss.str().c_str());
 	};
 	return levelList[levelCounter]->update(elapsed_ms);
 }
@@ -143,12 +147,6 @@ void World::draw()
 	// Getting size of window
 	int w, h;
     glfwGetFramebufferSize(m_window, &w, &h);
-
-
-	// Updating window title with points
-	std::stringstream title_ss;
-	title_ss << "Points: " << m_points;
-	glfwSetWindowTitle(m_window, title_ss.str().c_str());
 
 	// Clearing backbuffer
 	glViewport(0, 0, w, h);
