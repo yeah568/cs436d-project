@@ -427,6 +427,8 @@ bool Level::update(float elapsed_ms)
 void Level::on_mouse_scroll(GLFWwindow* window, vec2 offset) {
 }
 
+
+
 void Level::fire_ult() {
 	if (m_ultimate_charge >= 100.f) {
 		m_ultimate_charge = 0.f;
@@ -435,13 +437,18 @@ void Level::fire_ult() {
 		float player_angle = 1.57f;
 		Texture *texture = tm->get_texture("bullet_1");
 
-		float angle_step = 3.14f / 6;
+		// spawn a bullet every 15 degrees, centered around vertical, up to 45 degrees in each direction
+		const float ult_start_angle = player_angle - 3.14f / 4;
+		const float ult_end_angle = player_angle + 3.14f / 4;
+		const int ult_num_bullets_fired = 7;
+		const float ult_dmg = 10.f;
+		const float ult_speed = 1500.f;
 
-		spawn_player_bullet(player_pos, player_angle - 2 * angle_step, { 0.5, 0.5 }, 5.f, 1500.f, texture, &m_bullets);
-		spawn_player_bullet(player_pos, player_angle - angle_step, { 0.5, 0.5 }, 5.f, 1500.f, texture, &m_bullets);
-		spawn_player_bullet(player_pos, player_angle, { 0.5, 0.5 }, 5.f, 1500.f, texture, &m_bullets);
-		spawn_player_bullet(player_pos, player_angle + angle_step, { 0.5, 0.5 }, 5.f, 1500.f, texture, &m_bullets);
-		spawn_player_bullet(player_pos, player_angle + 2 * angle_step, { 0.5, 0.5 }, 5.f, 1500.f, texture, &m_bullets);
+		float angle_step = (ult_end_angle - ult_start_angle) / ult_num_bullets_fired;
+
+		for (int i = 0; i < ult_num_bullets_fired; i++) {
+			spawn_player_bullet(player_pos, ult_start_angle + i * angle_step, { 0.5, 0.5 }, ult_dmg, ult_speed, texture, &m_bullets);
+		}
 	}
 }
 
