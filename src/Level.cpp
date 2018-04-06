@@ -766,9 +766,13 @@ void Level::handle_controller(float elapsed_ms) {
 		}
 	}
 
-	float leftTrigger = controller_state.Gamepad.bLeftTrigger / 255.f;
-	float rightTrigger = controller_state.Gamepad.bRightTrigger / 255.f;
+	float leftTrigger = controller_state.Gamepad.bLeftTrigger;
+	float rightTrigger = controller_state.Gamepad.bRightTrigger;
 
+
+	if (leftTrigger > XINPUT_GAMEPAD_TRIGGER_THRESHOLD || rightTrigger > XINPUT_GAMEPAD_TRIGGER_THRESHOLD) {
+		fire_ult();
+	}
 
 	float LX = controller_state.Gamepad.sThumbLX;
 
