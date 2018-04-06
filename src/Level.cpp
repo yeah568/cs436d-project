@@ -68,8 +68,9 @@ bool Level::init(std::string song_path, std::string osu_path, float boss_health_
     }
     printf("FMOD loaded sounds and music");
 
-    unsigned int boss_health = 0;
-    audioEngine.get_music_length(&boss_health, FMOD_TIMEUNIT_MS);
+    m_music_length = 0;
+    audioEngine.get_music_length(&m_music_length, FMOD_TIMEUNIT_MS);
+	unsigned int boss_health = m_music_length;
     boss_health *= boss_health_multiplier/1000;
 
     m_current_speed = 1.f;
@@ -197,6 +198,12 @@ bool Level::update(float elapsed_ms)
     } else {
         m_current_time += elapsed_ms;
     }
+
+	if (m_current_time > m_music_length) {
+		m_level_state = LOST;
+		return true;
+	}
+
 
 	m_boss_health_bar.set_health_percentage(m_boss.get_health()/m_boss.get_total_health());
 	float remaining_offset = elapsed_ms;
