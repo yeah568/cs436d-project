@@ -50,14 +50,14 @@ bool SongSelect::init() {
 }
 void SongSelect::draw()
 {
-	int w = screen.x;
-	int h = screen.y;
+	float w = screen.x;
+	float h = screen.y;
 	// Fake projection matrix, scales with respect to window coordinates
 	// PS: 1.f / w in [1][1] is correct.. do you know why ? (:
 	float left = 0.f;// *-0.5;
 	float top = 0.f;// (float)h * -0.5;
-	float right = (float)w;// *0.5;
-	float bottom = (float)h;// *0.5;
+	float right = w;// *0.5;
+	float bottom = h;// *0.5;
 
 	float sx = 2.f / (right - left);
 	float sy = 2.f / (top - bottom);
@@ -83,7 +83,7 @@ void SongSelect::destroy() {
 	back_button.destroy();
 }
 
-bool SongSelect::update(float ms) { return 1; };
+bool SongSelect::update(float ms) { return 1; }
 
 
 void SongSelect::on_mouse_click(vec2 pos) {
@@ -136,4 +136,8 @@ void SongSelect::on_mouse_move(double xpos, double ypos) {
 	if (back_button.was_clicked(pos)) {
 		back_button.set_text_color({0,1.f,0});
 	}
+}
+
+std::string SongSelect::getTitleText() {
+	return "Song Select";
 }

@@ -98,14 +98,18 @@ public:
 
     virtual void on_mouse_click(vec2 pos) {};
 
-	void handle_controller(float elapsed_ms);
-
-	void vibrate_controller(int controller, float duration, unsigned short left_speed, unsigned short right_speed);
+	virtual std::string getTitleText();
 
 private:
     void handle_beat(float remaining_offset, Beat *curBeat, vec2 screen);
 
     void on_arrow_key(Dir dir);
+
+	void setTitleText(OsuBeatmap beatmap);
+
+	void handle_controller(float elapsed_ms);
+
+	void vibrate_controller(int controller, float duration, unsigned short left_speed, unsigned short right_speed);
 
 	float vibration_remaining;
 #if _WIN32
@@ -158,6 +162,7 @@ protected:
     float m_next_little_enemies_spawn;
 
     float m_current_time;
+	unsigned int m_music_length;
 
 //    Mix_Music *m_background_music;
 //    Mix_Chunk *m_player_dead_sound;
@@ -178,6 +183,8 @@ protected:
 	unsigned int m_score;
 
 	float m_ultimate_charge;
+  
+	std::string m_title_text;
 };
 
 class Level1 : public Level {
@@ -200,7 +207,7 @@ public:
 
 class Level3 : public Level {
 public:
-    Level3(int width, int height) : Level(width, height) {};
+    Level3(float width, float height) : Level(width, height) {};
 
     ~Level3();
 
@@ -209,7 +216,7 @@ public:
 
 class MainMenu : public Level {
 public: 
-	MainMenu(int width, int height) : Level(width, height) {};
+	MainMenu(float width, float height) : Level(width, height) {};
 	
 
 	~MainMenu();
@@ -223,11 +230,12 @@ public:
     void on_mouse_click(vec2 pos);
     Button songselect_button;
 	void on_mouse_move(double xpos, double ypos);
+	std::string getTitleText();
 };
 
 class SongSelect : public Level {
 public:
-    SongSelect(int width, int height) : Level(width, height) {};
+    SongSelect(float width, float height) : Level(width, height) {};
     ~SongSelect();
     bool init();
     void destroy();
@@ -240,6 +248,7 @@ public:
 	void on_mouse_click(vec2 pos);
 	void on_mouse_scroll(GLFWwindow* window, vec2 offset);
 	void on_mouse_move(double xpos, double ypos);
+	std::string getTitleText();
 };
 
 #endif
