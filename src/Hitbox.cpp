@@ -72,6 +72,8 @@ void Hitbox::destroy()
 	glDeleteShader(effect.vertex);
 	glDeleteShader(effect.fragment);
 	glDeleteShader(effect.program);
+
+	delete m_texture;
 }
 
 void Hitbox::draw(const mat3& projection)
