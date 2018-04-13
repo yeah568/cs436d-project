@@ -1,5 +1,6 @@
 #include "DiscordRPC.hpp"
 #include "discord_register.h"
+#include <cstring>
 #include <ctime>
 
 
