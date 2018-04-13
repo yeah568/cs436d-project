@@ -44,7 +44,7 @@ test: build
 	$(CXX) -c $(CXXFLAGS) -o $@ $< 
 
 $(BIN): $(SUBDIRS) $(ALL_OBJ) 
-	$(CXX)  $(LDFLAGS) -o $@ $(ALL_OBJ) $(wildcard $(addsuffix /*.o,$(SUBDIRS))) $(LIBPATH) $(LIB)
+	$(CXX)  $(LDFLAGS) -o $@ $(ALL_OBJ) $(wildcard $(addsuffix /*.o,$(SUBDIRS))) $(LIBPATH) $(LIB) -fPIC
 
 clean:
 	- rm -f $(BIN) $(ALL_OBJ)
