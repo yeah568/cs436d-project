@@ -10,7 +10,7 @@ ifeq ($(OS), Darwin)
 	LDFLAGS = "-Wl,-rpath,./ext/fmod/lib"
 else ifeq ($(OS), Linux)
 	CXXFLAGS = -Iext/gl3w -Iext/fmod-lin/inc -Iext/freetype/include -Iext/discord-rpc/include -std=c++11 -Wall -pedantic -DENABLE_SOUND -D LINUX -g
-	LIB = -lglfw -lGL -lm -lXrandr -lXi -lX11 -lXxf86vm -lpthread -ldl -lSDL2 -lSDL2_mixer -lfmod -lfmodL -lfreetype -ldiscord-rpc
+	LIB = -lglfw -lGL -lm -lXrandr -lXi -lX11 -lXxf86vm -lpthread -ldl -lSDL2 -lSDL2_mixer -lfmod -lfmodL -lfreetype -ldiscord-rpc -fPIC
 	LIBPATH = -Lext/fmod-lin/lib/x86_64 -Lext/discord-rpc/linux
 	LDFLAGS = "-Wl,-rpath,./ext/fmod-lin/lib/x86_64"
 else
@@ -44,7 +44,7 @@ test: build
 	$(CXX) -c $(CXXFLAGS) -o $@ $< 
 
 $(BIN): $(SUBDIRS) $(ALL_OBJ) 
-	$(CXX)  $(LDFLAGS) -o $@ $(ALL_OBJ) $(wildcard $(addsuffix /*.o,$(SUBDIRS))) $(LIBPATH) $(LIB) -fPIC
+	$(CXX)  $(LDFLAGS) -o $@ $(ALL_OBJ) $(wildcard $(addsuffix /*.o,$(SUBDIRS))) $(LIBPATH) $(LIB)
 
 clean:
 	- rm -f $(BIN) $(ALL_OBJ)
