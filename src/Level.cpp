@@ -355,6 +355,42 @@ bool Level::update(float elapsed_ms)
 		}
 	}
 
+	for (auto enemy_bullet_it = m_enemy_bullets.begin(); enemy_bullet_it != m_enemy_bullets.end();) {
+		if (m_player.collides_with(*enemy_bullet_it)) {
+            audioEngine.play_player_hit();
+  		vibrate_controller(0, 500.f, 32000, 32000);
+			healthbar.update(m_player.get_health() / max_player_health);
+			auto pe = new ParticleEmitter(
+				enemy_bullet_it->get_position(),
+				100,
+				false);
+			pe->init();
+			enemy_bullet_it = m_enemy_bullets.erase(enemy_bullet_it);
+			m_particle_emitters.emplace_back(pe);
+			m_player.set_health(-0.5);
+            if (m_player.get_health() <= max_player_health/2.f) {
+                audioEngine.set_distortion_bypass(false);
+                //set distortion proportional to distance to zero
+                float wetness = 1 - (m_player.get_health() / max_player_health);
+                audioEngine.set_wetness_levels(wetness);
+
+            } else {
+                audioEngine.set_distortion_bypass(true);
+            }
+			if (m_player.get_health() <= 0) {
+                audioEngine.play_player_death();
+				m_player.kill();
+				m_level_state = LOST;
+                audioEngine.set_music_pause(true);
+				return true;
+				//printf("Player has died\n");
+			}
+			break;
+		} else {
+			++enemy_bullet_it;
+		}
+	}
+
 
 	if (m_bullets.size() > 0) {
 		for (auto bullet_it = m_bullets.begin(); bullet_it != m_bullets.end();) {
