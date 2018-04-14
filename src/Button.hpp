@@ -8,6 +8,7 @@ public:
 Button() : Sprite(nullptr) {};
 TextRenderer* text_r;
 virtual bool init(std::string font_name, std::string str_text);
+virtual void destroy();
 bool was_clicked(vec2 pos);
 virtual void set_position(vec2 pos);
 void set_text_color(vec3 col);

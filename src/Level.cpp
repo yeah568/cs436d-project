@@ -126,6 +126,7 @@ bool Level::init(std::string song_path, std::string osu_path, float boss_health_
 }
 
 Level::~Level() {
+	delete beatlist;
 	delete m_big_noodle_renderer;
 }
 bool Level3::init() {
