@@ -20,7 +20,7 @@ endif
 
 BIN=beatcoin
 OBJ=$(BIN).o common.o Sprite.o Player.o World.o Bullet.o Background.o DiscordRPC.o
-OBJ2=BeatCircle.o BeatList.o OsuParser.o CenterBeatCircle.o Level.o
+OBJ2=BeatCircle.o BeatList.o OsuParser.o CenterBeatCircle.o Level.o EndScreen.o Leaderboard.o
 OBJ3=HealthBar.o LevelList.o Boss.o Enemy.o SpriteSheet.o BossHealthBar.o Structure.o AudioEngine.o
 OBJ4=Spawner.o TextureManager.o Hitbox.o Particle.o ParticleEmitter.o TextRenderer.o MainMenu.o Button.o SongSelect.o
 ALL_OBJ=$(OBJ) $(OBJ2) $(OBJ3) $(OBJ4)

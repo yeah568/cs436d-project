@@ -19,6 +19,8 @@ namespace
     }
 }
 
+unsigned int Level::m_score;
+
 World::World()
 {	
 	m_points = 0;
@@ -95,6 +97,7 @@ bool World::init(vec2 screen, bool is_full_screen)
 	glfwSetMouseButtonCallback(m_window, cursor_button_redirect);
 	glfwSetScrollCallback(m_window, scroll_redirect);
 	TextureManager* tm = TextureManager::get_instance();
+	Level::m_score = 0;
 	//return levelList[levelCounter].init
 	//Level1* level = new Level1(screen.x, screen.y);
 	Level::levelList = &levelList;
