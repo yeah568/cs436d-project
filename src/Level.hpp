@@ -182,11 +182,8 @@ protected:
 	int m_combo;
 	float max_player_health;
 
-	unsigned int m_score;
-
 	float m_ultimate_charge;
   
-
 	std::string m_title_text;
 };
 
