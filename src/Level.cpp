@@ -79,7 +79,6 @@ bool Level::init(std::string song_path, std::string osu_path, float boss_health_
 
     m_current_speed = 1.f;
 	m_combo = 0;
-	m_score = 0;
 
 	m_level_state = RUNNING;
 	finished = false;
@@ -544,6 +543,7 @@ void Level::on_key(int key, int action, int mod) {
     if (action == GLFW_PRESS) {
         switch (key) {
             case GLFW_KEY_H:
+                m_score += 250;
                 finished = 1;
                 break;
             case GLFW_KEY_D:
