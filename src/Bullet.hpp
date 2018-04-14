@@ -26,6 +26,8 @@ public:
 	
 	void set_speed(float spd);
 
+	void set_movement_dir(vec2 movement_dir);
+
 protected:
 	vec2 velocity;
 	float m_damage = 25.0f;

@@ -75,6 +75,8 @@ public:
     // Steps the game ahead by ms milliseconds
     virtual bool update(float ms);
 
+	void fire_ult();
+
     // Renders our scene
     virtual void draw();
 
@@ -179,6 +181,9 @@ protected:
 	LevelStates m_level_state;
 	int m_combo;
 	float max_player_health;
+
+	float m_ultimate_charge;
+  
 	std::string m_title_text;
 };
 

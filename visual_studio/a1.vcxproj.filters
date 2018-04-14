@@ -38,7 +38,7 @@
     <ClCompile Include="..\src\EndScreen.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="$(ProjectDir)..\src\AudioEngine.hpp" />
+    <ClInclude Include="$(ProjectDir)..\src\AudioEngine.hpp" />
     <ClInclude Include="$(ProjectDir)..\src\Sprite.hpp" />
     <ClInclude Include="$(ProjectDir)..\src\OsuParser.hpp" />
     <ClInclude Include="$(ProjectDir)..\src\utils\StringUtils.hpp" />
@@ -53,9 +53,7 @@
     <ClInclude Include="$(ProjectDir)..\src\Boss.hpp" />
     <ClInclude Include="$(ProjectDir)..\src\Enemy.hpp" />
     <ClInclude Include="$(ProjectDir)..\src\Bullet.hpp" />
-    <ClCompile Include="$(ProjectDir)..\src\Button.hpp" />
-  </ItemGroup>
-  <ItemGroup>
+    <ClInclude Include="$(ProjectDir)..\src\Button.hpp" />
     <ClInclude Include="..\src\Leaderboard.hpp" />
   </ItemGroup>
 </Project>

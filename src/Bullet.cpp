@@ -51,6 +51,11 @@ void Bullet::set_speed(float spd)
 	m_speed = spd;
 }
 
+void Bullet::set_movement_dir(vec2 movement_dir) {
+	m_movement_dir = movement_dir;
+	velocity = normalize(m_movement_dir);
+}
+
 void PlayerBullet::update(float ms)
 {
 	float step = m_speed * (ms / 1000);
