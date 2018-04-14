@@ -203,6 +203,8 @@ bool Level::update(float elapsed_ms)
 		return true;
 	}
 
+	handle_controller(elapsed_ms);
+
     if (!(audioEngine.is_playing(audioEngine.get_music_channel()))) {
         audioEngine.play_music();
     } else {
@@ -213,7 +215,6 @@ bool Level::update(float elapsed_ms)
 		m_level_state = LOST;
 		return true;
 	}
-
 
 	m_boss_health_bar.set_health_percentage(m_boss.get_health()/m_boss.get_total_health());
 	float remaining_offset = elapsed_ms;
@@ -765,14 +766,18 @@ void Level::handle_controller(float elapsed_ms) {
 		on_arrow_key(left);
 	}
 
+	float leftTrigger = controller_state.Gamepad.bLeftTrigger;
+	float rightTrigger = controller_state.Gamepad.bRightTrigger;
+
+	if (leftTrigger > XINPUT_GAMEPAD_TRIGGER_THRESHOLD || rightTrigger > XINPUT_GAMEPAD_TRIGGER_THRESHOLD) {
+		fire_ult();
+	}
+
 	if ((controller_state.Gamepad.wButtons & XINPUT_GAMEPAD_START) != 0) {
 		if (m_level_state == LOST || m_level_state == WON) {
 			finished = true;
 		}
 	}
-
-	float leftTrigger = controller_state.Gamepad.bLeftTrigger / 255.f;
-	float rightTrigger = controller_state.Gamepad.bRightTrigger / 255.f;
 
 
 	float LX = controller_state.Gamepad.sThumbLX;
