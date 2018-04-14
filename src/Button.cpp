@@ -50,6 +50,10 @@ bool Button::init(std::string font_name, std::string str_text) {
     return Sprite::init();
 }
 
+void Button::destroy() {
+	delete text_r;
+}
+
 bool SongButton::init(std::string font_name, std::string str_text) {
     Button::init(font_name, str_text);
     song_art.set_scale({1.f,1.f});

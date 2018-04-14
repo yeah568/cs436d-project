@@ -13,6 +13,7 @@
 #include <signal.h>
 #include <stdlib.h>
 //#include <unistd.h>
+#include "DiscordRPC.hpp"
 
 using Clock = std::chrono::high_resolution_clock;
 
@@ -21,9 +22,6 @@ World world;
 int width = 1600;
 int height = 900;
 const char* title = "Your Title Here";
-
-
-
 
 // Entry point
 int main(int argc, char* argv[])
@@ -42,6 +40,8 @@ int main(int argc, char* argv[])
 		return EXIT_FAILURE;
 	}
 
+	DiscordRPC::InitDiscord();
+
 	auto t = Clock::now();
 
 	// variable timestep loop.. can be improved (:
@@ -57,9 +57,13 @@ int main(int argc, char* argv[])
 		
 		world.update(elapsed_sec);
 		world.draw();
+
+		DiscordRPC::RunCallbacks();
 	}
 
 	world.destroy();    
+
+	DiscordRPC::ShutdownDiscord();
 
 	return EXIT_SUCCESS;
 }

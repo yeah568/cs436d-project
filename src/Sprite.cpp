@@ -69,6 +69,10 @@ void Sprite::destroy()
   glDeleteShader(effect.vertex);
   glDeleteShader(effect.fragment);
   glDeleteShader(effect.program);
+
+  for (auto hitbox : m_hitboxes) {
+	  delete hitbox;
+  }
 }
 
 void Sprite::draw(const mat3& projection)

@@ -48,6 +48,7 @@ bool SongSelect::init() {
 	return 1;
 	
 }
+
 void SongSelect::draw()
 {
 	float w = screen.x;
@@ -78,8 +79,10 @@ void SongSelect::draw()
 
 void SongSelect::destroy() { 
 	background.destroy();
-	for (auto& btn : song_boxes)
+	for (auto& btn : song_boxes) {
 		btn->destroy();
+		delete btn;
+	}
 	back_button.destroy();
 }
 
