@@ -199,11 +199,11 @@ void Level::handle_beat(float remaining_offset, Beat *curBeat, vec2 screen) {
 
 bool Level::update(float elapsed_ms)
 {
+	handle_controller(elapsed_ms);
+
 	if (m_level_state != RUNNING) {
 		return true;
 	}
-
-	handle_controller(elapsed_ms);
 
     if (!(audioEngine.is_playing(audioEngine.get_music_channel()))) {
         audioEngine.play_music();
