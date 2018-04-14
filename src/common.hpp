@@ -13,7 +13,9 @@
 #ifdef _MSC_VER
   #define data_path "../data"
   #define shader_path(name) "../shaders/" name
+  static const std::string LEADERBOARD_PATH = "leaderboard.txt";
 #else
+    static const std::string LEADERBOARD_PATH = "visual_studio/leaderboard.txt";
   #define data_path "data"
   #define shader_path(name) "shaders/" name
 #endif

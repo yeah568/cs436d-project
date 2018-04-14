@@ -100,6 +100,8 @@ public:
 
 	virtual std::string getTitleText();
 
+	static unsigned int m_score;
+
 private:
     void handle_beat(float remaining_offset, Beat *curBeat, vec2 screen);
 
@@ -184,6 +186,7 @@ protected:
 
 	float m_ultimate_charge;
   
+
 	std::string m_title_text;
 };
 
@@ -227,10 +230,34 @@ public:
 	Background background;
     Button play_button;
     Button exit_button;
+	Button leaderboard;
+
     void on_mouse_click(vec2 pos);
     Button songselect_button;
 	void on_mouse_move(double xpos, double ypos);
 	std::string getTitleText();
+};
+
+class Leaderboard : public Level {
+public:
+	Leaderboard(int width, int height) : Level(width, height) {};
+
+
+	~Leaderboard();
+	bool init();
+	void destroy();
+	bool update(float ms);
+	void draw();
+	Background background;
+	Button play_button;
+	Button exit_button;
+	void on_mouse_click(vec2 pos);
+	TextRenderer* title;
+	std::vector<LeaderboardEntry*> entries;
+	Button songselect_button;
+	int parse_score(std::string parsable);
+	void on_mouse_move(double xpos, double ypos);
+    void on_mouse_scroll(GLFWwindow* window, vec2 offset);
 };
 
 class SongSelect : public Level {
@@ -249,6 +276,26 @@ public:
 	void on_mouse_scroll(GLFWwindow* window, vec2 offset);
 	void on_mouse_move(double xpos, double ypos);
 	std::string getTitleText();
+};
+
+class EndScreen : public Level {
+public:
+	EndScreen(int width, int height) : Level(width, height) {};
+	~EndScreen();
+	bool init();
+	void destroy();
+	bool update(float ms);
+	void draw();
+	// TODO: replace with m_background from Level
+	Background background;
+	Button input_button;
+	Button exit_button;
+	Button EnterName;
+	void write_score();
+	void on_mouse_click(vec2 pos);
+	//void on_mouse_scroll(GLFWwindow* window, vec2 offset);
+	void on_mouse_move(double xpos, double ypos);
+	void on_key(int key, int action, int mod);
 };
 
 #endif
