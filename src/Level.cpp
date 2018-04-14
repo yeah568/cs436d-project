@@ -7,6 +7,7 @@
 #include "Structure.hpp"
 #include "Spawner.hpp"
 #include "TextureManager.hpp"
+#include "DiscordRPC.hpp"
 
 
 // stlib
@@ -106,6 +107,10 @@ bool Level::init(std::string song_path, std::string osu_path, float boss_health_
 	max_player_health = player_health;
     m_player.set_health_abs(max_player_health);
 	healthbar.update(1.f);
+
+	DiscordRPC::UpdatePresence(getTitleText());
+
+
     if (m_boss.init((float)boss_health, &m_little_enemies, &m_structures)) {
         Structure::player_bullets = &m_bullets;
         Structure::enemy_bullets = &m_enemy_bullets;
