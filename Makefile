@@ -9,10 +9,10 @@ ifeq ($(OS), Darwin)
 	LIBPATH = -Lext/fmod/lib -Lext/discord-rpc/osx
 	LDFLAGS = "-Wl,-rpath,./ext/fmod/lib"
 else ifeq ($(OS), Linux)
-	CXXFLAGS = -Iext/gl3w -Iext/fmod-lin/inc -Iext/freetype/include -Iext/discord-rpc/include -std=c++11 -Wall -pedantic -DENABLE_SOUND -D LINUX -g -fPIC
+	CXXFLAGS = -Iext/gl3w -Iext/fmod-lin/inc -Iext/freetype/include -Iext/discord-rpc/include -std=c++11 -Wall -pedantic -DENABLE_SOUND -D LINUX -g
 	LIB = -lglfw -lGL -lm -lXrandr -lXi -lX11 -lXxf86vm -lpthread -ldl -lSDL2 -lSDL2_mixer -lfmod -lfmodL -lfreetype -ldiscord-rpc
 	LIBPATH = -Lext/fmod-lin/lib/x86_64 -Lext/discord-rpc/linux
-	LDFLAGS = "-Wl,-rpath,./ext/fmod-lin/lib/x86_64" -fPIC
+	LDFLAGS = "-Wl,-rpath,./ext/fmod-lin/lib/x86_64"
 else
     $(error Your OS $(OS) is not supported.) 
     exit 1
